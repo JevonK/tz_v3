@@ -1,0 +1,225 @@
+{extend name='main'}
+
+{block name='content'}
+
+<style>
+    .store-total-container {
+        font-size: 14px;
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+    }
+
+    .store-total-container .store-total-icon {
+        top: 45%;
+        right: 8%;
+        font-size: 65px;
+        position: absolute;
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .store-total-container .store-total-item {
+        color: #fff;
+        line-height: 4em;
+        padding: 15px 25px;
+        position: relative;
+    }
+
+    .store-total-container .store-total-item > div:nth-child(2) {
+        font-size: 46px;
+        line-height: 46px;
+    }
+
+</style>
+
+<div class="think-box-shadow store-total-container">
+<div class="think-box-shadow store-total-container notselect">
+    <div class="margin-bottom-15">数据统计</div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm6 layui-col-md4">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#c543d8,#925cc3)">
+                <div>用户总量</div>
+                <div>{:number_format($user_count)}人</div>
+                <div>平台用户总人数</div>
+            </div>
+            <i class="store-total-icon layui-icon layui-icon-user"></i>
+        </div>
+        <div class="layui-col-sm6 layui-col-md4">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
+                <div>活跃用户</div>
+                <div>{:number_format($user_login_count_today)}人</div>
+                <div>当前活跃用户</div>
+            </div>
+            <i class="store-total-icon layui-icon layui-icon-user"></i>
+        </div>
+        <div class="layui-col-sm6 layui-col-md4">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#ff7d7d,#fb2c95)">
+                <div>用户余额</div>
+                <div>${:number_format($user_money_sum)}</div>
+                <div>平台用户总余额</div>
+            </div>
+            <i class="store-total-icon layui-icon layui-icon-template-1"></i>
+        </div>
+    </div>
+</div>
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <!--<div class="pull-right">-->
+        <!--    {if auth("export_excel")}-->
+        <!--    <a href="/admin.html#/admin/index/exportExcel">导出报表</a>-->
+            <!--<a class="layui-btn" data-modal='{:url("export_excel")}'>导出报表</a>-->
+        <!--    {else}-->
+        <!--    <a data-tips-text="您没有导出报表的权限哦！" class="layui-btn layui-btn-sm layui-btn-primary layui-disabled">导出报表</a>-->
+        <!--    {/if}-->
+        <!--</div>-->
+        <div class="think-box-shadow">
+            <table class="layui-table" lay-even>
+                <caption class="text-left margin-bottom-15 font-s14">综合报表</caption>
+                <colgroup>
+                    <col width="30%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <td>备注</td>
+                        <td>新增用户</td>
+                        <td>充值</td>
+                        <td>充值笔数</td>
+                        <td>提现</td>
+                        <td>提现笔数</td>
+                        <td>系统赠送</td>
+                        <td>系统操作</td>
+                        <td>投资笔数</td>
+                        <td>投资人数</td>
+                        <td>投资额</td>
+                        <td>投资收益</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>今日</td>
+                        <td>{:number_format($today['new_user'])}人</td>
+                        <td>${:number_format($today['recharge'],2)}</td>
+                        <td>{:number_format($today['recharge_count'])}笔</td>
+                        <td>${:number_format($today['withdraw'],2)}</td>
+                        <td>{:number_format($today['withdraw_count'])}笔</td>
+                        <td>${:number_format($today['sys_reward'],2)}</td>
+                        <td>${:number_format($today['sys_sum'],2)}</td>
+                        <td>{:number_format($today['invest'])}笔</td>
+                        <td>{:number_format($today['invest_user_count'])}人</td>
+                        <td>${:number_format($today['invest_sum'],2)}</td>
+                        <td>${:number_format($today['invest_reward'],2)}</td>
+                    </tr>
+                    <tr>
+                        <td>昨日</td>
+                        <td>{:number_format($yesterday['new_user'])}人</td>
+                        <td>${:number_format($yesterday['recharge'],2)}</td>
+                        <td>{:number_format($yesterday['recharge_count'])}笔</td>
+                        <td>${:number_format($yesterday['withdraw'],2)}</td>
+                        <td>{:number_format($yesterday['withdraw_count'])}笔</td>
+                        <td>${:number_format($yesterday['sys_reward'],2)}</td>
+                        <td>${:number_format($yesterday['sys_sum'],2)}</td>
+                        <td>{:number_format($yesterday['invest'])}笔</td>
+                        <td>{:number_format($yesterday['invest_user_count'])}人</td>
+                        <td>${:number_format($yesterday['invest_sum'],2)}</td>
+                        <td>${:number_format($yesterday['invest_reward'],2)}</td>
+                    </tr>
+                    <tr>
+                        <td>本月</td>
+                        <td>{:number_format($month['new_user'])}人</td>
+                        <td>${:number_format($month['recharge'],2)}</td>
+                        <td>{:number_format($month['recharge_count'])}笔</td>
+                        <td>${:number_format($month['withdraw'],2)}</td>
+                        <td>{:number_format($month['withdraw_count'])}笔</td>
+                        <td>${:number_format($month['sys_reward'],2)}</td>
+                        <td>${:number_format($month['sys_sum'],2)}</td>
+                        <td>{:number_format($month['invest'])}笔</td>
+                        <td>{:number_format($month['invest_user_count'])}人</td>
+                        <td>${:number_format($month['invest_sum'],2)}</td>
+                        <td>${:number_format($month['invest_reward'],2)}</td>
+                    </tr>
+                    <tr>
+                        <td>上月</td>
+                        <td>{:number_format($last_month['new_user'])}人</td>
+                        <td>${:number_format($last_month['recharge'],2)}</td>
+                        <td>{:number_format($last_month['recharge_count'])}笔</td>
+                        <td>${:number_format($last_month['withdraw'],2)}</td>
+                        <td>{:number_format($last_month['withdraw_count'])}笔</td>
+                        <td>${:number_format($last_month['sys_reward'],2)}</td>
+                        <td>${:number_format($last_month['sys_sum'],2)}</td>
+                        <td>{:number_format($last_month['invest'])}笔</td>
+                        <td>{:number_format($last_month['invest_user_count'])}人</td>
+                        <td>${:number_format($last_month['invest_sum'],2)}</td>
+                        <td>${:number_format($last_month['invest_reward'],2)}</td>
+                    </tr>
+                    <tr>
+                        <td>总计</td>
+                        <td>{:number_format($user_count)}人</td>
+                        <td>${:number_format($recharge_sum,2)}</td>
+                        <td>{:number_format($recharge_count)}笔</td>
+                        <td>${:number_format($withdraw_sum,2)}</td>
+                        <td>{:number_format($withdraw_count)}笔</td>
+                        <td>${:number_format($sys_reward,2)}</td>
+                        <td>${:number_format($funding_sys_sum,2)}</td>
+                        <td>{:number_format($invest_count)}笔</td>
+                        <td>{:number_format($invest_user_count)}人</td>
+                        <td>${:number_format($invest_sum,2)}</td>
+                        <td>${:number_format($invest_reward,2)}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="think-box-shadow">
+                <div class="text-right" style="float: right;width: 20%;">
+                    <form class="layui-form layui-form-pane form-search" action="{:request()->url()}" onsubmit="return false" method="get" autocomplete="off">
+                    <input data-date-range name="i_time" value="{$Think.get.i_time|default=''}" placeholder="请选择时间（系统时区）" class="layui-input margin-bottom-15">
+                    <button class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    </form>
+                </div>
+                <table class="layui-table" lay-even>
+                    <caption class="text-left margin-bottom-15 font-s14">明细
+                    </caption>
+                    <colgroup>
+                        <col width="30%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <td>日期</td>
+                            <td>新增用户</td>
+                            <td>充值</td>
+                            <td>充值笔数</td>
+                            <td>提现</td>
+                            <td>提现笔数</td>
+                            <td>系统赠送</td>
+                            <td>系统操作</td>
+                            <td>投资笔数</td>
+                            <td>投资人数</td>
+                            <td>投资额</td>
+                            <td>投资收益</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {volist name="day" id="v"}
+                        <tr>
+                            <td>{$v['date']}</td>
+                            <td>{:number_format($v['new_user'])}人</td>
+                            <td>${:number_format($v['recharge'],2)}</td>
+                            <td>{:number_format($v['recharge_count'])}笔</td>
+                            <td>${:number_format($v['withdraw'],2)}</td>
+                            <td>{:number_format($v['withdraw_count'])}笔</td>
+                            <td>${:number_format($v['sys_reward'],2)}</td>
+                            <td>${:number_format($v['sys_sum'],2)}</td>
+                            <td>{:number_format($v['invest'])}笔</td>
+                            <td>{:number_format($v['invest_user_count'])}人</td>
+                            <td>${:number_format($v['invest_sum'],2)}</td>
+                            <td>${:number_format($v['invest_reward'],2)}</td>
+                        </tr>
+                        {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

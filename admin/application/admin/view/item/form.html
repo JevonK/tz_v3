@@ -1,0 +1,270 @@
+{extend name='admin@main'}
+
+{block name="content"}
+
+
+<form onsubmit="return false;" id="GoodsForm" data-auto="true" method="post" class='layui-form layui-card' autocomplete="off">
+
+    <div class="layui-card-body think-box-shadow padding-left-40">
+
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">项目分类</span>
+                <select class="layui-select" required name="cid" lay-search>
+                    {foreach $class as $cate}
+                    {if isset($vo.class) and $vo.class eq $cate.id}
+                    <option selected value="{$cate.id}">{$cate.spl|raw}{$cate.zh_cn|default=''}</option>
+                    {else}
+                    <option value="{$cate.id}">{$cate.spl|raw}{$cate.zh_cn|default=''}</option>
+                    {/if}
+                    {/foreach}
+                </select>
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">显示/隐藏</span>
+                <select class="layui-select" name="show" required>
+                    {foreach ['0'=>'隐藏','1'=>'显示'] as $k=>$v}
+                    <!--{eq name='$vo.show' value='$k.""'}-->
+                    <option selected value="{$k}">{$v}</option>
+                    <!--{else}-->
+                    <option value="{$k}">{$v}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">还款类型</span>
+                <select class="layui-select" name="type" required>
+                    {foreach ['1'=>'每日付息到期还本','2'=>'到期还本付息（日）','3'=>'到期还本付息（时）'] as $k=>$v}
+                    <!--{eq name='$vo.type' value='$k.""'}-->
+                    <option selected value="{$k}">{$v}</option>
+                    <!--{else}-->
+                    <option value="{$k}">{$v}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">利率（%）</span>
+                <input name="rate" required class="layui-input" placeholder="请输入利率（%）" value="{$vo.rate|default=''}">
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">周期（天/时）</span>
+                <input name="day" required class="layui-input" placeholder="请输入周期（天）" value="{$vo.day|default=''}">
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">投资金额</span>
+                <input name="min" required class="layui-input" placeholder="请输入最小投资金额" value="{$vo.min|default=''}">
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">可投资次数</span>
+                <input name="num" required class="layui-input" placeholder="请输入可投资次数" value="{$vo.num|default=''}">
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">K线走势范围 , 隔开</span>
+                <input name="k_range" required class="layui-input" placeholder="请输入走势范围" value="{$vo.k_range|default=''}">
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（简体）</span>
+                <input name="title_zh_cn"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_zh_cn|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（繁体）</span>
+                <input name="title_zh_hk"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_zh_hk|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（英文）</span>
+                <input name="title_en_us"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_en_us|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（泰语）</span>
+                <input name="title_th_th"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_th_th|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（越南）</span>
+                <input name="title_vi_vn"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_vi_vn|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（日语）</span>
+                <input name="title_ja_jp"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_ja_jp|default=''}">
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（韩语）</span>
+                <input name="title_ko_kr"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_ko_kr|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（马来）</span>
+                <input name="title_ms_my"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_ms_my|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（葡萄牙）</span>
+                <input name="title_pt_pt"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_pt_pt|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（西班牙）</span>
+                <input name="title_es_es"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_es_es|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（土耳其）</span>
+                <input name="title_tr_tr"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_tr_tr|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（印尼）</span>
+                <input name="title_id_id"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_id_id|default=''}">
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（德语）</span>
+                <input name="title_de_de"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_de_de|default=''}">
+            </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">项目名称（法语）</span>
+                <input name="title_fr_fr"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_fr_fr|default=''}">
+            </label>
+        </div>
+        <!--<div class="layui-form-item">-->
+        <!--    <span class="color-green">项目封面图片（尺寸： 200:200）</span>-->
+        <!--    <table class="layui-table">-->
+        <!--        <thead>-->
+        <!--        <tr>-->
+        <!--            <th class="text-center">项目封面图片</th>-->
+        <!--        </tr>-->
+        <!--        <tr>-->
+        <!--            <td width="90px" class="text-center"><input name="img" type="hidden" value="{$vo.img|default=''}"></td>-->
+        <!--        </tr>-->
+        <!--        </thead>-->
+        <!--    </table>-->
+        <!--    <script>$('[name="img"]').uploadOneImage()</script>-->
+        <!--</div>-->
+        <div class="layui-form-item">
+            <span class="color-green">项目封面图片（尺寸： 750:390）</span>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th class="text-center">项目详情图片</th>
+                </tr>
+                <tr>
+                    <td width="90px" class="text-center"><input name="img2" type="hidden" value="{$vo.img2|default=''}"></td>
+                </tr>
+                </thead>
+            </table>
+            <script>$('[name="img2"]').uploadOneImage()</script>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（简体）</span>
+                <textarea name="content_zh_cn">{$vo.content_zh_cn|default='简体'|raw}</textarea>
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（繁体）</span>
+                <textarea name="content_zh_hk">{$vo.content_zh_hk|default='繁体'|raw}</textarea>
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（英文）</span>
+                <textarea name="content_en_us">{$vo.content_en_us|default='英文'|raw}</textarea>
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（泰语）</span>
+                <textarea name="content_th_th">{$vo.content_th_th|default='泰语'|raw}</textarea>
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（越南）</span>
+                <textarea name="content_vi_vn">{$vo.content_vi_vn|default='越南'|raw}</textarea>
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（日语）</span>
+                <textarea name="content_ja_jp">{$vo.content_ja_jp|default='日语'|raw}</textarea>
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（韩语）</span>
+                <textarea name="content_ko_kr">{$vo.content_ko_kr|default='韩语'|raw}</textarea>
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（马来）</span>
+                <textarea name="content_ms_my">{$vo.content_ms_my|default='马来'|raw}</textarea>
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（葡萄牙）</span>
+                <textarea name="content_pt_pt">{$vo.content_pt_pt|default='葡萄牙'|raw}</textarea>
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（西班牙）</span>
+                <textarea name="content_es_es">{$vo.content_es_es|default='西班牙'|raw}</textarea>
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（土耳其）</span>
+                <textarea name="content_tr_tr">{$vo.content_tr_tr|default='土耳其'|raw}</textarea>
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（印尼）</span>
+                <textarea name="content_id_id">{$vo.content_id_id|default='印尼'|raw}</textarea>
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（德语）</span>
+                <textarea name="content_de_de">{$vo.content_de_de|default='德语'|raw}</textarea>
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green">项目详情（法语）</span>
+                <textarea name="content_fr_fr">{$vo.content_fr_fr|default='法语'|raw}</textarea>
+            </label>
+        </div>
+        <div class="layui-form-item text-center">
+            {notempty name='vo.id'}<input type="hidden" name="id" value="{$vo.id}">{/notempty}
+            <button class="layui-btn layui-btn-danger" ng-click="hsitoryBack()" type="button">取消编辑</button>
+            <button class="layui-btn" type="submit">保存项目</button>
+        </div>
+
+    </div>
+</form>
+{/block}
+
+{block name='script'}
+<script>
+    window.form.render();
+    require(['ckeditor', 'angular'], function () {
+        window.createEditor('[name="content_zh_cn"]', {height: 100});
+        window.createEditor('[name="content_zh_hk"]', {height: 100});
+        window.createEditor('[name="content_en_us"]', {height: 100});
+        window.createEditor('[name="content_th_th"]', {height: 100});
+        window.createEditor('[name="content_vi_vn"]', {height: 100});
+        window.createEditor('[name="content_ja_jp"]', {height: 100});
+        window.createEditor('[name="content_ko_kr"]', {height: 100});
+        window.createEditor('[name="content_ms_my"]', {height: 100});
+        window.createEditor('[name="content_pt_pt"]', {height: 100});
+        window.createEditor('[name="content_es_es"]', {height: 100});
+        window.createEditor('[name="content_tr_tr"]', {height: 100});
+        window.createEditor('[name="content_id_id"]', {height: 100});
+        window.createEditor('[name="content_de_de"]', {height: 100});
+        window.createEditor('[name="content_fr_fr"]', {height: 100});
+        var app = angular.module("GoodsForm", []).run(callback);
+        angular.bootstrap(document.getElementById(app.name), [app.name]);
+
+        function callback($rootScope) {
+            $rootScope.hsitoryBack = function () {
+                $.msg.confirm('确定要取消编辑吗？', function (index) {
+                    history.back(), $.msg.close(index);
+                });
+            };
+        }
+
+    })
+</script>
+{/block}
