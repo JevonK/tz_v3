@@ -1,4 +1,7 @@
-# shop
+# shop 
+```
+node v16.20.0
+```
 
 ## Project setup
 ```
