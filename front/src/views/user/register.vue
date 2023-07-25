@@ -135,6 +135,7 @@
 					username: "",
 					password: "",
 					invite_code: "",
+					is_system: 0,
 					code: "",
 					smsCode: "",
 					phone: "",
@@ -279,7 +280,20 @@
 			},
 			getparams() {
 				var invite_code = this.$route.query.code;
+				var is_system = this.$route.query.is_system | 0;
+				console.log(invite_code,is_system);
 				this.data.invite_code = invite_code;
+				this.data.is_system = is_system;
+			},
+			getQueryVariable(variable)
+			{
+				var query = window.location.search.substring(1);
+				var vars = query.split("&");
+				for (var i=0;i<vars.length;i++) {
+					var pair = vars[i].split("=");
+					if(pair[0] == variable){return pair[1];}
+				}
+				return(false);
 			},
 			submit() {
 				if (this.loading) {

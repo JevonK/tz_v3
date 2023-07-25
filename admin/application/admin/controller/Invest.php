@@ -44,8 +44,13 @@ class Invest extends Controller
     public function index()
     {
         $this->title = '已投项目管理';
+        $auth = $this->app->session->get('user');
+        $where = [];
+        if (isset($auth['username']) and $auth['username'] != 'admin') {
+            $where['u.system_user_id'] = $auth['id'] ?? 0;
+        }
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username,it.title_zh_cn as title');
-        $query->join('lc_user u','i.uid=u.id');
+        $query->where($where)->join('lc_user u','i.uid=u.id');
         $query->join('lc_item it','i.itemid=it.id')->like('it.title_zh_cn#it_title,u.username#u_username')->dateBetween('i.time#i_time')->order('i.id desc')->page();
     }
 

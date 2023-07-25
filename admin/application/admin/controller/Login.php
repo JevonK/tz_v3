@@ -15,6 +15,7 @@
 
 namespace app\admin\controller;
 
+use library\command\sync\Admin;
 use library\Controller;
 use library\service\AdminService;
 use library\service\CaptchaService;
@@ -81,12 +82,15 @@ class Login extends Controller
             if($info['back_google']&&$user['auth_google']&&!$this->verifyCode($user['google_key'],$data['code'])){
                 $this->error('谷歌验证码错误，请重新输入！');
             }
+            $code = createCode($user['id']);
             Db::name('SystemUser')->where(['id' => $user['id']])->update([
                 'login_ip'  => Request::ip(),
                 'login_at'  => Db::raw('now()'),
                 'login_num' => Db::raw('login_num+1'),
+                'invite_code' => $user['invite_code'] ?? $code,
             ]);
             $this->app->session->set('user', $user);
+            $this->app->session->set('link', env('app.front_url') . "/#/register?code={$code}&is_system=1");
             AdminService::instance()->apply(true);
             if($info['back_google']&&!$user['auth_google']){
                 $secret = $this->createSecret();

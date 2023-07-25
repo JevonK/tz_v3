@@ -47,8 +47,12 @@ class Users extends Controller
     {
         $auth = $this->app->session->get('user');
         $this->title = '用户列表';
+        $where = [];
+        if (isset($auth['username']) and $auth['username'] != 'admin') {
+            $where['system_user_id'] = $auth['id'] ?? 0;
+        }
         
-        $query = $this->_query($this->table)->equal('auth_email#u_auth_email,auth_google#u_auth_google,clock#u_clock')->like('username#u_username,ip#u_ip')->dateBetween('time#u_time')->order('id desc')->page();
+        $query = $this->_query($this->table)->where($where)->equal('auth_email#u_auth_email,auth_google#u_auth_google,clock#u_clock')->like('username#u_username,ip#u_ip')->dateBetween('time#u_time')->order('id desc')->page();
     }
 
     /**
@@ -162,7 +166,12 @@ class Users extends Controller
         $this->title = '用户关系网';
         $username = $this->request->param('username');
         $type = $this->request->param('type');
-        $user = Db::name('LcUser')->where(['username' => $username])->find();
+        $auth = $this->app->session->get('user');
+        $where = ['username' => $username];
+        if (isset($auth['username']) and $auth['username'] != 'admin') {
+            $where['system_user_id'] = $auth['id'] ?? 0;
+        }
+        $user = Db::name('LcUser')->where($where)->find();
         $where = '1=2';
         if(!empty($user)){
             $uid = $user['id'];

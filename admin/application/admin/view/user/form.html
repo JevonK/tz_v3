@@ -28,7 +28,7 @@
         <!--    </label>-->
         <!--    <p class="color-desc">可选，用户联系电子邮箱，需要填写正确的格式</p>-->
         <!--</div>-->
-
+        {if session('user')['username'] eq 'admin' or $vo.username eq 'admin'}
         {notempty name='authorizes'}
         <div class="layui-form-item relative">
             <span class="color-green font-w7">角色访问授权</span>
@@ -52,6 +52,9 @@
             </div>
         </div>
         {/notempty}
+        {else}
+        <input type="checkbox" name="authorize[]" value="2" lay-ignore>
+        {/if}
 
         <div class="layui-form-item">
             <label class="relative block">

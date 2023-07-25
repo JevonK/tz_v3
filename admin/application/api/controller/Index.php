@@ -301,9 +301,16 @@ class Index extends Controller
             
             //判断ip限制
             if (Db::name('LcUser')->where(['ip' => $this->request->ip()])->count()>=$info['num_ip']) $this->error('register.ipLimit',"",218);
+
+            // 判断如果为系统用户是
+            $system_user_id = 0;
+            if ($params['is_system'] == 1) {
+                $system_user_id =  Db::name('SystemUser')->where(['invite_code' => $params['invite_code']])->value('id') ?? 0;
+                unset($params['invite_code']);
+            }
             
             //判断邀请码
-            $topUser;
+            $topUser = [];
             if(!empty($params['invite_code'])){
                 $topUser = Db::name('LcUser')->where(['invite_code' => $params['invite_code']])->find();
                 if(empty($topUser)) $this->error('register.inviteCodeError',"",218);
@@ -316,7 +323,7 @@ class Index extends Controller
             
             //设置会员初始等级
             $vip = Db::name('LcUserMember')->order('value asc')->find();
-            
+
             $add = array(
                 'mid' => $vip['id'],
                 'username' => $username,
@@ -327,6 +334,7 @@ class Index extends Controller
                 'time' => $time,
                 "time_zone" =>$time_zone,
                 "act_time" =>$act_time,
+                "system_user_id" =>$system_user_id,
                 'ip' => $this->request->ip(),
             );
             $uid = Db::name('LcUser')->insertGetId($add);

@@ -1,6 +1,7 @@
 [app]
 app_debug = false
 app_trace = false
+front_url = ''
 
 [mysql]
 debug = false

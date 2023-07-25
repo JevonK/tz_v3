@@ -48,6 +48,7 @@
         </ul>
         <ul class="layui-nav layui-layout-right">
 
+            <li lay-unselect class="layui-nav-item"><a href="javascript:void(0);" id="copy-link" data-link="{:session('link')}">复制邀请链接</a></li>
             <li lay-unselect class="layui-nav-item"><a data-reload><i class="layui-icon layui-icon-refresh-3"></i></a></li>
             {notempty name='Think.session.user.username'}
             <li class="layui-nav-item">
@@ -135,6 +136,22 @@
             $('.ignore').hide();
         });
     });
+    $("#copy-link").click(function() {
+        var link = $(this).data('link');
+        // 创建输入框
+        var textarea = document.createElement('textarea');
+        document.body.appendChild(textarea);
+        // 隐藏此输入框
+        textarea.style.position = 'absolute';
+        textarea.style.clip = 'rect(0 0 0 0)';
+        // 赋值
+        textarea.value = link;
+        // 选中
+        textarea.select();
+        // 复制
+        document.execCommand('copy', true);
+        alert("复制成功：" + link);
+    })
     function seeNum(){
         var seeNumUrl = "/admin/index/check";
         var rechargeState = 1;//充值声音开关，1开/0关

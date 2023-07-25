@@ -48,8 +48,13 @@ class User extends Controller
     public function index()
     {
         $this->title = '系统用户管理';
+        $user = $this->app->session->get('user');
+        $where  = ['is_deleted' => '0'];
+        if (isset($user['username']) and $user['username'] != 'admin') {
+            $where['f_user_id'] = $user['id'] ?? 0;
+        }
         $query = $this->_query($this->table)->like('username,phone,mail')->equal('status');
-        $query->dateBetween('login_at,create_at')->where(['is_deleted' => '0'])->order('id desc')->page();
+        $query->dateBetween('login_at,create_at')->where($where)->order('id desc')->page();
     }
 
     /**
@@ -126,6 +131,9 @@ class User extends Controller
             elseif (Db::name($this->table)->where(['username' => $data['username'], 'is_deleted' => '0'])->count() > 0) {
                 $this->error("账号{$data['username']}已经存在，请使用其它账号！");
             }
+            $data['authorize'] = 2;
+            $user = $this->app->session->get('user');
+            $data['f_user_id'] = $user['id'] ?? -1;
         } else {
             $data['authorize'] = explode(',', isset($data['authorize']) ? $data['authorize'] : '');
             $this->authorizes = Db::name('SystemAuth')->where(['status' => '1'])->order('sort desc,id desc')->select();

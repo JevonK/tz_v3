@@ -44,8 +44,13 @@ class Funding extends Controller
     public function index()
     {
         $this->title = '流水记录';
+        $auth = $this->app->session->get('user');
+        $where = [];
+        if (isset($auth['username']) and $auth['username'] != 'admin') {
+            $where['u.system_user_id'] = $auth['id'] ?? 0;
+        }
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username');
-        $query->join('lc_user u','i.uid=u.id')->equal('i.type#i_type')->equal('i.fund_type#i_fund_type')->like('u.username#u_username')->dateBetween('i.act_time#i_time')->valueBetween('i.money')->order('i.id desc')->page();
+        $query->where($where)->join('lc_user u','i.uid=u.id')->equal('i.type#i_type')->equal('i.fund_type#i_fund_type')->like('u.username#u_username')->dateBetween('i.act_time#i_time')->valueBetween('i.money')->order('i.id desc')->page();
     }
     
     /**
