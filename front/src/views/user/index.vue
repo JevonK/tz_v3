@@ -29,11 +29,25 @@
 		</div>
 		<div class="block_div flex_center money1">
 			<div>
-				<p @click="showMsg()">{{$t('user.fundingAccount')}}
+				<p @click="showMsg()">{{$t('recharge.money')}}
 					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
 				</p>
 				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(fundBalanceUsd)}}</p>
 				<p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p>
+			</div>
+			<div>
+				<p @click="showMsg()">{{$t('user.withdrawAccount')}}
+					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
+				</p>
+				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(fundBalanceUsd)}}</p>
+				<!-- <p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p> -->
+			</div>
+			<div>
+				<p @click="showMsg()">{{$t('vip.points')}}
+					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
+				</p>
+				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(fundBalanceUsd)}}</p>
+				<!-- <p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p> -->
 			</div>
 			<div class="recharge">
 				<p @click="$router.push('/recharge')">{{$t('user.recharge')}}</p>
