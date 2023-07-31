@@ -21,6 +21,23 @@
                 </select>
             </label>
             <label class="layui-col-xs1 relative">
+                <span class="color-green">vip等级限制</span>
+                <select class="layui-select" name="vip_level" lay-search>
+                    {if isset($vo.vip_level) and $vo.vip_level eq 0}
+                    <option selected value="{$cate.id}">请选择vip等级限制</option>
+                    {else}
+                    <option value="0">请选择vip等级限制</option></option>
+                    {/if}
+                    {foreach $viplists as $cate}
+                    {if isset($vo.vip_level) and $vo.vip_level eq $cate.id}
+                    <option selected value="{$cate.id}">{$cate.name|default=''}</option>
+                    {else}
+                    <option value="{$cate.id}">{$cate.name|default=''}</option>
+                    {/if}
+                    {/foreach}
+                </select>
+            </label>
+            <label class="layui-col-xs1 relative">
                 <span class="color-green">显示/隐藏</span>
                 <select class="layui-select" name="show" required>
                     {foreach ['0'=>'隐藏','1'=>'显示'] as $k=>$v}
@@ -63,6 +80,14 @@
             <label class="layui-col-xs1 relative">
                 <span class="color-green">K线走势范围 , 隔开</span>
                 <input name="k_range" required class="layui-input" placeholder="请输入走势范围" value="{$vo.k_range|default=''}">
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">购买所需积分</span>
+                <input name="need_integral" class="layui-input" placeholder="请输入购买所需积分" value="{$vo.need_integral|default='0'}">
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">赠送积分</span>
+                <input name="gifts_integral" class="layui-input" placeholder="请输入赠送积分" value="{$vo.gifts_integral|default='0'}">
             </label>
         </div>
         <div class="layui-form-item layui-row layui-col-space15">

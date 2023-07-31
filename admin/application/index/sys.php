@@ -308,6 +308,52 @@ function addFunding($uid,$money_usd,$money_act,$type,$fund_type,$language = "zh_
         return false;
     }
 }
+
+/**
+ * Describe:添加积分流水
+ * DateTime: 2022/6/17
+ * @param $uid
+ * @param $money_usd
+ * @param $type
+ * @param $reason
+ * @return bool
+ * @throws \think\db\exception\DataNotFoundException
+ * @throws \think\db\exception\ModelNotFoundException
+ * @throws \think\exception\DbException
+ */
+function addIntegral($uid,$money_usd,$type,$fund_type,$language = "zh_cn")
+{
+    $user = Db::name('LcUser')->find($uid);
+    if (!$user) return false;
+    if ($user['integral'] < 0) return false;
+    //货币转换
+    $currency = Db::name('LcCurrency')->where(['country' => $language])->find();
+    //时区转换
+    $time = date('Y-m-d H:i:s');
+    
+    $time_zone = $currency['time_zone'];
+    $act_time = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+    
+    $data = array(
+        'uid' => $uid,
+        'money' => $money_usd,
+        'type' => $type,
+        'fund_type' => $fund_type,
+        'before' => $user['integral'],
+        'time' => date('Y-m-d H:i:s'),
+        'act_time' => $act_time,
+        'time_zone' => $time_zone
+    );
+    Db::startTrans();
+    $re = Db::name('LcUserIntegral')->insert($data);
+    if ($re) {
+        Db::commit();
+        return true;
+    } else {
+        Db::rollback();
+        return false;
+    }
+}
 /**
  * Describe:模拟请求
  * DateTime: 2022/7/17

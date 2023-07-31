@@ -120,6 +120,7 @@ class Item extends Controller
             if (empty($vo['class']) && $this->request->get('class', '0')) $vo['class'] = $this->request->get('class', '0');
             $this->class = Db::name("LcItemClass")->order('id asc')->select();
             $this->class = Data::arr2table($this->class);
+            $this->viplists = Db::name("LcUserMember")->select();
         }
         if (empty($vo['add_time'])) $vo['add_time'] = date("Y-m-d H:i:s");
     }

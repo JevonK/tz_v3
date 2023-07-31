@@ -2,10 +2,10 @@
 	<div class="user_wrap">
 		<div class="red_top_bg">
 			<div class="big_tit">{{$t('home.my')}}</div>
-			<div class="msg" @click="signin()">
+			<!-- <div class="msg" @click="signin()">
 				<img v-if="!signinStatue" src="../img/user/signin.png">
 				<img v-if="signinStatue" src="../img/user/signed.png">
-			</div>
+			</div> -->
 		</div>
 		<div class="top_header_bg"></div>
 		<div class="block_div flex_center top_header">
@@ -35,23 +35,31 @@
 				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(fundBalanceUsd)}}</p>
 				<p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p>
 			</div>
+			<div class="recharge">
+				<p @click="$router.push('/recharge')">{{$t('user.recharge')}}</p>
+				<!-- <p @click="$router.push('/withdraw')">{{$t('user.withdraw')}}</p> -->
+			</div>
+		</div>
+		<div class="block_div flex_center money1 money2">
 			<div>
 				<p @click="showMsg()">{{$t('user.withdrawAccount')}}
 					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
 				</p>
-				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(fundBalanceUsd)}}</p>
-				<!-- <p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p> -->
+				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(data.withdrawable)}}</p>
+				<p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p>
 			</div>
+			<div class="recharge">
+				<!-- <p @click="$router.push('/recharge')">{{$t('user.recharge')}}</p> -->
+				<p class="withdraw" @click="$router.push('/withdraw')">{{$t('user.withdraw')}}</p>
+			</div>
+		</div>
+		<div class="block_div flex_center money1 money2">
 			<div>
 				<p @click="showMsg()">{{$t('vip.points')}}
 					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
 				</p>
-				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(fundBalanceUsd)}}</p>
-				<!-- <p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p> -->
-			</div>
-			<div class="recharge">
-				<p @click="$router.push('/recharge')">{{$t('user.recharge')}}</p>
-				<p @click="$router.push('/withdraw')">{{$t('user.withdraw')}}</p>
+				<p>{{data.integral}}</p>
+				<p class="money_usd">--</p>
 			</div>
 		</div>
 		<div class="block_div flex_center user_yw">
@@ -433,6 +441,12 @@
 				background: #FF5722;
 			}
 		}
+		.withdraw {
+			background: #FF5722 !important;
+		}
+	}
+	.money2 {
+		margin-top: 10px;
 	}
 
 	.list {

@@ -29,6 +29,7 @@
 								<van-cell :title="$t('invest.endTime')" value-class="value_class" :border="false"
 									:value="item.time2_actual" />
 							</van-cell-group>
+							<p v-if="item.is_receive == 1" class="receive" @click="receive_click(item)">领取</p>
 						</div>
 					</div>
 				</van-list>
@@ -104,6 +105,18 @@
 					this.page = this.page + 1;
 					this.loading = false;
 				});
+			},
+			receive_click (item) {
+				this.loading = true;
+				Fetch("/user/invest_settle", {
+					'invest_id' : item['id'],
+					'type' : item['type'],
+				}).then((res) => {
+					window.location.reload();
+					this.loading = false;
+				}).catch((res) => {
+					this.loading = false;
+				});
 			}
 		}
 	};
@@ -156,6 +169,15 @@
 			}
 
 		}
+	}
+
+	.receive {
+		padding: 5px 10px;
+		background: #3775f4;
+		margin: 0 10px 8px 0;
+		color: #FFFFFF;
+		border-radius: 8px;
+		text-align: center;
 	}
 
 	/deep/ .van-cell {

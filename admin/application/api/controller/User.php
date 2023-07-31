@@ -90,6 +90,8 @@ class User extends Controller
             "auth_email" => $user['auth_email'],
             "auth_phone" => $user['auth_phone'],
             "auth_google" => $user['auth_google'],
+            "withdrawable" => $user['withdrawable'],
+            "integral" => $user['integral'],
             "invite_code" => $user['invite_code'],
             "user_icon" => getInfo('user_img'),
             "vip_name" => $member['name'],
@@ -609,7 +611,8 @@ class User extends Controller
                 $wallet['account'] = substr($wallet['account'],0,2).'****'.substr($wallet['account'],strlen($wallet['account'])-2,strlen($wallet['account']));
             }
         }
-        $availableAmount = $user['money'] - $user['frozen_money'];
+        // $availableAmount = $user['money'] - $user['frozen_money'];
+        $availableAmount = $user['withdrawable'] - $user['frozen_money'];
         $data = array(
             "wallets" =>$wallets,
             "withdrawNum" =>$currency['withdraw_num'],
@@ -713,11 +716,12 @@ class User extends Controller
         
         //判断余额，可提现金额=用户余额-冻结金额
         //判断实际余额
-        $act_user_money = $user['money']-$user['frozen_money'];
+        // $act_user_money = $user['money']-$user['frozen_money'];
+        $act_user_money = $user['withdrawable']-$user['frozen_money'];
         
-        $money_usd = $params['money'];
+        $money_usd = $params['withdrawable'];
         
-        if($act_user_money<$params['money']) $this->error('utils.parameterError',"",218);
+        if($act_user_money<$params['withdrawable']) $this->error('utils.parameterError',"",218);
         
         //判断最低提现金额
         $currency = Db::name('LcCurrency')->where(['country' => $language])->find();
@@ -1283,6 +1287,15 @@ class User extends Controller
         if(empty($params['id'])) $this->error('utils.parameterError',"",218);
         $item = Db::name('LcItem')->find($params['id']);
         if(empty($item)) $this->error('utils.parameterError',"",218);
+
+        // 判断vip等级是否满足
+        if ($user['mid'] < $item['vip_level']) {
+            $this->error('auth.authFirst',"",405);
+        }
+
+        if ($item['need_integral'] > $user['integral']) {
+            $this->error('auth.authFirst',"",405);
+        }
         
          $money_usd = $item['min'];
         //金额转换
@@ -1364,6 +1377,12 @@ class User extends Controller
             }else{
                 setNumber('LcUser', 'frozen_money', $user['frozen_money'], 2, "id = $uid");
             }
+            // 积分扣除
+            setNumber('LcUser', 'value', $item['need_integral'], 2, "id = $uid");
+            addIntegral($uid,$item['need_integral'],2,2,$language);
+            // 积分赠送
+            setNumber('LcUser', 'value', $item['gifts_integral'], 1, "id = $uid");
+            addIntegral($uid,$item['gifts_integral'],1,2,$language);
             //添加每日投资奖励
             $reward = Db::name('LcReward')->find(1);
             if($reward['invest']>0){
@@ -1387,6 +1406,16 @@ class User extends Controller
             if($draw['invest']>0){
                 setNumber('LcUser', 'draw_num', $draw['invest'], 1, "id = $uid");
             }
+
+            // 添加返利
+            $fusers = Db::name("LcUserRelation")->where("uid = $uid")->order('level desc')->limit(3)->select();
+            $fusers = array_reverse($fusers); 
+            $vip_level = [$vip['level_b'], $vip['level_c'], $vip['level_d']];
+            foreach($fusers as $key => $val) {
+                $interest_rate = floor($money_usd*$vip_level[$key]*100) / 100;
+                setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
+            }
+
             Db::commit();
             $this->success("success");
         }else{
@@ -1483,11 +1512,27 @@ class User extends Controller
         $page = $params["page"];
         $listRows = $params["listRows"];
         
-        $list = Db::name('LcInvest')->field("itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
+        $list = Db::name('LcInvest')->field("id,itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual,time,time2")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
         $length = Db::name('LcInvest')->where("uid = $uid")->count();
         
         foreach ($list as &$invest) {
+            $invest['is_receive'] = date('Y-m-d H:i:s') > $invest['time2'] ? 1 : 0;
             $item = Db::name('LcItem')->find($invest['itemid']);
+            // 判断是否有领取
+            if ($invest['type'] == 1) {
+                $Date_1=date("Y-m-d");
+                $Date_2=date("Y-m-d", strtotime($invest['time']));
+                $d1=strtotime($Date_1);
+                $d2=strtotime($Date_2);
+                $day_diff=round(($d1-$d2)/3600/24);
+                if (!empty($day_diff)) {
+                    $wait_day = $day_diff - ($invest['total_num'] - $invest['wait_num']);
+                    $invest['is_receive'] = $wait_day > 0 ? 1 : 0;
+                }
+            }
+            if ($invest['status'] == 1) {
+                $invest['is_receive'] = 0;
+            }
             $invest['title'] = "--";
             if(!empty($item)){
                 $invest['title'] = $item["title_$language"];
@@ -2005,5 +2050,160 @@ class User extends Controller
             'length' => $length
         );
         $this->success("success", $data);
+    }
+
+    // 领取利息
+    public function invest_settle()
+    {
+        $noInvest = true;
+        $params = $this->request->param();
+        $id = $params['invest_id'];
+        $type = $params['type'];
+
+        // $uid = $this->userInfo['id'];
+        
+        $now = date('Y-m-d H:i:s');
+        $invest_list1 = [];
+        $invest_list2 = [];
+        $savings_list1 = [];
+        switch ($type) {
+            case 1:
+                //每日付息到期还本
+                $invest_list1 = Db::name("LcInvest")->where("id = $id and type=1 AND status = 0")->select();
+                break;
+            case 2:
+                //到期还本付息
+                $invest_list2 = Db::name("LcInvest")->where("id = $id and time2 <= '$now' AND status = 0 AND ( type=2 OR type=3 )")->select();
+                break;
+            case 3:
+                //储蓄金定期
+                $savings_list1 = Db::name("LcSavingsSubscribe")->where("id = $id and type=2 AND status = 0")->select();
+                break;
+        }
+        if (empty($invest_list1)&&empty($invest_list2)&&empty($savings_list1)) $this->error('error');
+        
+        //每日付息到期还本处理
+        foreach ($invest_list1 as $k => $v) {
+            // 判断是否隔天没有领取
+            $wait_day = 0;
+            $Date_1=date("Y-m-d");
+            $Date_2=date("Y-m-d", $v['time']);
+            $d1=strtotime($Date_1);
+            $d2=strtotime($Date_2);
+            $day_diff=round(($d1-$d2)/3600/24);
+            if (!empty($day_diff)) {
+                $wait_day = $day_diff - ($v['total_num'] - $v['wait_num']) - 1;
+            }
+            
+            //判断返还时间
+            $return_num = $v['wait_num'] - 1;
+            $return_time = date('Y-m-d H:i:s', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*$wait_day)));
+            if($return_time > $now) continue;
+            
+            $time_zone = $v['time_zone'];
+            $language = getLanguageByTimezone($time_zone);
+            
+            $money = $v['money'];
+            //每日利息=总利息/总期数
+            $day_interest = $v['total_interest']/$v['total_num'];
+            
+            //最后一期
+            if($v['wait_num']==1){
+                Db::name('LcInvest')->where('id', $v['id'])->update(['status' => 1,'wait_num' => 0,'wait_interest' => 0]);
+                //返还本金
+                addFunding($v['uid'],$money,changeMoneyByLanguage($money,$language),1,15,$language);
+                setNumber('LcUser', 'money', $money, 1, "id = {$v['uid']}");
+                
+            }else{
+                $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . $wait_day . ' day'));
+                Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time2' => $time2]);
+            }
+            
+            //利息
+            addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,6,$language);
+            setNumber('LcUser', 'money', $day_interest, 1, "id = {$v['uid']}");
+            
+            //添加收益
+            setNumber('LcUser', 'income', $day_interest, 1, "id = {$v['uid']}");
+            
+            $noInvest = false;
+        }
+        //到期还本付息处理
+        foreach ($invest_list2 as $k => $v) {
+            Db::name('LcInvest')->where('id', $v['id'])->update(['status' => 1,'wait_num' => 0,'wait_interest' => 0]);
+            
+            $time_zone = $v['time_zone'];
+            $language = getLanguageByTimezone($time_zone);
+            
+            $money = $v['money'];
+            $total_interest = $v['total_interest'];
+            
+            //利息
+            addFunding($v['uid'],$total_interest,changeMoneyByLanguage($total_interest,$language),1,6,$language);
+            setNumber('LcUser', 'money', $total_interest, 1, "id = {$v['uid']}");
+            
+            //本金
+            addFunding($v['uid'],$money,changeMoneyByLanguage($money,$language),1,15,$language);
+            setNumber('LcUser', 'money', $money, 1, "id = {$v['uid']}");
+            
+            
+            //添加收益
+            setNumber('LcUser', 'income', $total_interest, 1, "id = {$v['uid']}");
+            
+            $noInvest = false;
+        }
+            //储蓄金定期收益处理
+        foreach ($savings_list1 as $k => $v) {
+            //判断返还时间
+            $return_num = $v['wait_day'] - 1;
+            $return_time = date('Y-m-d H:i:s', strtotime($v['time2'].'-' . $return_num . ' day'));
+            if($return_time > $now) continue;
+            
+            $time_zone = $v['time_zone'];
+            $language = getLanguageByTimezone($time_zone);
+            
+            $money = $v['money'];
+            //每日利息=申购金额*利率
+            $day_interest = $v['money']*$v['rate']/100;
+            
+            //最后一期
+            if($v['wait_day']==1){
+                Db::name('LcSavingsSubscribe')->where('id', $v['id'])->update(['status' => 1,'wait_day' => 0]);
+                //添加赎回记录
+                $orderNo = 'RE' . date('YmdHis') . rand(1000, 9999) . rand(100, 999);
+                $insert = array(
+                    "uid" =>$v['uid'],
+                    "orderNo" =>$orderNo,
+                    "money" =>$money,
+                    "money2" =>$v['money2'],
+                    "type" =>2,
+                    "currency" =>$v['currency'],
+                    "time_zone" =>$v['time_zone'],
+                    "time" =>$now,
+                    "time_actual" =>$time_actual = dateTimeChangeByZone($now, 'Asia/Shanghai', $v['time_zone'], 'Y-m-d H:i:s'),
+                );
+                Db::name('LcSavingsRedeem')->insertGetId($insert);
+                
+                //自动赎回
+                addFunding($v['uid'],$money,changeMoneyByLanguage($money,$language),1,17,$language);
+                setNumber('LcUser', 'savings_fixed', $money, 2, "id = {$v['uid']}");
+                setNumber('LcUser', 'money', $money, 1, "id = {$v['uid']}");
+                
+            }else{
+                Db::name('LcSavingsSubscribe')->where('id', $v['id'])->update(['wait_day' => $v['wait_day']-1]);
+            }
+            
+            //利息流水
+            addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,18,$language);
+            //利息
+            setNumber('LcUser', 'money', $day_interest, 1, "id = {$v['uid']}");
+            
+            
+            $noInvest = false;
+        }
+        if($noInvest){
+            $this->error('error');
+        }
+        $this->success('success');
     }
 }

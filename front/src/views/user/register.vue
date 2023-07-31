@@ -281,7 +281,6 @@
 			getparams() {
 				var invite_code = this.$route.query.code;
 				var is_system = this.$route.query.is_system | 0;
-				console.log(invite_code,is_system);
 				this.data.invite_code = invite_code;
 				this.data.is_system = is_system;
 			},
