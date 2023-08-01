@@ -273,7 +273,7 @@ function requestPost($path) {
  * @throws \think\db\exception\ModelNotFoundException
  * @throws \think\exception\DbException
  */
-function addFunding($uid,$money_usd,$money_act,$type,$fund_type,$language = "zh_cn")
+function addFunding($uid,$money_usd,$money_act,$type,$fund_type,$language = "zh_cn", $price_type=1)
 {
     $user = Db::name('LcUser')->find($uid);
     if (!$user) return false;
@@ -292,6 +292,7 @@ function addFunding($uid,$money_usd,$money_act,$type,$fund_type,$language = "zh_
         'money2' => $money_act,
         'type' => $type,
         'fund_type' => $fund_type,
+        'price_type' => $price_type,
         'before' => $user['money'],
         'currency' => $currency['symbol'],
         'time' => date('Y-m-d H:i:s'),

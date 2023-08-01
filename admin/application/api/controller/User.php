@@ -1413,7 +1413,12 @@ class User extends Controller
             $vip_level = [$vip['level_b'], $vip['level_c'], $vip['level_d']];
             foreach($fusers as $key => $val) {
                 $interest_rate = floor($money_usd*$vip_level[$key]*100) / 100;
+                // 添加收益
                 setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
+                // 添加总收益
+                setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
+                //流水添加
+                addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,5,$language, 2);
             }
 
             Db::commit();
@@ -2120,8 +2125,8 @@ class User extends Controller
             }
             
             //利息
-            addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,6,$language);
-            setNumber('LcUser', 'money', $day_interest, 1, "id = {$v['uid']}");
+            addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,6,$language, 2);
+            setNumber('LcUser', 'withdrawable', $day_interest, 1, "id = {$v['uid']}");
             
             //添加收益
             setNumber('LcUser', 'income', $day_interest, 1, "id = {$v['uid']}");
@@ -2139,8 +2144,8 @@ class User extends Controller
             $total_interest = $v['total_interest'];
             
             //利息
-            addFunding($v['uid'],$total_interest,changeMoneyByLanguage($total_interest,$language),1,6,$language);
-            setNumber('LcUser', 'money', $total_interest, 1, "id = {$v['uid']}");
+            addFunding($v['uid'],$total_interest,changeMoneyByLanguage($total_interest,$language),1,6,$language, 2);
+            setNumber('LcUser', 'withdrawable', $total_interest, 1, "id = {$v['uid']}");
             
             //本金
             addFunding($v['uid'],$money,changeMoneyByLanguage($money,$language),1,15,$language);
@@ -2194,9 +2199,9 @@ class User extends Controller
             }
             
             //利息流水
-            addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,18,$language);
+            addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,18,$language, 2);
             //利息
-            setNumber('LcUser', 'money', $day_interest, 1, "id = {$v['uid']}");
+            setNumber('LcUser', 'withdrawable', $day_interest, 1, "id = {$v['uid']}");
             
             
             $noInvest = false;
