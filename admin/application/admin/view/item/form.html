@@ -24,7 +24,7 @@
                 <span class="color-green">vip等级限制</span>
                 <select class="layui-select" name="vip_level" lay-search>
                     {if isset($vo.vip_level) and $vo.vip_level eq 0}
-                    <option selected value="{$cate.id}">请选择vip等级限制</option>
+                    <option selected value="0">请选择vip等级限制</option>
                     {else}
                     <option value="0">请选择vip等级限制</option></option>
                     {/if}

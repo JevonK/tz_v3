@@ -1159,7 +1159,7 @@ class User extends Controller
         $uid = $this->userInfo['id'];
         $user = Db::name("LcUser")->find($uid);
         $uname = substr($user['username'],0,2).'***'.substr($user['username'],strlen($user['username'])-2,strlen($user['username']));
-        
+
         $vip = Db::name('LcUserMember')->field("name,logo,invest_num,rewards_direct,rewards_undirect,value as this_value")->find($user['mid']);
         if(empty($vip)) $this->error('utils.parameterError',"",218);
         
@@ -1175,7 +1175,7 @@ class User extends Controller
             "username" =>$uname,
             "invite_code" =>$user['invite_code'],
             "user_value" =>$user['value'],
-            "balance" =>$user['money'],
+            "balance" => $user['money'],
             "income" =>0,
             );
         
@@ -1421,6 +1421,15 @@ class User extends Controller
                 addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,5,$language, 2);
             }
 
+            // 当前用户没有等级的话就直接升等级一            
+            if ($vip['value'] == 0) {
+                $vip_next = Db::name('LcUserMember')->where("value > '{$vip['value']}'")->order('value asc')->find();
+                if(empty($vip_next)){
+                    $vip_next = Db::name('LcUser')->where("id = {$user['id']}")->update(['mid' => $vip_next['id']]);
+                }
+            }
+            
+
             Db::commit();
             $this->success("success");
         }else{
@@ -1517,7 +1526,7 @@ class User extends Controller
         $page = $params["page"];
         $listRows = $params["listRows"];
         
-        $list = Db::name('LcInvest')->field("id,itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual,time,time2")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
+        $list = Db::name('LcInvest')->field("id,itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual,time,time2,total_num,wait_num")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
         $length = Db::name('LcInvest')->where("uid = $uid")->count();
         
         foreach ($list as &$invest) {

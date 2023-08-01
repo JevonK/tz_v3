@@ -42,13 +42,13 @@
 					<div class="funding_name">{{$t('vip.income')}}</div>
 				</div>
 			</div>
-			<div class="progress">
-				<van-progress :percentage="percentage" color="#ffa325" stroke-width="5" pivot-text="" />
-				<div class="flex_center progress_text">
-					<p>{{vip.this_value}}</p>
-					<p>{{vip.next_value}}</p>
-				</div>
-			</div>
+				<!-- <div class="progress">
+					<van-progress :percentage="percentage" color="#ffa325" stroke-width="5" pivot-text="" />
+					<div class="flex_center progress_text">
+						<p>{{vip.this_value}}</p>
+						<p>{{vip.next_value}}</p>
+					</div>
+				</div> -->
 		</div>
 		<!-- 我的权益 -->
 		<div class="block_div rights">

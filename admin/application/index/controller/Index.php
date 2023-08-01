@@ -233,10 +233,13 @@ class Index extends Controller
             $noInvest = true;
             
             $now = date('Y-m-d H:i:s');
+            $invest_list1 = [];
+            $invest_list2 = [];
+            $savings_list1 = [];
             //每日付息到期还本
-            $invest_list1 = Db::name("LcInvest")->where("type=1 AND status = 0")->select();
+            // $invest_list1 = Db::name("LcInvest")->where("type=1 AND status = 0")->select();
             //到期还本付息
-            $invest_list2 = Db::name("LcInvest")->where("time2 <= '$now' AND status = 0 AND ( type=2 OR type=3 )")->select();
+            // $invest_list2 = Db::name("LcInvest")->where("time2 <= '$now' AND status = 0 AND ( type=2 OR type=3 )")->select();
             //储蓄金定期
             $savings_list1 = Db::name("LcSavingsSubscribe")->where("type=2 AND status = 0")->select();
             
@@ -342,9 +345,9 @@ class Index extends Controller
                 }
                 
                 //利息流水
-                addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,18,$language);
+                addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,18,$language, 2);
                 //利息
-                setNumber('LcUser', 'money', $day_interest, 1, "id = {$v['uid']}");
+                setNumber('LcUser', 'withdrawable', $day_interest, 1, "id = {$v['uid']}");
                 
                 
                 $noInvest = false;
@@ -535,4 +538,58 @@ class Index extends Controller
     // 	closedir($open);
     // 	return rmdir($path);
     // }
+    public function vip_update() {
+        set_time_limit(24*3600);
+        $vips = Db::name('LcUserMember')->where('value > 0')->select();
+        foreach($vips as $item) {
+            if ($item['value'] == 6) {
+                break;
+            }
+            $user_level = Db::name('LcUser')->where("mid = {$item['id']}")->select();
+            foreach ($user_level as $val) {
+                switch ($item['value']) {
+                    case 1:
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level=1 and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = $num['num'] ?? 0;
+                        if($num > 2) {
+                            Db::name('LcUser')->where("id = {$val['id']}")->update(['mid' => ($val['mid']+1)]);
+                        }
+                        break;
+                    case 2:
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = $num['num'] ?? 0;
+                        if($num > 2) {
+                            Db::name('LcUser')->where("id = {$val['id']}")->update(['mid' => ($val['mid']+1)]);
+                        }
+                        break;
+                    case 3:
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = $num['num'] ?? 0;
+                        $member_num = Db::name("LcUserRelation")->where("parentid={$val['id']}")->count();
+                        if($num > 1 && $member_num > 99) {
+                            Db::name('LcUser')->where("id = {$val['id']}")->update(['mid' => ($val['mid']+1)]);
+                        }
+                        break;
+                    case 4:
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = $num['num'] ?? 0;
+                        $member_num = Db::name("LcUserRelation")->where("parentid={$val['id']}")->count();
+                        if($num > 1 && $member_num > 399) {
+                            Db::name('LcUser')->where("id = {$val['id']}")->update(['mid' => ($val['mid']+1)]);
+                        }
+                        break;
+                    case 5:
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = $num['num'] ?? 0;
+                        $member_num = Db::name("LcUserRelation")->where("parentid={$val['id']}")->count();
+                        if($num > 0 && $member_num > 999) {
+                            Db::name('LcUser')->where("id = {$val['id']}")->update(['mid' => ($val['mid']+1)]);
+                        }
+                        break;
+                }
+            }
+        }
+        echo "success";die;
+
+    }
 }
