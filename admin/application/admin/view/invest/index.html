@@ -11,6 +11,7 @@
             <th class='text-left nowrap'>投资数据</th>
             <th class='text-left nowrap'>投资状态</th>
             <th class="text-left nowrap">投资时间</th>
+            <th class="text-left nowrap">操作</th>
         </tr>
         </thead>
         {/notempty}
@@ -60,6 +61,16 @@
                 到期时间：{$vo.time2|default='--'}<br>
                 实际到期：{$vo.time2_actual|default='--'}<br>
                 时区：{$vo.time_zone|default='--'}
+            </td>
+            <td>
+                {if auth("admin/invest/set_pause") and $vo.status == 0}
+                    {if $vo.pause_time > 0}
+                        <a class="layui-btn layui-btn-sm layui-btn-normal" data-confirm="确定要开启项目吗?" data-action="{:url('set_pause')}" data-value="id#{$vo.id}" data-csrf="{:systoken('set_pause')}">开启</a>
+                    {else}
+                        <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要暂停项目吗?" data-action="{:url('set_pause')}" data-value="id#{$vo.id}" data-csrf="{:systoken('set_pause')}">暂停</a>
+                    {/if}
+                {/if}
+                
             </td>
         </tr>
         {/foreach}

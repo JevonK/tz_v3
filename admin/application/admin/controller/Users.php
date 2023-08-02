@@ -148,11 +148,12 @@ class Users extends Controller
                 sysoplog('用户管理', '添加用户');
             }
         } else {
-            $this->member = Db::name("LcUserMember")->order('id desc')->select();
+            $this->member = Db::name("LcUserMember")->order('id ace')->select();
             $this->currencies = Db::name("LcCurrency")->order('sort asc')->select();
             $vo['auth_email'] = isset($vo['auth_email'])?$vo['auth_email']:0;
             $vo['auth_google'] = isset($vo['auth_google'])?$vo['auth_google']:0;
             $vo['clock'] = isset($vo['clock'])?$vo['clock']:0;
+            $vo['member'] = $this->member;
         }
     }
     /**
@@ -292,4 +293,76 @@ class Users extends Controller
         sysoplog('用户管理', '删除用户');
         $this->_delete($this->table);
     }
+
+    /**
+     * 添加投资
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
+    public function add_invest() {
+        if ($this->request->isGet()) {
+            $user_id = $this->request->param('id');
+            $items = Db::table('lc_item')->select();
+            $this->_form($this->table, 'add_invest','',[],['projects' => $items, 'user_id' => $user_id]);
+        } else {
+            $item_id = $this->request->param('item_id');
+            $user_id = $this->request->param('user_id');
+            $language = 'en_us';
+            $item = Db::table('lc_item')->where('id', $item_id)->find();
+            $money_usd = $item['min'];
+            //时区转换
+            $time = date('Y-m-d H:i:s');
+            $time_zone = getTimezoneByLanguage($language);
+            $time_actual = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+            $currency = getCurrencyByLanguage($language);
+           
+            $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' day'));
+            $total_interest = $money_usd * $item['rate'] / 100;
+            $total_num = 1;
+            
+            //到期还本付息（时）
+            if($item['type']==3){
+                //按时
+                $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' hour'));
+            }
+            //每日付息到期还本
+            elseif($item['type']==1){
+                //日利率
+                $total_interest = $money_usd * $item['rate'] * $item['day'] / 100;
+                //返息期数
+                $total_num = $item['day'];
+            }
+            $time2_actual = dateTimeChangeByZone($time2, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+            $orderNo = 'ST' . date('YmdHis') . rand(1000, 9999) . rand(100, 999);
+            //添加投资记录
+            $insert = array(
+                "uid" =>$user_id,
+                "itemid" =>$item['id'],
+                "orderNo" =>$orderNo,
+                "money" => 0,
+                "money2" =>$money_usd,
+                "total_interest" =>$total_interest,
+                "wait_interest" =>$total_interest,
+                "total_num" =>$total_num,
+                "wait_num" =>$total_num,
+                "day" =>$item['day'],
+                "rate" =>$item['rate'],
+                "type" =>$item['type'],
+                "currency" =>$currency,
+                "time_zone" =>$time_zone,
+                "time" =>$time,
+                "time_actual" =>$time_actual,
+                "time2" =>$time2,
+                "time2_actual" =>$time2_actual,
+            );
+            $iid = Db::name('LcInvest')->insertGetId($insert);
+            if (!empty($iid)) {
+                $this->success(lang('think_library_form_success'), '');
+            } else {
+                $this->error(lang('think_library_form_error'));
+            }
+        }
+    }
+
 }

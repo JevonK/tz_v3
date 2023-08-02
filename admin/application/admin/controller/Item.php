@@ -152,5 +152,21 @@ class Item extends Controller
         
         $this->_save($this->table, ['k_x' => $k_x,'k_y_12m' => $k_y_12m]);
     }
+    /**
+     * 设置是否显示
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     */
+    public function set_show() {
+        $params = $this->request->param();
+        $res = Db::name($this->table)->where('id',$params['id'])->update(['show' => $params['show']]);
+        // 回复前端结果
+        if ($res !== false) {
+            $this->success(lang('think_library_save_success'), '');
+        } else {
+            $this->error(lang('think_library_save_error'));
+        }
+    }
 
 }

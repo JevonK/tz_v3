@@ -105,6 +105,10 @@
                 {else}
                 <a data-tips-text="您没有编辑用户的权限哦！" class="layui-btn layui-btn-sm layui-btn-primary layui-disabled">编 辑</a>
                 {/if}
+
+                {if auth("add_invest")}
+                <a data-dbclick class="layui-btn layui-btn-sm" data-title="添加投资" data-modal='{:url("add_invest")}?id={$vo.id}'>添加投资</a>
+                {/if}
                 
                 {if $vo.clock eq 0 and auth("forbid")}
                 <a class="layui-btn layui-btn-sm layui-btn-warm" data-action="{:url('forbid')}" data-value="id#{$vo.id};clock#0" data-csrf="{:systoken('forbid')}">冻 结</a>

@@ -64,4 +64,38 @@ class Invest extends Controller
     protected function _index_page_filter(&$data)
     {
     }
+
+    /**
+     * 投资暂停
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
+    public function set_pause() {
+        $id = $this->request->param('id');
+        $curr_time = time();
+        $invest = Db::name($this->table)->where('id',$id)->find();
+        if ($invest['pause_time'] > 0) {
+            $diff_time = $curr_time - $invest['pause_time'];
+            $time = strtotime($invest['time']) + $diff_time;
+            $time2 = strtotime($invest['time2']) + $diff_time;
+            $time2_actual = strtotime($invest['time2_actual']) + $diff_time;
+            $update_data = [
+                'pause_time' => 0,
+                'time2_actual' => date('Y-m-d H:i:s', $time2_actual),
+                'time2' => date('Y-m-d H:i:s', $time2),
+            ];
+            if ($invest['type'] == 1) {
+                $update_data['time'] = date('Y-m-d H:i:s', $time);
+            }
+            Db::name($this->table)->where('id',$id)->update($update_data);
+        }else {
+            Db::name($this->table)->where('id',$id)->update(['pause_time' => $curr_time]);
+        }
+        $this->success(lang('think_library_form_success'), '');
+
+    }
 }

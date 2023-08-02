@@ -66,6 +66,20 @@
                 <input name="point" class="layui-input" required placeholder="请输入签到积分" value="{$vo.point|default='0'}">
             </label>
         </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs4 relative">
+                <span class="color-green">会员设置</span>
+                <select class="layui-select" name="mid" required>
+                    {foreach $vo['member'] as $k=>$v}
+                    <!--{eq name='$vo.mid' value='$v.id'}-->
+                    <option selected value="{$v.id}">{$v.name}</option>
+                    <!--{else}-->
+                    <option value="{$v.id}">{$v.name}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
+        </div>
     </div>
 
     <div class="hr-line-dashed"></div>

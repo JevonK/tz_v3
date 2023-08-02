@@ -1290,11 +1290,17 @@ class User extends Controller
 
         // 判断vip等级是否满足
         if ($user['mid'] < $item['vip_level']) {
-            $this->error('auth.authFirst',"",405);
+            $this->error('auth.parameterError',"",405);
         }
 
-        if ($item['need_integral'] > $user['integral']) {
-            $this->error('auth.authFirst',"",405);
+        // 判断积分是否足够
+        if (!empty($item['need_integral']) && $item['need_integral'] > $user['integral']) {
+            $this->error('auth.parameterError',"",405);
+        }
+
+        // 判断项目是否上架
+        if (empty($item['show'])) {
+            $this->error('auth.parameterError',"",405);
         }
         
          $money_usd = $item['min'];
@@ -1526,7 +1532,7 @@ class User extends Controller
         $page = $params["page"];
         $listRows = $params["listRows"];
         
-        $list = Db::name('LcInvest')->field("id,itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual,time,time2,total_num,wait_num")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
+        $list = Db::name('LcInvest')->field("id,itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual,time,time2,total_num,wait_num,pause_time")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
         $length = Db::name('LcInvest')->where("uid = $uid")->count();
         
         foreach ($list as &$invest) {
@@ -2130,7 +2136,7 @@ class User extends Controller
                 
             }else{
                 $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . $wait_day . ' day'));
-                Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time2' => $time2]);
+                Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time2' => $time2, 'time2_actual' => $time2]);
             }
             
             //利息

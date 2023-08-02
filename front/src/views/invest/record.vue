@@ -29,7 +29,7 @@
 								<van-cell :title="$t('invest.endTime')" value-class="value_class" :border="false"
 									:value="item.time2_actual" />
 							</van-cell-group>
-							<p v-if="item.is_receive == 1" class="receive" @click="receive_click(item)">领取</p>
+							<p v-if="item.is_receive == 1 && item.pause_time == 0" class="receive" @click="receive_click(item)">领取</p>
 						</div>
 					</div>
 				</van-list>
