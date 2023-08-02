@@ -125,7 +125,7 @@ class Index extends Controller
                             setNumber('LcUser', 'value', $money, 1, "id = $uid");
                             //更新会员等级
                             $user_1 = Db::name("LcUser")->find($uid);
-                            setUserMember($uid,$user_1['value']);
+                            // setUserMember($uid,$user_1['value']);
                             //添加冻结金额
                             $info = Db::name('LcInfo')->find(1);
                             if($info['recharge_need_flow']){
@@ -152,7 +152,7 @@ class Index extends Controller
                                 setNumber('LcUser', 'value', $money, 1, "id = $uid");
                                 //更新会员等级
                                 $user_1 = Db::name("LcUser")->find($uid);
-                                setUserMember($uid,$user_1['value']);
+                                // setUserMember($uid,$user_1['value']);
                                 //添加冻结金额
                                 $info = Db::name('LcInfo')->find(1);
                                 if($info['recharge_need_flow']){
@@ -188,9 +188,9 @@ class Index extends Controller
                         else if($body->status == 2){
                             //审核失败，返还提现金额
                             //流水添加
-                            addFunding($uid,$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']));
+                            addFunding($uid,$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']),2);
                             //余额返还
-                            setNumber('LcUser', 'money', $withdrawRecord['money'], 1, "id = $uid");
+                            setNumber('LcUser', 'withdrawable', $withdrawRecord['money'], 1, "id = $uid");
                             //设置提现状态为失败 2 
                             Db::name('LcUserWithdrawRecord')->where('id', $withdrawRecord['id'])->update(['status' => 2 , 'time2' => date('Y-m-d H:i:s')]);
                         }
@@ -201,9 +201,9 @@ class Index extends Controller
                         else if($body->status == 4){
                             //失败，返还提现金额
                             //流水添加
-                            addFunding($uid,$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']));
+                            addFunding($uid,$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']),2);
                             //余额返还
-                            setNumber('LcUser', 'money', $withdrawRecord['money'], 1, "id = $uid");
+                            setNumber('LcUser', 'withdrawable', $withdrawRecord['money'], 1, "id = $uid");
                             //设置提现状态为失败 2 
                             Db::name('LcUserWithdrawRecord')->where('id', $withdrawRecord['id'])->update(['status' => 2 , 'time2' => date('Y-m-d H:i:s')]);
                         }
