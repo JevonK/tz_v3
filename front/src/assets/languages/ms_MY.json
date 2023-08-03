@@ -308,7 +308,8 @@
 		"congratulation": "Tahniah untuk mendapatkan: ",
 		"unfortunately": "Malangnya, tidak ada hadiah yang menang",
 		"myPoints": "Mata: " ,
-		"pointsEmpty": "Kekurangan mata"
+		"draw_num": "Frekuensi: " ,
+		"pointsEmpty": "Kekurangan Frekuensi"
 	},
 	"savings": {
 		"savings": "Penjimatan",

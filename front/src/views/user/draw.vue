@@ -32,8 +32,8 @@
 				</div>
 			</div>
 			<div class="zp-num">
-				<span>{{$t('draw.myPoints')}}</span>
-				<span>{{point_total}}</span>
+				<span>{{$t('draw.draw_num')}}</span>
+				<span>{{draw_num}}</span>
 			</div>
 		</div>
 		<div class="zp-bg2">
@@ -128,7 +128,7 @@
 			//开始抽奖
 			draw() {
 				if (!this.loading) {
-					if (this.point_total < this.point) {
+					if (this.draw_num < 1) {
 						this.$toast(this.$t('draw.pointsEmpty'));
 						return false;
 					}
@@ -139,7 +139,7 @@
 							let index = this.list.findIndex(item => item.id == r.data.draw.id);
 							this.winner = index;
 							this.winCallback(r.data.drid);
-							this.point_total = this.point_total - this.point;
+							this.draw_num--;
 						});
 					} else {
 						this.winner = this.random(0, this.list.length - 1)

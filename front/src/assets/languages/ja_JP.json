@@ -308,7 +308,8 @@
 		"congratulation": "おめでとうございます：",
 		"unfortunately": "残念ながら、受賞賞はありません",
 		"myPoints": "ポイント：",
-		"pointsEmpty": "ポイントの欠如"
+		"draw_num": "回数: " ,
+		"pointsEmpty": "回数の欠如"
 	},
 	"savings": {
 		"savings": "節約",

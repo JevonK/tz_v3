@@ -308,7 +308,8 @@
 		"congratulation": "Selamat atas mendapatkan: ",
 		"unfortunately": "Sayangnya, tidak ada hadiah kemenangan",
 		"myPoints": "Poin: " ,
-		"pointsEmpty": "Kurangnya poin"
+		"draw_num": "Frekuensi: " ,
+		"pointsEmpty": "Kurangnya Frekuensi"
 	},
 	"savings": {
 		"savings": "Tabungan",

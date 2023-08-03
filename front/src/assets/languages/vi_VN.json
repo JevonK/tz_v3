@@ -308,7 +308,8 @@
 		"congratulation": "Xin chúc mừng nhận được: ",
 		"unfortunately": "Thật không may, không có giải thưởng chiến thắng",
 		"myPoints": "Điểm: " ,
-		"pointsEmpty": "Thiếu điểm"
+		"draw_num": "Số lần: " ,
+		"pointsEmpty": "Thiếu Số lần"
 	},
 	"savings": {
 		"savings": "Tiết kiệm",

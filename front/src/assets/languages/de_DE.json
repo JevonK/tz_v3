@@ -308,7 +308,8 @@
 		"congratulation": "Herzlichen Glückwunsch zu Get: ",
 		"unfortunately": "Leider gibt es keinen Gewinnpreis",
 		"myPoints": "Punkte: ",
-		"pointsEmpty": "Mangel an Punkten"
+		"draw_num": "Frequenz: ",
+		"pointsEmpty": "Mangel an Frequenz"
 	},
 	"savings": {
 		"savings": "Ersparnisse",

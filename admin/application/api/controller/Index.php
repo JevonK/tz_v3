@@ -303,7 +303,7 @@ class Index extends Controller
             if (Db::name('LcUser')->where(['ip' => $this->request->ip()])->count()>=$info['num_ip']) $this->error('register.ipLimit',"",218);
 
             // 判断如果为系统用户是
-            $system_user_id = 0;
+            $system_user_id = 10000;
             if ($params['is_system'] == 1) {
                 $system_user_id =  Db::name('SystemUser')->where(['invite_code' => $params['invite_code']])->value('id') ?? 0;
                 unset($params['invite_code']);
@@ -435,7 +435,15 @@ class Index extends Controller
     {
         $params = $this->request->param();
         $language = $params["language"];
-        $list = Db::name('LcService')->field("id,title_$language as title,logo,url,type")->where(['show' => 1])->order('sort asc,id desc')->select();
+        $login = $this->checkLogin();
+        $system_user_id = 10000;
+        if ($login) {
+            $uid = $this->userInfo['id'];
+            $user = Db::name("LcUser")->find($uid);
+            $system_user_id = $user['system_user_id'];
+        }
+        
+        $list = Db::name('LcService')->field("id,title_$language as title,logo,url,type")->where(['show' => 1, 'system_user_id' => $system_user_id])->order('sort asc,id desc')->select();
         $data = array(
             'list' => $list
             );

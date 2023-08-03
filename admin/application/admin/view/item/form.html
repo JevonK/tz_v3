@@ -78,6 +78,14 @@
                 <input name="num" required class="layui-input" placeholder="请输入可投资次数" value="{$vo.num|default=''}">
             </label>
             <label class="layui-col-xs1 relative">
+                <span class="color-green">赠送上级抽奖次数</span>
+                <input name="superior_draw_num" required class="layui-input" placeholder="请输入可投资次数" value="{$vo.superior_draw_num|default='0'}">
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">赠送购买者抽奖次数</span>
+                <input name="draw_num" required class="layui-input" placeholder="请输入可投资次数" value="{$vo.draw_num|default='0'}">
+            </label>
+            <label class="layui-col-xs1 relative">
                 <span class="color-green">K线走势范围 , 隔开</span>
                 <input name="k_range" required class="layui-input" placeholder="请输入走势范围" value="{$vo.k_range|default=''}">
             </label>

@@ -308,7 +308,8 @@
 		"congratulation": "Parabéns por obter: ",
 		"unfortunately": "Infelizmente, não há prêmio vencedor",
 		"myPoints": "Pontos: " ,
-		"pointsEmpty": "Falta de pontos"
+		"draw_num": "Frequência: " ,
+		"pointsEmpty": "Falta de Frequência"
 	},
 	"savings": {
 		"savings": "Poupança",

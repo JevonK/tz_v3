@@ -308,7 +308,8 @@
 		"congratulation": "Alındığınız için tebrikler: ",
 		"unfortunately": "Ne yazık ki, kazanan bir ödül yok",
 		"myPoints": "Puan: " ,
-		"pointsEmpty": "Puan eksikliği"
+		"draw_num": "Frekuensi: " ,
+		"pointsEmpty": "Frekuensi eksikliği"
 	},
 	"savings": {
 		"savings": "Tasarruf",

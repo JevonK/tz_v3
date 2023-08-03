@@ -308,7 +308,8 @@
 		"congratulation": "ขอแสดงความยินดีกับการรับ: ",
 		"unfortunately": "น่าเสียดายที่ไม่มีรางวัลชนะเลิศ",
 		"myPoints": "คะแนน: " ,
-		"pointsEmpty": "ขาดคะแนน"
+		"draw_num": "จำนวนครั้ง: " ,
+		"pointsEmpty": "ขาดจำนวนครั้ง"
 	},
 	"savings": {
 		"savings": "เงินออม",

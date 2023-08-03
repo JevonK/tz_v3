@@ -308,7 +308,8 @@
 		"congratulation": "恭喜您獲得:",
 		"unfortunately": "很遺憾，沒有抽中獎品",
 		"myPoints": "積分：",
-		"pointsEmpty": "積分不足"
+		"draw_num": "次數: " ,
+		"pointsEmpty": "次數不足"
 	},
 	"savings": {
 		"savings": "儲蓄金",

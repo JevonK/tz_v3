@@ -308,7 +308,8 @@
 		"congratulation": "축하를 축하합니다 : " ,
 		"unfortunately": "불행히도, 상을받는 상이 없습니다",
 		"myPoints": "포인트 : " ,
-		"pointsEmpty": "포인트 부족"
+		"draw_num": "횟수: " ,
+		"pointsEmpty": "횟수 부족"
 	},
 	"savings": {
 		"savings": "저축",

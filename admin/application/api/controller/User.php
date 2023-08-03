@@ -1408,9 +1408,20 @@ class User extends Controller
                 }
             }
             //添加抽奖次数
-            $draw = Db::name('LcDraw')->find(1);
-            if($draw['invest']>0){
-                setNumber('LcUser', 'draw_num', $draw['invest'], 1, "id = $uid");
+            // $draw = Db::name('LcDraw')->find(1);
+            // if($draw['invest']>0){
+            //     setNumber('LcUser', 'draw_num', $draw['invest'], 1, "id = $uid");
+            // }
+            if ($item['superior_draw_num'] > 0) {
+                // 上级
+                $parentid = Db::table('lc_user_relation')->where("uid=$uid and level=1")->value('parentid');
+                if ($parentid) {
+                    setNumber('LcUser', 'draw_num', $item['superior_draw_num'], 1, "id = $parentid");
+                }
+            }
+            if ($item['draw_num'] > 0) {
+                // 购买者
+                setNumber('LcUser', 'draw_num', $item['draw_num'], 1, "id = $uid");
             }
 
             // 添加返利
@@ -1617,7 +1628,8 @@ class User extends Controller
         $user = Db::name('LcUser')->find($uid);
         $set  = Db::name('LcDraw')->find(1);
         
-        if($user['point'] - $set['point'] < 0) $this->error('utils.parameterError',"",218);
+        // if($user['point'] - $set['point'] < 0) $this->error('utils.parameterError',"",218);
+        if($user['draw_num'] < 1) $this->error('utils.parameterError',"",218);
         
         $prizeList  = Db::name('LcDrawPrize')->field("id,title_$language as title,img,type,probability,money")->order('sort asc,id desc')->select();
         
@@ -1644,15 +1656,16 @@ class User extends Controller
         $did = Db::name('LcDrawRecord')->insertGetId($add);
         if(empty($did)) $this->error('utils.networkException',"",218);
         //抽奖次数减少
-        $point_now = $user['point'] - $set['point'];
-        Db::name('LcUser')->where(['id' => $uid])->update(['point' => $point_now]);
+        // $point_now = $user['point'] - $set['point'];
+        // Db::name('LcUser')->where(['id' => $uid])->update(['point' => $point_now]);
+        Db::name('LcUser')->where(['id' => $uid])->setDec('draw_num');
         
         //现金则添加到账户余额
         if($draw['type']==2){
             //流水添加
             addFunding($uid,$draw['money'],changeMoneyByLanguage($draw['money'],$language),1,14,$language);
             //添加余额
-            setNumber('LcUser', 'money', $draw['money'], 1, "id = $uid");
+            setNumber('LcUser', 'withdrawable', $draw['money'], 1, "id = $uid");
             //添加冻结金额
             if(getInfo('recharge_need_flow')){
                 setNumber('LcUser', 'frozen_money', $draw['money'], 1, "id = $uid");

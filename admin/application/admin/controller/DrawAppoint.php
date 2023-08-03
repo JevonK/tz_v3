@@ -19,20 +19,20 @@ use library\Controller;
 use think\Db;
 
 /**
- * 客服管理
+ * 抽奖指定管理
  * Class Item
  * @package app\admin\controller
  */
-class Service extends Controller
+class DrawAppoint extends Controller
 {
     /**
      * 绑定数据表
      * @var string
      */
-    protected $table = 'LcService';
+    protected $table = 'LcDrawAppoint';
 
     /**
-     * 客服列表
+     * 抽奖指定列表
      * @auth true
      * @menu true
      * @throws \think\Exception
@@ -43,15 +43,35 @@ class Service extends Controller
      */
     public function index()
     {
-        $this->title = '客服列表';
-        $auth = $this->app->session->get('user');
-        $query = $this->_query($this->table)->where("system_user_id={$auth['id']}");
-        $query->order('sort asc,id asc')->page();
+        $this->title = '抽奖指定列表';
+        $query = $this->_query($this->table)->alias('i')->field('i.*,d.title_zh_cn as title,img,u.username, d.type as dtype');
+        $query->join('lc_draw_prize d','i.draw_prize_id=d.id')->join('lc_user u','i.uid=u.id')->equal('d.type#i_type')->like('u.username#u_username')->dateBetween('i.created_at#i_time')->order('i.id desc')->page();
     }
-
-
+    
     /**
-     * 添加客服
+     * 数据列表处理
+     * @param array $data
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    protected function _index_page_filter(&$data)
+    {
+    }
+    
+    /**
+     * 表单数据处理
+     * @param array $vo
+     * @throws \ReflectionException
+     */
+    protected function _form_filter(&$vo){
+        if ($this->request->isGet()) {
+            $vo['users'] = Db::table('lc_user')->field('id, username')->select();
+            $vo['prizes'] = Db::table('lc_draw_prize')->field('id, title_zh_cn')->select();
+        }
+    }
+    /**
+     * 添加指定
      * @auth true
      * @throws \think\Exception
      * @throws \think\db\exception\DataNotFoundException
@@ -61,27 +81,13 @@ class Service extends Controller
      */
     public function add()
     {
-        $this->title = '添加客服';
+        // $this->title = '添加奖品';
         $this->_form($this->table, 'form');
     }
 
-    /**
-     * 编辑客服
-     * @auth true
-     * @throws \think\Exception
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * @throws \think\exception\PDOException
-     */
-    public function edit()
-    {
-        $this->title = '编辑客服';
-        $this->_form($this->table, 'form');
-    }
 
     /**
-     * 删除客服
+     * 删除抽奖指定
      * @auth true
      * @throws \think\Exception
      * @throws \think\exception\PDOException
@@ -91,22 +97,4 @@ class Service extends Controller
         $this->applyCsrfToken();
         $this->_delete($this->table);
     }
-    
-       /**
-     * 表单数据处理
-     * @param array $vo
-     * @throws \ReflectionException
-     */
-    protected function _form_filter(&$vo){
-        if ($this->request->isGet()) {
-            if(!isset($vo['show'])) $vo['show'] = '1';
-            if(!isset($vo['type'])) $vo['type'] = '1';
-        }
-        if ($this->request->isPost()) {
-            $auth = $this->app->session->get('user');
-            $vo['system_user_id'] = $auth['id'];
-        }
-        if (empty($vo['time'])) $vo['time'] = date("Y-m-d H:i:s");
-    }
-
 }

@@ -308,7 +308,8 @@
 		"congratulation": "Congratulations to you to get: ",
 		"unfortunately": "Unfortunately, there is no winning prize",
 		"myPoints": "Puntos: " ,
-		"pointsEmpty": "Falta de puntos"
+		"myPoints": "Number: " ,
+		"pointsEmpty": "Falta de Number"
 	},
 	"savings": {
 		"savings": "Savings",
