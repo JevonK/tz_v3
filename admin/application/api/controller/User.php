@@ -1628,22 +1628,30 @@ class User extends Controller
         $user = Db::name('LcUser')->find($uid);
         $set  = Db::name('LcDraw')->find(1);
         
+        
         // if($user['point'] - $set['point'] < 0) $this->error('utils.parameterError',"",218);
         if($user['draw_num'] < 1) $this->error('utils.parameterError',"",218);
-        
-        $prizeList  = Db::name('LcDrawPrize')->field("id,title_$language as title,img,type,probability,money")->order('sort asc,id desc')->select();
-        
-        //概率算法
-        $list = [];
-        foreach($prizeList as $k2=>$v2) {
-            $list[$k2] = $v2['probability'];
-        }
-        $draw = $prizeList[get_rand($list)];
-        
         //时区转换
         $time = date('Y-m-d H:i:s');
         $time_zone = getTimezoneByLanguage($language);
         $act_time = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+        
+        
+        // 是否存在必中
+        $draw_appoint  = Db::table('lc_draw_appoint')->where('uid', $uid)->whereNull('use_time')->find();
+        if ($draw_appoint) {
+            $draw = Db::name('LcDrawPrize')->where('id', $draw_appoint['draw_prize_id'])->field("id,title_$language as title,img,type,probability,money")->find();
+            Db::table('lc_draw_appoint')->where('id', $draw_appoint['id'])->update(['time_zone' => $time_zone, 'act_use_time' => $act_time, 'use_time' => $time]);
+        }else {
+            $prizeList  = Db::name('LcDrawPrize')->field("id,title_$language as title,img,type,probability,money")->order('sort asc,id desc')->select();
+
+            //概率算法
+            $list = [];
+            foreach($prizeList as $k2=>$v2) {
+                $list[$k2] = $v2['probability'];
+            }
+            $draw = $prizeList[get_rand($list)];
+        }
         
         $add = array(
             'uid' => $uid,
