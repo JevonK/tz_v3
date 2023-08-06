@@ -122,7 +122,7 @@ class Index extends Controller
                             //添加余额
                             setNumber('LcUser', 'money', $money, 1, "id = $uid");
                             //添加积分
-                            setNumber('LcUser', 'value', $money, 1, "id = $uid");
+                            setNumber('LcUser', 'point', $money, 1, "id = $uid");
                             //更新会员等级
                             $user_1 = Db::name("LcUser")->find($uid);
                             // setUserMember($uid,$user_1['value']);
@@ -149,7 +149,7 @@ class Index extends Controller
                                 //添加余额
                                 setNumber('LcUser', 'money', $money, 1, "id = $uid");
                                 //添加积分
-                                setNumber('LcUser', 'value', $money, 1, "id = $uid");
+                                setNumber('LcUser', 'point', $money, 1, "id = $uid");
                                 //更新会员等级
                                 $user_1 = Db::name("LcUser")->find($uid);
                                 // setUserMember($uid,$user_1['value']);
