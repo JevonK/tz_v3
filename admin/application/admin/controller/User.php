@@ -53,8 +53,8 @@ class User extends Controller
         if (isset($user['username']) and $user['username'] != 'admin') {
             $where['f_user_id'] = $user['id'] ?? 0;
         }
-        $query = $this->_query($this->table)->like('username,phone,mail')->equal('status');
-        $query->dateBetween('login_at,create_at')->where($where)->order('id desc')->page();
+        $query = $this->_query($this->table)->where($where)->like('username,phone,mail')->equal('status');
+        $query->dateBetween('login_at,create_at')->order('id desc')->page();
     }
 
     /**

@@ -84,16 +84,19 @@ class RechargeRecord extends Controller
         $rechargeRecord = Db::name($this->table)->find($id);
         $uid = $rechargeRecord['uid'];
         
+        if ($rechargeRecord['status'] != 0) {
+            $this->error('当前充值已处理');
+        }
         
         //流水添加
         addFunding($uid,$rechargeRecord['money'],$rechargeRecord['money2'],1,2,getLanguageByTimezone($rechargeRecord['time_zone']));
         //添加余额
         setNumber('LcUser', 'money', $rechargeRecord['money'], 1, "id = $uid");
         //添加积分
-        setNumber('LcUser', 'value', $rechargeRecord['money'], 1, "id = $uid");
+        // setNumber('LcUser', 'value', $rechargeRecord['money'], 1, "id = $uid");
         //更新会员等级
-        $user_1 = Db::name("LcUser")->find($uid);
-        setUserMember($uid,$user_1['value']);
+        // $user_1 = Db::name("LcUser")->find($uid);
+        // setUserMember($uid,$user_1['value']);
         
         //添加冻结金额
         $info = Db::name('LcInfo')->find(1);

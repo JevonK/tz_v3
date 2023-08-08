@@ -22,4 +22,5 @@ return [
     'url_param_type' => 1,
     // 当前 ThinkAdmin 版本号
     'thinkadmin_ver' => 'v5',
+    'front_url' => 'https://riotplatforms.online', 
 ];

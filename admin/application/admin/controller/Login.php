@@ -90,7 +90,7 @@ class Login extends Controller
                 'invite_code' => $user['invite_code'] ?? $code,
             ]);
             $this->app->session->set('user', $user);
-            $this->app->session->set('link', env('app.front_url') . "/#/register?code={$code}&is_system=1");
+            $this->app->session->set('link', getInfo('domain') . "/#/register?code={$code}&is_system=1");
             AdminService::instance()->apply(true);
             if($info['back_google']&&!$user['auth_google']){
                 $secret = $this->createSecret();
