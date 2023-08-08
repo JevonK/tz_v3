@@ -77,6 +77,8 @@
             </td>
             <td class='text-left nowrap'>
                 用户余额：<a data-title="查看流水" data-open='{:url("admin/funding/index")}?u_username={$vo.username}'>${$vo.money|number_format=2}</a><br>
+                用户提现余额：${$vo.withdrawable|number_format=2}<br>
+                用户积分：${$vo.point|number_format=2}<br>
                 储蓄金：活期({$vo.savings_flexible|number_format=2})  定期({$vo.savings_fixed|number_format=2})<br>
                 冻结余额：{$vo.frozen_money|number_format=2}<br>
                 总充值：{$vo.recharge_sum|number_format=2}<br>

@@ -83,6 +83,49 @@
                 <span class="color-green">抽奖次数</span>
                 <input name="draw_num" class="layui-input" required placeholder="请输入抽奖次数" value="{$vo.draw_num|default='0'}">
             </label>
+            <label class="layui-col-xs4 relative">
+                <span class="color-green">提现余额</span>
+                <input name="withdrawable" class="layui-input" required placeholder="请输入抽奖次数" value="{$vo.withdrawable|default='0.00'}">
+            </label>
+           
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs4 relative">
+                <span class="color-green">允许充值</span></span>
+                <select class="layui-select" name="is_recharge" required>
+                    {foreach ['0'=>'否','1'=>'是'] as $k=>$v}
+                    <!--{eq name='$vo.is_recharge' value='$k.""'}-->
+                    <option selected value="{$k}">{$v}</option>
+                    <!--{else}-->
+                    <option value="{$k}">{$v}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
+            <label class="layui-col-xs4 relative">
+                <span class="color-green">允许邀请</span></span>
+                <select class="layui-select" name="is_invite" required>
+                    {foreach ['0'=>'否','1'=>'是'] as $k=>$v}
+                    <!--{eq name='$vo.is_invite' value='$k.""'}-->
+                    <option selected value="{$k}">{$v}</option>
+                    <!--{else}-->
+                    <option value="{$k}">{$v}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
+            <label class="layui-col-xs4 relative">
+                <span class="color-green">允许提现</span></span>
+                <select class="layui-select" name="is_withdrawal" required>
+                    {foreach ['0'=>'否','1'=>'是'] as $k=>$v}
+                    <!--{eq name='$vo.is_withdrawal' value='$k.""'}-->
+                    <option selected value="{$k}">{$v}</option>
+                    <!--{else}-->
+                    <option value="{$k}">{$v}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
         </div>
     </div>
 

@@ -92,6 +92,7 @@ class User extends Controller
             "auth_google" => $user['auth_google'],
             "withdrawable" => $user['withdrawable'],
             "integral" => $user['integral'],
+            "point" => $user['point'],
             "invite_code" => $user['invite_code'],
             "user_icon" => getInfo('user_img'),
             "vip_name" => $member['name'],
@@ -698,6 +699,9 @@ class User extends Controller
         
 		//用户被锁定
         if ($user['clock'] == 1) $this->error('login.userLocked',"",218);
+
+        //是否允许提现
+        if ($user['is_withdrawal'] == 1) $this->error('login.userLocked',"",218);
 		
         //判断认证状态
         if(getUserNeedAuth($uid)) $this->error('auth.authFirst',"",405);
@@ -965,6 +969,9 @@ class User extends Controller
         
         //判断认证状态
         if(getUserNeedAuth($uid)) $this->error('auth.authFirst',"",405);
+
+        // 判断是否允许充值
+        if(empty($user['is_recharge'])) $this->error('login.userLocked',"",218);
         
         //判断参数
         if(empty($params['id'])||empty($params['money'])) $this->error('utils.parameterError',"",218);
@@ -1294,7 +1301,7 @@ class User extends Controller
         }
 
         // 判断积分是否足够
-        if (!empty($item['need_integral']) && $item['need_integral'] > $user['integral'] && !$params['is_withdrawal_purchase']) {
+        if (!empty($item['need_integral']) && $item['need_integral'] > $user['point'] && !$params['is_withdrawal_purchase']) {
             $this->error('auth.parameterError',"",405);
         }
 
@@ -1399,11 +1406,11 @@ class User extends Controller
             }
             if (!$params['is_withdrawal_purchase']) {
                 // 积分扣除
-                setNumber('LcUser', 'value', $item['need_integral'], 2, "id = $uid");
+                setNumber('LcUser', 'point', $item['need_integral'], 2, "id = $uid");
                 addIntegral($uid,$item['need_integral'],2,2,$language);
             }
             // 积分赠送
-            setNumber('LcUser', 'value', $item['gifts_integral'], 1, "id = $uid");
+            setNumber('LcUser', 'point', $item['gifts_integral'], 1, "id = $uid");
             addIntegral($uid,$item['gifts_integral'],1,2,$language);
             //添加每日投资奖励
             $reward = Db::name('LcReward')->find(1);

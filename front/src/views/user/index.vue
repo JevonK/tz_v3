@@ -58,7 +58,7 @@
 				<p @click="showMsg()">{{$t('vip.points')}}
 					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
 				</p>
-				<p>{{data.integral}}</p>
+				<p>{{data.point}}</p>
 				<p class="money_usd">--</p>
 			</div>
 		</div>
