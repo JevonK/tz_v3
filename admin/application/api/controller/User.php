@@ -1560,13 +1560,13 @@ class User extends Controller
             $item = Db::name('LcItem')->find($invest['itemid']);
             // 判断是否有领取
             if ($invest['type'] == 1) {
-                $Date_1=date("Y-m-d");
-                $Date_2=date("Y-m-d", strtotime($invest['time']));
+                $Date_1=date("Y-m-d H:i:s");
+                $Date_2=date("Y-m-d H:i:s", strtotime($invest['time']));
                 $d1=strtotime($Date_1);
                 $d2=strtotime($Date_2);
                 $day_diff=round(($d1-$d2)/3600/24);
                 if (!empty($day_diff)) {
-                    $wait_day = $day_diff - ($invest['total_num'] - $invest['wait_num']);
+                    $wait_day = $day_diff - ($invest['total_num'] - $invest['wait_num']) - 1;
                     $invest['is_receive'] = $wait_day > 0 ? 1 : 0;
                 }
             }
