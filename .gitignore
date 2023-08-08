@@ -2,4 +2,4 @@ admin/runtime
 admin/.env
 dist
 front/node_modules
-.DS_Store
+*.DS_Store
