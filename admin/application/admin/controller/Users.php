@@ -49,7 +49,7 @@ class Users extends Controller
         $this->title = '用户列表';
         $where = '';
         if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
+            $where = "(system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']} )";
         }
         
         $query = $this->_query($this->table)->where($where)->equal('auth_email#u_auth_email,auth_google#u_auth_google,clock#u_clock')->like('username#u_username,ip#u_ip')->dateBetween('time#u_time')->order('id desc')->page();
@@ -170,7 +170,7 @@ class Users extends Controller
         $auth = $this->app->session->get('user');
         $where = '';
         if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
+            $where = "(system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']} )";
         }
         $user = Db::name('LcUser')->where($where)->where(['username' => $username])->find();
         $where = '1=2';
