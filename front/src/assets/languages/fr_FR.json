@@ -39,7 +39,8 @@
 		"type15": "Investissement en arrière-plan",
 		"type16": "Économies (s'abonner)",
 		"type17": "Économies (rachat)",
-		"type18": "Économies (revenu)"
+		"type18": "Économies (revenu)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Page d'accueil",
@@ -71,6 +72,8 @@
 		"paymentType": "Méthode de paiement: ",
 		"endTime": "Date d'expiration: ",
 		"detail": "Détails du projet",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"investNow": "Investir",
 		"orderInfo": "Détails de commande",
 		"moneyPlaceholder": "Veuillez saisir le montant de l'investissement",

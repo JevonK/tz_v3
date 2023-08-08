@@ -45,9 +45,9 @@ class Invest extends Controller
     {
         $this->title = '已投项目管理';
         $auth = $this->app->session->get('user');
-        $where = [];
+        $where = '';
         if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where['u.system_user_id'] = $auth['id'] ?? 0;
+            $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
         }
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username,it.title_zh_cn as title');
         $query->where($where)->join('lc_user u','i.uid=u.id');

@@ -39,7 +39,8 @@
 		"type15": "投資の終了、校長を返します",
 		"type16": "節約（購読）",
 		"type17": "節約（償還）",
-		"type18": "節約（所得）"
+		"type18": "節約（所得）",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "ホームページ",
@@ -71,6 +72,8 @@
 		"paymentType": "支払方法：",
 		"endTime": "有効期限：",
 		"detail": "プロジェクト詳細",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"investNow": "すぐに投資",
 		"orderInfo": "注文詳細",
 		"moneyPlaceholder": "投資額を入力してください",

@@ -61,9 +61,25 @@
                     {/foreach}
                 </select>
             </label>
+            <label class="layui-col-xs2 relative">
+                <span class="color-green">是否分销</span>
+                <select class="layui-select" name="is_distribution" required>
+                    {foreach ['1'=>'是','0'=>'否'] as $k=>$v}
+                    <!--{eq name='$vo.is_distribution' value='$k.""'}-->
+                    <option selected value="{$k}">{$v}</option>
+                    <!--{else}-->
+                    <option value="{$k}">{$v}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
             <label class="layui-col-xs1 relative">
                 <span class="color-green">利率（%）</span>
                 <input name="rate" required class="layui-input" placeholder="请输入利率（%）" value="{$vo.rate|default=''}">
+            </label>
+            <label class="layui-col-xs1 relative">
+                <span class="color-green">提现余额购买折扣（%）</span>
+                <input name="withdrawal_purchase" required class="layui-input" placeholder="请输入利率（%）" value="{$vo.withdrawal_purchase|default=''}">
             </label>
             <label class="layui-col-xs1 relative">
                 <span class="color-green">周期（天/时）</span>

@@ -574,7 +574,7 @@ class Index extends Controller
         $language = $params["language"];
         $id = $params["id"];
         
-        $item = Db::name('LcItem')->field("title_$language as title,content_$language as content,id,img2 as img,min,day,rate,num,type,k_x,k_y_12m")->where(['show' => 1])->find($id);
+        $item = Db::name('LcItem')->field("title_$language as title,content_$language as content,id,img2 as img,min,day,rate,num,type,k_x,k_y_12m,withdrawal_purchase")->where(['show' => 1])->find($id);
         
         if(empty($item)) $this->error('utils.parameterError',"",218);
         // $item['min'] = changeMoneyByLanguage($item['min'],$language);
@@ -594,6 +594,7 @@ class Index extends Controller
             $uid = $this->userInfo['id'];
             $user1 = Db::name('LcUser')->find($uid);
             $user['balance'] = $user1['money'];
+            $user['withdrawable'] = $user1['withdrawable'];
             $user['login'] = true;
             //判断项目投资次数
             $investCount = Db::name('LcInvest')->where(['itemid' => $id,'uid' => $uid])->count();

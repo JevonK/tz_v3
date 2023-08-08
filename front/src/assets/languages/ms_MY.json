@@ -39,7 +39,8 @@
 		"type15": "Akhir pelaburan, kembalikan prinsipal",
 		"type16": "Penjimatan (melanggan)",
 		"type17": "Penjimatan (penebusan)",
-		"type18": "Penjimatan (pendapatan)"
+		"type18": "Penjimatan (pendapatan)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Laman Utama",
@@ -69,6 +70,8 @@
 		"cycle": "Kitaran pelaburan: ",
 		"type": "Jenis plaburan: ",
 		"paymentType": "Kaedah pembayaran: ",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"endTime": "Tarikh tamat: ",
 		"detail": "Butiran projek",
 		"investNow": "Melabur",

@@ -39,7 +39,8 @@
 		"type15": "Kết thúc khoản đầu tư, trả lại hiệu trưởng",
 		"type16": "Tiết kiệm (đặt mua)",
 		"type17": "Tiết kiệm (chuộc lại)",
-		"type18": "Tiết kiệm (thu nhập)"
+		"type18": "Tiết kiệm (thu nhập)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Trang chủ",
@@ -72,6 +73,8 @@
 		"endTime": "Ngày hết hạn: ",
 		"detail": "Chi tiết dự án",
 		"investNow": "Đầu tư",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"orderInfo": "Chi tiết đặt hàng",
 		"moneyPlaceholder": "Vui lòng nhập số tiền đầu tư",
 		"income": "Thu nhập: ",

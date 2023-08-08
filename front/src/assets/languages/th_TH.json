@@ -39,7 +39,8 @@
 		"type15": "สิ้นสุดการลงทุนคืนเงินต้น",
 		"type16": "เงินออม (ติดตาม)",
 		"type17": "เงินออม (การไถ่)",
-		"type18": "เงินออม (รายได้)"
+		"type18": "เงินออม (รายได้)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "โฮมเพจ",
@@ -73,6 +74,8 @@
 		"detail": "รายละเอียดโครงการ",
 		"investNow": "ลงทุน",
 		"orderInfo": "รายละเอียดสั่งซื้อ",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"moneyPlaceholder": "กรุณาป้อนจำนวนเงินลงทุน",
 		"income": "รายได้: ",
 		"submit": "ส่ง",

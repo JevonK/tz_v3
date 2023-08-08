@@ -39,7 +39,8 @@
 		"type15": "Return of investment principal",
 		"type16": "Savings (subscribe)",
 		"type17": "Savings (redeem)",
-		"type18": "Savings (income)"
+		"type18": "Savings (income)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Home",
@@ -72,6 +73,8 @@
 		"endTime": "Expiration time: ",
 		"detail": "Project details",
 		"investNow": "Invest now",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"orderInfo": "Order details",
 		"moneyPlaceholder": "Please enter the investment amount",
 		"income": "Income: ",

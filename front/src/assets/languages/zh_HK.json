@@ -39,7 +39,8 @@
 		"type15": "投資本金返還",
 		"type16": "儲蓄金-申購",
 		"type17": "儲蓄金-贖回",
-		"type18": "儲蓄金-收益"
+		"type18": "儲蓄金-收益",
+		"type19": "间属投资-收益"
 	},
 	"home": {
 		"index": "首頁",
@@ -72,6 +73,8 @@
 		"endTime": "到期時間：",
 		"detail": "項目詳情",
 		"investNow": "立即投資",
+		"investBalance": "余额投资",
+		"investWithdrawal": "提现投资",
 		"orderInfo": "訂單詳情",
 		"moneyPlaceholder": "請輸入投資金額",
 		"income": "收益",

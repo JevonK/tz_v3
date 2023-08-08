@@ -39,7 +39,8 @@
 		"type15": "Fim do investimento, devolva o diretor",
 		"type16": "Poupança (se inscrever)",
 		"type17": "Poupança (redenção)",
-		"type18": "Poupança (renda)"
+		"type18": "Poupança (renda)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Pagina inicial",
@@ -71,6 +72,8 @@
 		"paymentType": "Forma de pagamento: ",
 		"endTime": "Data de validade: ",
 		"detail": "Detalhes do Projeto",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"investNow": "Investir",
 		"orderInfo": "Detalhes do pedido",
 		"moneyPlaceholder": "Por favor, insira o valor do investimento",

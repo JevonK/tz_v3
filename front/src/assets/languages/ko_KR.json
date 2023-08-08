@@ -39,7 +39,8 @@
 		"type15": "투자 종료, 교장을 반환하십시오",
 		"type16": "저축 (구독하다)",
 		"type17": "저축 (되찾기)",
-		"type18": "저축 (소득)"
+		"type18": "저축 (소득)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "홈페지",
@@ -73,6 +74,8 @@
 		"detail": "프로젝트 세부 사항",
 		"investNow": "즉시 투자",
 		"orderInfo": "주문 세부 사항",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"moneyPlaceholder": "투자 금액을 입력하십시오",
 		"income": "소득 : " ,
 		"submit": "제출하다",

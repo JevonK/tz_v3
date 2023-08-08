@@ -39,7 +39,8 @@
 		"type15": "Yatırımın sonu, müdürü iade et",
 		"type16": "Tasarruf (abone)",
 		"type17": "Tasarruf (itfa)",
-		"type18": "Tasarruf (gelir)"
+		"type18": "Tasarruf (gelir)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Ana sayfa",
@@ -70,6 +71,8 @@
 		"type": "Yatırım Türü: ",
 		"paymentType": "Ödeme şekli: ",
 		"endTime": "Son kullanma tarihi: ",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"detail": "Proje detayları",
 		"investNow": "Yatırım",
 		"orderInfo": "Sipariş detayları",

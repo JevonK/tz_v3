@@ -131,13 +131,17 @@ class User extends Controller
             elseif (Db::name($this->table)->where(['username' => $data['username'], 'is_deleted' => '0'])->count() > 0) {
                 $this->error("账号{$data['username']}已经存在，请使用其它账号！");
             }
-            $data['authorize'] = 2;
+            $data['authorize'] = $data['authorize'] ?? 2;
             $user = $this->app->session->get('user');
             $data['f_user_id'] = $user['id'] ?? -1;
         } else {
             $data['authorize'] = explode(',', isset($data['authorize']) ? $data['authorize'] : '');
             $this->authorizes = Db::name('SystemAuth')->where(['status' => '1'])->order('sort desc,id desc')->select();
         }
+    }
+    public function _form_result($result, $data) {
+        $user = $this->app->session->get('user');
+        $this->insertUserRelation($result,$user['id'], 999);
     }
 
     /**
@@ -260,5 +264,35 @@ class User extends Controller
         }
         
     }
+    /**
+ * @description：插入用户关系（闭包表方式）
+ * @date: 2022/6/17
+ * @param $userId
+ * @param $parentid
+ * @param $invite_level  分销级别
+ * @return bool
+ */
+public function insertUserRelation($userId,$parentid,$invite_level)
+{
+    //查询上级关系网
+    $topRelation = Db::name('SystemUserRelation')->where(['uid' => $parentid])->order('id asc')->select();
+    
+    Db::name('SystemUserRelation')->insert(['uid' => $userId,'parentid' => $parentid,'level' => 1]);
+    //插入上级关系网
+    if(!empty($topRelation)){
+        foreach ($topRelation as $key => $top) {
+            //当达到分销级别时，跳出循环
+            if($key>=$invite_level-1){
+                break;
+            }
+            Db::name('LcUserRelation')->insert([
+                'uid' => $userId,
+                'parentid' => $top['parentid'],
+                'level' => $top['level']+1
+                ]);
+        }
+    }
+    return true;
+}
 
 }

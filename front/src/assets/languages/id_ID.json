@@ -39,7 +39,8 @@
 		"type15": "Akhir investasi, kembalikan kepala sekolah",
 		"type16": "Penghematan (langganan)",
 		"type17": "Penghematan (penebusan)",
-		"type18": "Penghematan (penghasilan)"
+		"type18": "Penghematan (penghasilan)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Beranda",
@@ -70,6 +71,8 @@
 		"type": "Jenis investasi: ",
 		"paymentType": "Cara Pembayaran: ",
 		"endTime": "Tanggal kedaluwarsa: ",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"detail": "Detail Proyek",
 		"investNow": "Investasi",
 		"orderInfo": "Detail pesanan",

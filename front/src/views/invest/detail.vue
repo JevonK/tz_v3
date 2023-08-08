@@ -32,9 +32,15 @@
 			</div>
 			<div class="content" v-html="item.content"></div>
 		</div>
-		<div class="basic_btn btn" @click="showPopup=true">
-			{{$t('invest.investNow')}}
+		<div class="btn-gr">
+			<div class="basic_btn btn" @click="showPopupClick(false)">
+				{{$t('invest.investBalance')}}
+			</div>
+			<div class="basic_btn btn" @click="showPopupClick(true)">
+				{{$t('invest.investWithdrawal')}}
+			</div>
 		</div>
+		
 		<van-popup v-model:show="showPopup" position="bottom" closeable close-icon-position="top-left">
 			<div class="item_info popup_info">
 				<div class="title">
@@ -46,13 +52,18 @@
 							:border="false" :value="item.rate+'%'" />
 						<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
 							:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
-						<van-cell :title="$t('invest.amount')" value-class="value_class" :border="false"
+						<van-cell v-if="!is_withdrawal_purchase" :title="$t('invest.amount')" value-class="value_class" :border="false"
 							:value="common.currency_symbol_basic()+common.precision_basic(item.min)" />
+						<van-cell v-else :title="$t('invest.amount')" value-class="value_class" :border="false"
+							:value="common.currency_symbol_basic()+common.precision_basic(item.min*item.withdrawal_purchase/100)" />
 						<van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
 							:value="$t('index.method'+item.type)" />
-						<van-cell v-show="user.login" :title="$t('invest.paymentType')" value-class="value_class"
+						<van-cell v-if="!is_withdrawal_purchase" v-show="user.login" :title="$t('invest.paymentType')" value-class="value_class"
 							:border="false"
 							:value="$t('user.fundingAccount')+' ('+common.currency_symbol_basic()+common.precision_basic(user.balance)+')'" />
+						<van-cell v-else v-show="user.login" :title="$t('invest.paymentType')" value-class="value_class"
+							:border="false"
+							:value="$t('user.withdrawAccount')+' ('+common.currency_symbol_basic()+common.precision_basic(user.withdrawable)+')'" />
 					</van-cell-group>
 				</div>
 				<div class=" flex_center invest_detail_wrap">
@@ -100,6 +111,7 @@
 				income: 0,
 				showPopup: false,
 				loading: false,
+				is_withdrawal_purchase: false,
 			};
 		},
 		created() {
@@ -113,6 +125,10 @@
 			this.start();
 		},
 		methods: {
+			showPopupClick(type) {
+				this.showPopup = true;
+				this.is_withdrawal_purchase = type;
+			},
 			start() {
 				Fetch('/index/item_detail', {
 					id: this.$router.history.current.params.code
@@ -152,7 +168,8 @@
 				}
 				this.loading = true;
 				Fetch('/user/invest', {
-					id: this.item.id
+					id: this.item.id,
+					is_withdrawal_purchase: this.is_withdrawal_purchase
 				}).then(r => {
 					this.$router.replace('/invest/record');
 				})
@@ -348,10 +365,16 @@
 		}
 	}
 
-	.btn {
+	.btn-gr {
+		width: 100%;
 		position: fixed;
-		bottom: 20px;
-		width: 80%;
+		bottom: 8px;
+	}
+	.btn {
+		float: left;
+		// position: fixed;
+		// bottom: 20px;
+		width: 36%;
 		margin-left: 10%;
 	}
 

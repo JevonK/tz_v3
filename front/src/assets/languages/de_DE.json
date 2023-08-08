@@ -39,7 +39,8 @@
 		"type15": "Rückzahlung des Anlagekapitals",
 		"type16": "Einsparungen (Abonnieren)",
 		"type17": "Einsparungen (Einlösung)",
-		"type18": "Einsparungen (Einkommen)"
+		"type18": "Einsparungen (Einkommen)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Startseite",
@@ -72,6 +73,8 @@
 		"endTime": "Ablaufdatum: ",
 		"detail": "Projekt Details",
 		"investNow": "Jetzt investieren",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"orderInfo": "Bestelldetails",
 		"moneyPlaceholder": "Bitte geben Sie den Anlagebetrag ein",
 		"income": "Einkommen: ",

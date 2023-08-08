@@ -19,20 +19,20 @@ use library\Controller;
 use think\Db;
 
 /**
- * 流水记录
+ * 红包记录管理
  * Class Item
  * @package app\admin\controller
  */
-class Funding extends Controller
+class RedEnvelopeRecord extends Controller
 {
     /**
      * 绑定数据表
      * @var string
      */
-    protected $table = 'LcUserFunding';
+    protected $table = 'LcRedEnvelopeRecord';
 
     /**
-     * 流水记录
+     * 红包记录列表
      * @auth true
      * @menu true
      * @throws \think\Exception
@@ -43,18 +43,26 @@ class Funding extends Controller
      */
     public function index()
     {
-        $this->title = '流水记录';
-        $auth = $this->app->session->get('user');
-        $where = '';
-        if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
-        }
-        $query = $this->_query($this->table)->alias('i')->field('i.*,u.username');
-        $query->where($where)->join('lc_user u','i.uid=u.id')->equal('i.type#i_type')->equal('i.fund_type#i_fund_type')->like('u.username#u_username')->dateBetween('i.act_time#i_time')->valueBetween('i.money')->order('i.id desc')->page();
+        $this->title = '红包列表';
+        $query = $this->_query($this->table)->alias('i')->field('i.*,d.title_zh_cn as title,u.username,d.type as dtype');
+        $query->join('lc_red_envelope d','i.pid=d.id')->join('lc_user u','i.uid=u.id')->equal('d.type#i_type')->like('u.username#u_username')->dateBetween('i.time#i_time')->order('i.id desc')->page();
     }
     
     /**
-     * 删除记录
+     * 数据列表处理
+     * @param array $data
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    protected function _index_page_filter(&$data)
+    {
+    }
+    
+
+
+    /**
+     * 删除红包记录
      * @auth true
      * @throws \think\Exception
      * @throws \think\exception\PDOException

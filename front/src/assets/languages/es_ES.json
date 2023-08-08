@@ -39,7 +39,8 @@
 		"type15": "La inversión expira, devuelve al director",
 		"type16": "Ahorros (suscribir)",
 		"type17": "Ahorros (redención)",
-		"type18": "Ahorros (ingreso)"
+		"type18": "Ahorros (ingreso)",
+		"type19": "Intermediary investment (income)"
 	},
 	"home": {
 		"index": "Portada",
@@ -69,6 +70,8 @@
 		"cycle": "Ciclo de inversión: ",
 		"type": "Tipo de inversión: ",
 		"paymentType": "Método de pago: ",
+		"investBalance": "Balance invest",
+		"investWithdrawal": "Withdrawal invest",
 		"endTime": "Fecha de caducidad: ",
 		"detail": "Detalles del proyecto",
 		"investNow": "Invertir",

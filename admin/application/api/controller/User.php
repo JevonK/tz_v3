@@ -719,9 +719,9 @@ class User extends Controller
         // $act_user_money = $user['money']-$user['frozen_money'];
         $act_user_money = $user['withdrawable']-$user['frozen_money'];
         
-        $money_usd = $params['withdrawable'];
+        $money_usd = $params['money'];
         
-        if($act_user_money<$params['withdrawable']) $this->error('utils.parameterError',"",218);
+        if($act_user_money<$params['money']) $this->error('utils.parameterError',"",218);
         
         //判断最低提现金额
         $currency = Db::name('LcCurrency')->where(['country' => $language])->find();
@@ -1294,7 +1294,7 @@ class User extends Controller
         }
 
         // 判断积分是否足够
-        if (!empty($item['need_integral']) && $item['need_integral'] > $user['integral']) {
+        if (!empty($item['need_integral']) && $item['need_integral'] > $user['integral'] && !$params['is_withdrawal_purchase']) {
             $this->error('auth.parameterError',"",405);
         }
 
@@ -1305,8 +1305,13 @@ class User extends Controller
         
          $money_usd = $item['min'];
         //金额转换
-        //判断余额>投资金额
-        if($user['money']<$money_usd) $this->error('utils.parameterError',"",218);
+        //判断余额/提现余额>投资金额
+        if ($params['is_withdrawal_purchase']) {
+            $money_usd = floor($money_usd*$item['withdrawal_purchase']) / 100;
+            if($user['withdrawable']<$money_usd) $this->error('utils.parameterError',"",218);
+        }else {
+            if($user['money']<$money_usd) $this->error('utils.parameterError',"",218);
+        }
         
         //判断投资金额
         // if ($money_usd - $item['max'] > 0 || $money_usd - $item['min'] < 0) $this->error('utils.parameterError',"",218);
@@ -1353,7 +1358,7 @@ class User extends Controller
             "uid" =>$uid,
             "itemid" =>$item['id'],
             "orderNo" =>$orderNo,
-            "money" =>$money_usd,
+            "money" =>$item['min'],
             "money2" =>$money_usd,
             "total_interest" =>$total_interest,
             "wait_interest" =>$total_interest,
@@ -1362,6 +1367,7 @@ class User extends Controller
             "day" =>$item['day'],
             "rate" =>$item['rate'],
             "type" =>$item['type'],
+            "is_distribution" =>$item['is_distribution'],
             "currency" =>$currency,
             "time_zone" =>$time_zone,
             "time" =>$time,
@@ -1373,19 +1379,29 @@ class User extends Controller
         Db::startTrans();
         $iid = Db::name('LcInvest')->insertGetId($insert);
         if(!empty($iid)){
-            //流水添加
-            addFunding($uid,$money_usd,changeMoneyByLanguage($money_usd,$language),2,5,$language);
-            //余额扣除
-            setNumber('LcUser', 'money', $money_usd, 2, "id = $uid");
+           
+            if ($params['is_withdrawal_purchase']) {
+                 //流水添加
+                addFunding($uid,$money_usd,changeMoneyByLanguage($money_usd,$language),2,5,$language,2);
+                //提现余额扣除
+                setNumber('LcUser', 'withdrawable', $money_usd, 2, "id = $uid");
+            }else {
+                 //流水添加
+                addFunding($uid,$money_usd,changeMoneyByLanguage($money_usd,$language),2,5,$language);
+                //余额扣除
+                setNumber('LcUser', 'money', $money_usd, 2, "id = $uid");
+            }
             //冻结金额扣除
             if($user['frozen_money']>$money_usd){
                 setNumber('LcUser', 'frozen_money', $money_usd, 2, "id = $uid");
             }else{
                 setNumber('LcUser', 'frozen_money', $user['frozen_money'], 2, "id = $uid");
             }
-            // 积分扣除
-            setNumber('LcUser', 'value', $item['need_integral'], 2, "id = $uid");
-            addIntegral($uid,$item['need_integral'],2,2,$language);
+            if (!$params['is_withdrawal_purchase']) {
+                // 积分扣除
+                setNumber('LcUser', 'value', $item['need_integral'], 2, "id = $uid");
+                addIntegral($uid,$item['need_integral'],2,2,$language);
+            }
             // 积分赠送
             setNumber('LcUser', 'value', $item['gifts_integral'], 1, "id = $uid");
             addIntegral($uid,$item['gifts_integral'],1,2,$language);
@@ -1422,20 +1438,6 @@ class User extends Controller
             if ($item['draw_num'] > 0) {
                 // 购买者
                 setNumber('LcUser', 'draw_num', $item['draw_num'], 1, "id = $uid");
-            }
-
-            // 添加返利
-            $fusers = Db::name("LcUserRelation")->where("uid = $uid")->order('level desc')->limit(3)->select();
-            $fusers = array_reverse($fusers); 
-            $vip_level = [$vip['level_b'], $vip['level_c'], $vip['level_d']];
-            foreach($fusers as $key => $val) {
-                $interest_rate = floor($money_usd*$vip_level[$key]*100) / 100;
-                // 添加收益
-                setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
-                // 添加总收益
-                setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
-                //流水添加
-                addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,5,$language, 2);
             }
 
             // 当前用户没有等级的话就直接升等级一            
@@ -2128,7 +2130,7 @@ class User extends Controller
             // 判断是否隔天没有领取
             $wait_day = 0;
             $Date_1=date("Y-m-d");
-            $Date_2=date("Y-m-d", $v['time']);
+            $Date_2=date("Y-m-d", strtotime($v['time']));
             $d1=strtotime($Date_1);
             $d2=strtotime($Date_2);
             $day_diff=round(($d1-$d2)/3600/24);
@@ -2139,7 +2141,7 @@ class User extends Controller
             //判断返还时间
             $return_num = $v['wait_num'] - 1;
             $return_time = date('Y-m-d H:i:s', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*$wait_day)));
-            if($return_time > $now) continue;
+            if($return_time > $now && empty($wait_day)) continue;
             
             $time_zone = $v['time_zone'];
             $language = getLanguageByTimezone($time_zone);
@@ -2147,17 +2149,47 @@ class User extends Controller
             $money = $v['money'];
             //每日利息=总利息/总期数
             $day_interest = $v['total_interest']/$v['total_num'];
+
+            // 添加返利
+            if ($v['is_distribution']) {
+                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
+                $fusers = array_reverse($fusers); 
+                foreach($fusers as $key => $val) {
+                    $level = '';
+                    switch ($key) {
+                        case 1:
+                            $level = $val['level_b'];
+                            break;
+                        case 2:
+                            $level = $val['level_c'];
+                            break;
+                        case 3:
+                            $level = $val['level_d'];
+                            break;
+                        
+                    }
+                    $interest_rate = floor($day_interest*$level*100) / 100;
+                    // 添加收益
+                    setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
+                    // 添加总收益
+                    setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
+                    //流水添加
+                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,19,$language);
+                }
+            }
+            
             
             //最后一期
             if($v['wait_num']==1){
                 Db::name('LcInvest')->where('id', $v['id'])->update(['status' => 1,'wait_num' => 0,'wait_interest' => 0]);
                 //返还本金
-                addFunding($v['uid'],$money,changeMoneyByLanguage($money,$language),1,15,$language);
-                setNumber('LcUser', 'money', $money, 1, "id = {$v['uid']}");
+                addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
+                setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
                 
             }else{
                 $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . $wait_day . ' day'));
-                Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time2' => $time2, 'time2_actual' => $time2]);
+                $time = date('Y-m-d H:i:s', strtotime($v['time'].'+' . $wait_day . ' day'));
+                Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time' => $time, 'time2' => $time2, 'time2_actual' => $time2]);
             }
             
             //利息
@@ -2178,14 +2210,42 @@ class User extends Controller
             
             $money = $v['money'];
             $total_interest = $v['total_interest'];
+
+            // 添加返利
+            if ($v['is_distribution']) {
+                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
+                $fusers = array_reverse($fusers); 
+                foreach($fusers as $key => $val) {
+                    $level = '';
+                    switch ($key) {
+                        case 1:
+                            $level = $val['level_b'];
+                            break;
+                        case 2:
+                            $level = $val['level_c'];
+                            break;
+                        case 3:
+                            $level = $val['level_d'];
+                            break;
+                        
+                    }
+                    $interest_rate = floor($day_interest*$level*100) / 100;
+                    // 添加收益
+                    setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
+                    // 添加总收益
+                    setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
+                    //流水添加
+                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,19,$language);
+                }
+            }
             
             //利息
             addFunding($v['uid'],$total_interest,changeMoneyByLanguage($total_interest,$language),1,6,$language, 2);
             setNumber('LcUser', 'withdrawable', $total_interest, 1, "id = {$v['uid']}");
             
             //本金
-            addFunding($v['uid'],$money,changeMoneyByLanguage($money,$language),1,15,$language);
-            setNumber('LcUser', 'money', $money, 1, "id = {$v['uid']}");
+            addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
+            setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
             
             
             //添加收益

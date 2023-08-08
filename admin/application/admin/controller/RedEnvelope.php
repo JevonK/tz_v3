@@ -19,20 +19,20 @@ use library\Controller;
 use think\Db;
 
 /**
- * 用户钱包管理
+ * 红包管理
  * Class Item
  * @package app\admin\controller
  */
-class Wallet extends Controller
+class RedEnvelope extends Controller
 {
     /**
      * 绑定数据表
      * @var string
      */
-    protected $table = 'LcUserWallet';
+    protected $table = 'LcRedEnvelope';
 
     /**
-     * 钱包列表
+     * 红包列表
      * @auth true
      * @menu true
      * @throws \think\Exception
@@ -43,27 +43,11 @@ class Wallet extends Controller
      */
     public function index()
     {
-        $this->title = '钱包列表';
-        $auth = $this->app->session->get('user');
-        $where = '';
-        if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
-        }
-        $query = $this->_query($this->table)->alias('i')->field('i.*,u.username,c.name as cname,c.country as ccountry,c.country_cn as ccountry_cn,c.price as crate');
-        $query->where($where)->join('lc_user u','i.uid=u.id')->join('lc_currency c','i.cid=c.id')->like('u.username#u_username')->order('i.id desc')->page();
+        $this->title = '红包列表';
+        $query = $this->_query($this->table);
+        $query->order('id asc')->page();
     }
 
-    /**
-     * 数据列表处理
-     * @param array $data
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    protected function _index_page_filter(&$data)
-    {
-
-    }
     /**
      * 表单数据处理
      * @param array $vo
@@ -71,72 +55,42 @@ class Wallet extends Controller
      */
     protected function _form_filter(&$vo){
         if ($this->request->isGet()) {
-            $vo['show'] = isset($vo['show'])?$vo['show']:1;
-        }else{
-            sysoplog('用户管理', '编辑用户钱包');
+            if(!isset($vo['type'])) $vo['type'] = '1';
         }
-        $this->currencies = Db::name("LcCurrency")->order('sort asc')->select();
-    }
-    /**
-     * 编辑USDT
-     * @auth true
-     * @throws \think\Exception
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * @throws \think\exception\PDOException
-     */
-    public function edit_usdt()
-    {
-        $this->title = '编辑USDT';
-        $this->_form($this->table, 'form_usdt');
-    }
-    /**
-     * 编辑支付宝
-     * @auth true
-     * @throws \think\Exception
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * @throws \think\exception\PDOException
-     */
-    public function edit_alipay()
-    {
-        $this->title = '编辑支付宝';
-        $this->_form($this->table, 'form_alipay');
-    }
-    /**
-     * 编辑微信扫码
-     * @auth true
-     * @throws \think\Exception
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * @throws \think\exception\PDOException
-     */
-    public function edit_wx()
-    {
-        $this->title = '编辑微信扫码';
-        $this->_form($this->table, 'form_wx');
-    }
-    /**
-     * 编辑银行卡
-     * @auth true
-     * @throws \think\Exception
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * @throws \think\exception\PDOException
-     */
-    public function edit_bank()
-    {
-        $this->title = '编辑银行卡';
-        $this->_form($this->table, 'form_bank');
     }
 
+    /**
+     * 添加红包
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
+    public function add()
+    {
+        // $this->title = '添加红包';
+        $this->_form($this->table, 'form');
+    }
 
     /**
-     * 删除充值方式
+     * 编辑红包
+     * @auth true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
+    public function edit()
+    {
+        // $this->title = '编辑红包';
+        $this->_form($this->table, 'form');
+    }
+
+    /**
+     * 删除红包
      * @auth true
      * @throws \think\Exception
      * @throws \think\exception\PDOException
@@ -145,5 +99,35 @@ class Wallet extends Controller
     {
         $this->applyCsrfToken();
         $this->_delete($this->table);
+    }
+    
+    /**
+     * 转盘配置
+     * @auth true
+     * @menu true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
+    public function set()
+    {
+        $this->title = '转盘配置';
+        $this->_form($this->set_table, 'set');
+    }
+    /**
+     * 转盘配置修改
+     * @auth true
+     * @menu true
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     */
+    public function set_edit()
+    {
+        $this->_form($this->set_table, 'set_form');
     }
 }
