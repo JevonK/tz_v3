@@ -210,7 +210,7 @@ class Index extends Controller
             //密码错误
             if ($user['password'] != md5($params['password'])) $this->error('login.passwordError',"",218);
             //用户被锁定
-            //if ($user['clock'] == 1) $this->error('login.userLocked',"",218);
+            if ($user['clock'] == 1) $this->error('login.userLocked',"",218);
             
             $time = date('Y-m-d H:i:s');
             $time_zone = getTimezoneByLanguage($language);
@@ -314,6 +314,7 @@ class Index extends Controller
             if(!empty($params['invite_code'])){
                 $topUser = Db::name('LcUser')->where(['invite_code' => $params['invite_code']])->find();
                 if(empty($topUser)) $this->error('register.inviteCodeError',"",218);
+                if(empty($user['is_recharge'])) $this->error('login.userLocked',"",218);
                 $system_user_id = $topUser['system_user_id'];
             }
             

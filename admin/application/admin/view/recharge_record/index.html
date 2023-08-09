@@ -86,11 +86,6 @@
                         {else}
                             <a data-tips-text="您没有同意的权限哦！" class="layui-btn layui-btn-sm layui-btn-primary layui-disabled">同意</a>
                         {/if}
-                        {if auth("refuse")}
-                        <a class="layui-btn layui-btn-danger layui-btn-xs" data-confirm="确定要拒绝充值吗？" data-action="{:url('refuse')}" data-value="id#{$vo.id}" data-csrf="{:systoken('refuse')}">拒绝</a>
-                        {else}
-                            <a data-tips-text="您没有拒绝的权限哦！" class="layui-btn layui-btn-sm layui-btn-primary layui-disabled">拒绝</a>
-                        {/if}
                     {/if}
                 {else}
                     {if auth("remove")}
@@ -98,6 +93,11 @@
                     {else}
                         <a data-tips-text="您没有删除的权限哦！" class="layui-btn layui-btn-sm layui-btn-primary layui-disabled">删除</a>
                     {/if}
+                {/if}
+                {if auth("refuse")}
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" data-confirm="确定要拒绝充值吗？" data-action="{:url('refuse')}" data-value="id#{$vo.id}" data-csrf="{:systoken('refuse')}">拒绝</a>
+                {else}
+                    <a data-tips-text="您没有拒绝的权限哦！" class="layui-btn layui-btn-sm layui-btn-primary layui-disabled">拒绝</a>
                 {/if}
             </td>
 

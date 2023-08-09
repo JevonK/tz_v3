@@ -702,7 +702,7 @@ class User extends Controller
         if ($user['clock'] == 1) $this->error('login.userLocked',"",218);
 
         //是否允许提现
-        if ($user['is_withdrawal'] == 1) $this->error('login.userLocked',"",218);
+        if ($user['is_withdrawal'] == 0) $this->error('login.userLocked',"",218);
 		
         //判断认证状态
         if(getUserNeedAuth($uid)) $this->error('auth.authFirst',"",405);
@@ -1298,17 +1298,17 @@ class User extends Controller
 
         // 判断vip等级是否满足
         if ($user['mid'] < $item['vip_level']) {
-            $this->error('utils.parameterError',"",218);
+            $this->error('vip等级不满足',"",218);
         }
 
         // 判断积分是否足够
         if (!empty($item['need_integral']) && $item['need_integral'] > $user['point'] && !$params['is_withdrawal_purchase']) {
-            $this->error('utils.parameterError',"",218);
+            $this->error('积分不够',"",218);
         }
 
         // 判断项目是否上架
         if (empty($item['show'])) {
-            $this->error('utils.parameterError',"",218);
+            $this->error('没有上架',"",218);
         }
         
          $money_usd = $item['min'];
@@ -1561,13 +1561,13 @@ class User extends Controller
             $item = Db::name('LcItem')->find($invest['itemid']);
             // 判断是否有领取
             if ($invest['type'] == 1) {
-                $Date_1=date("Y-m-d H:i:s");
-                $Date_2=date("Y-m-d H:i:s", strtotime($invest['time']));
+                $Date_1=date("Y-m-d");
+                $Date_2=date("Y-m-d", strtotime($invest['time']));
                 $d1=strtotime($Date_1);
                 $d2=strtotime($Date_2);
                 $day_diff=round(($d1-$d2)/3600/24);
                 if (!empty($day_diff)) {
-                    $wait_day = $day_diff - ($invest['total_num'] - $invest['wait_num']) - 1;
+                    $wait_day = $day_diff - ($invest['total_num'] - $invest['wait_num']);
                     $invest['is_receive'] = $wait_day > 0 ? 1 : 0;
                 }
             }
@@ -2148,7 +2148,7 @@ class User extends Controller
             
             //判断返还时间
             $return_num = $v['wait_num'] - 1;
-            $return_time = date('Y-m-d H:i:s', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*$wait_day)));
+            $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*$wait_day)));
             if($return_time > $now && empty($wait_day)) continue;
             
             $time_zone = $v['time_zone'];

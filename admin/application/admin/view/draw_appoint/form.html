@@ -13,7 +13,7 @@
             </label>
             <label class="layui-col-xs4 relative">
                 <span class="color-green">选择人员</span>
-                <select class="layui-select" name="uid" required>
+                <select name="uid" lay-search>
                     {foreach $vo['users'] as $k=>$v}
                     <option value="{$v.id}">{$v.username}</option>
                     {/foreach}

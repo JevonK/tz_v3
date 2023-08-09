@@ -1,12 +1,12 @@
 [app]
-app_debug = false
-app_trace = false
+app_debug = true
+app_trace = true
 front_url = ''
 
 [mysql]
-debug = false
-hostname='127.0.0.1'
+debug = true
+hostname='47.243.4.237'
 database='tz_v3'
 username='root'
-password=''
+password='tz_v3@2023'
 hostport='3306'
