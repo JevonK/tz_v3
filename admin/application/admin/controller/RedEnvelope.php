@@ -56,6 +56,7 @@ class RedEnvelope extends Controller
     protected function _form_filter(&$vo){
         if ($this->request->isGet()) {
             if(!isset($vo['type'])) $vo['type'] = '1';
+            if(empty($vo['code'])) $vo['code'] = uniqid();
         }
     }
 

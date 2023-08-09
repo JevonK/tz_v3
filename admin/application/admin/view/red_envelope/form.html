@@ -91,6 +91,7 @@
     </div>
     <div class="hr-line-dashed"></div>
     <div class="layui-form-item text-center">
+        <input type="hidden" name="code" value="{$vo.code}">
         {notempty name='vo.id'}<input type='hidden' value='{$vo.id}' name='id'>{/notempty}
         <button class="layui-btn" type='submit'>保存数据</button>
         <button class="layui-btn layui-btn-danger" ng-click="hsitoryBack()" type="button">取消编辑</button>

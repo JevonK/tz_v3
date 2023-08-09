@@ -93,6 +93,7 @@ class User extends Controller
             "withdrawable" => $user['withdrawable'],
             "integral" => $user['integral'],
             "point" => $user['point'],
+            "address" => $user['address'],
             "invite_code" => $user['invite_code'],
             "user_icon" => getInfo('user_img'),
             "vip_name" => $member['name'],
@@ -613,7 +614,7 @@ class User extends Controller
             }
         }
         // $availableAmount = $user['money'] - $user['frozen_money'];
-        $availableAmount = $user['withdrawable'] - $user['frozen_money'];
+        $availableAmount = $user['withdrawable'];
         $data = array(
             "wallets" =>$wallets,
             "withdrawNum" =>$currency['withdraw_num'],
@@ -1297,17 +1298,17 @@ class User extends Controller
 
         // 判断vip等级是否满足
         if ($user['mid'] < $item['vip_level']) {
-            $this->error('auth.parameterError',"",405);
+            $this->error('utils.parameterError',"",218);
         }
 
         // 判断积分是否足够
         if (!empty($item['need_integral']) && $item['need_integral'] > $user['point'] && !$params['is_withdrawal_purchase']) {
-            $this->error('auth.parameterError',"",405);
+            $this->error('utils.parameterError',"",218);
         }
 
         // 判断项目是否上架
         if (empty($item['show'])) {
-            $this->error('auth.parameterError',"",405);
+            $this->error('utils.parameterError',"",218);
         }
         
          $money_usd = $item['min'];
@@ -1315,9 +1316,9 @@ class User extends Controller
         //判断余额/提现余额>投资金额
         if ($params['is_withdrawal_purchase']) {
             $money_usd = floor($money_usd*$item['withdrawal_purchase']) / 100;
-            if($user['withdrawable']<$money_usd) $this->error('utils.parameterError',"",218);
+            if($user['withdrawable']<$money_usd) $this->error('invest.moneyNotEnough',"",218);
         }else {
-            if($user['money']<$money_usd) $this->error('utils.parameterError',"",218);
+            if($user['money']<$money_usd) $this->error('invest.moneyNotEnough',"",218);
         }
         
         //判断投资金额
@@ -1325,14 +1326,14 @@ class User extends Controller
        
         //判断投资次数
         $investCount = Db::name('LcInvest')->where(['itemid' => $item['id'],'uid' => $uid])->count();
-        if($investCount>=$item['num']) $this->error('utils.parameterError',"",218);
+        if($investCount>=$item['num']) $this->error('invest.investNumEmpty',"",218);
         
         //判断会员投资次数
         $now = date('Y-m-d H:i:s');//现在
         $today = date('Y-m-d');//今天0点
         $investCountToday = Db::name('LcInvest')->where(['itemid' => $item['id'],'uid' => $uid])->where("time >= '$today' AND time <= '$now'")->count();
         $vip = Db::name("LcUserMember")->find($user['mid']);
-        if($investCountToday>=$vip['invest_num']) $this->error('utils.parameterError',"",218);
+        if($investCountToday>=$vip['invest_num']) $this->error('invest.investNumEmpty',"",218);
         
         //时区转换
         $time = date('Y-m-d H:i:s');
@@ -1450,8 +1451,8 @@ class User extends Controller
             // 当前用户没有等级的话就直接升等级一            
             if ($vip['value'] == 0) {
                 $vip_next = Db::name('LcUserMember')->where("value > '{$vip['value']}'")->order('value asc')->find();
-                if(empty($vip_next)){
-                    $vip_next = Db::name('LcUser')->where("id = {$user['id']}")->update(['mid' => $vip_next['id']]);
+                if(!empty($vip_next)){
+                    Db::name('LcUser')->where("id = {$user['id']}")->update(['mid' => $vip_next['id']]);
                 }
             }
             
@@ -2312,6 +2313,90 @@ class User extends Controller
         if($noInvest){
             $this->error('error');
         }
+        $this->success('success');
+    }
+
+    // 兑换红包金额
+    public function red_envelope_redemption () {
+        $params = $this->request->param();
+        $language = $params["language"];
+        $code = $params["code"];
+        $this->checkToken($language);
+        $uid = $this->userInfo['id'];
+        $user = Db::name('LcUser')->find($uid);
+        //时区转换
+        $time = date('Y-m-d H:i:s');
+        $time_zone = getTimezoneByLanguage($language);
+        $act_time = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+
+        $red_envelope = Db::table('lc_red_envelope')->where("code='$code'")->find();
+        $red_envelope_record = Db::table('lc_red_envelope_record')->where("pid={$red_envelope['id']} and uid={$user['id']}")->find();
+        if (empty($red_envelope) or $red_envelope_record ) $this->error('utils.parameterError',"",218);
+        while(true) {
+            if ($red_envelope['type'] == 1) {
+                $red_envelope = Db::table('lc_red_envelope')->where("code='$code'")->find();
+                $residue_money = $red_envelope['money'] - $red_envelope['money2'];
+                $residue_num = $red_envelope['num'] - $red_envelope['residue_num'];
+                if ($residue_num == 0) {
+                    $this->error('utils.parameterError',"",218);
+                } else if ($residue_num == 1) {
+                    $money = $residue_money;
+                } else {
+                    $money = $this->getBonus($residue_money,$residue_num, 0.01, $residue_money-($residue_num*0.01));
+                }
+            }else {
+                $money = bcdiv($red_envelope['money'], $red_envelope['num'], 2);
+            }
+            $res = Db::table('lc_red_envelope')->where("code='$code' and residue_num={$red_envelope['residue_num']}")->setInc('money2', $money);
+            if ($res) {
+                break;
+            }
+        }
+        Db::table('lc_red_envelope')->where("code='$code'")->setInc('residue_num');
+        addFunding($user['id'],$money,changeMoneyByLanguage($money,$language),1,20,$language, 2);
+        Db::table('lc_user')->where("id={$user['id']}")->setInc('withdrawable', $money);
+        $record_data = [
+            'uid' => $user['id'],
+            'pid' => $red_envelope['id'],
+            'money' => $money,
+            'time_zone' => $time_zone,
+            'act_time' => $act_time,
+            'time' => $time
+        ];
+        Db::table('lc_red_envelope_record')->insert($record_data);
+        $this->success('success');
+    }
+
+    // 随机红包处理
+    public function getBonus($money, $num, $min, $max)  //$num是剩余红包数量
+    {
+        $num-=1;
+        if ($num * $min >= $money) {
+            throw new \Exception('最小金额超出范围');
+        }
+        if ($num * $max <= $money) {
+            throw new \Exception('最大金额太小');
+        }
+        $kmix = max($min, $money - $num * $max); //最小金额
+        $kmax = min($max, $money - $num * $min); //最大金额
+
+        $kAvg = $money / ($num + 1);
+        //获取最大值和最小值的距离之间的最小值
+        $kDis = min($kAvg - $kmix, $kmax - $kAvg);
+        //获取0到1之间的随机数与距离最小值相乘得出浮动区间，这使得浮动区间不会超出范围
+        $r = ((float)(rand(1, 10000) / 10000) - 0.5) * $kDis * 2;
+        $k = round($kAvg + $r, 2);
+        return $k;
+    }
+
+    // 添加收货地址
+    public function add_address() {
+        $params = $this->request->param();
+        $language = $params["language"];
+        $address = $params["address"];
+        $this->checkToken($language);
+        $uid = $this->userInfo['id'];
+        Db::name('LcUser')->where("id=$uid")->update(['address' => $address]);
         $this->success('success');
     }
 }

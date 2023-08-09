@@ -156,6 +156,18 @@
 						"value": '',
 						"logo": "user/auth1.png",
 						"url": "/auth"
+					},
+					{
+						"title": '红包',
+						"value": '',
+						"logo": "user/auth1.png",
+						"url": "/red_envelope"
+					},
+					{
+						"title": '收货地址',
+						"value": '',
+						"logo": "user/auth1.png",
+						"url": "/address"
 					}
 				],
 				menus2: [

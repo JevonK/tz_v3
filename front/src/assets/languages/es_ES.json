@@ -40,7 +40,8 @@
 		"type16": "Ahorros (suscribir)",
 		"type17": "Ahorros (redención)",
 		"type18": "Ahorros (ingreso)",
-		"type19": "Intermediary investment (income)"
+		"type19": "Intermediary investment (income)",
+		"type20": "红包领取"
 	},
 	"home": {
 		"index": "Portada",
@@ -90,6 +91,7 @@
 	"user": {
 		"invite_code": "Código de invitación",
 		"fundingAccount": "Cuenta capital",
+		"receive": "Receive",
 		"fundingTips": "Todos los fondos de la cuenta se resuelven en el dólar estadounidense y luego se convierten de acuerdo con el tipo de cambio actual, las fluctuaciones del tipo de cambio fluctuarán con él",
 		"recharge": "Recargar",
 		"withdraw": "Retirar",

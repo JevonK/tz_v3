@@ -112,6 +112,18 @@ export default new Router({
 		        import(/* webpackChunkName: "home" */ "./views/user/withdraw_record.vue")
 		},
 		{
+		    path: "/red_envelope",
+		    name: "red_envelope",
+		    component: () =>
+		        import(/* webpackChunkName: "home" */ "./views/user/red_envelope.vue")
+		},
+		{
+		    path: "/address",
+		    name: "address",
+		    component: () =>
+		        import(/* webpackChunkName: "home" */ "./views/user/address.vue")
+		},
+		{
 		    path: "/recharge",
 		    name: "recharge",
 		    component: () =>

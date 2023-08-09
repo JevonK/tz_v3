@@ -30,6 +30,7 @@
             <th class='text-left nowrap'>投资详情</th>
             <th class='text-left '>推广情况</th>
             <th class='text-left '>时间</th>
+            <th class='text-left '>收货地址</th>
             <th class='text-left '></th>
         </tr>
         </thead>
@@ -100,6 +101,9 @@
                 注册时间：{$vo.time}<br>
                 实际时间：{$vo.act_time}<br>
                 注册时区：{$vo.time_zone}
+            </td>
+            <td class='text-left '>
+                {$vo.address}
             </td>
             <td class='text-left '>
                 {if auth("edit")}

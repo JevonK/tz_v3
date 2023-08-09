@@ -172,6 +172,8 @@
 					is_withdrawal_purchase: this.is_withdrawal_purchase
 				}).then(r => {
 					this.$router.replace('/invest/record');
+				}).catch(e => {
+					this.loading = false;
 				})
 
 			},

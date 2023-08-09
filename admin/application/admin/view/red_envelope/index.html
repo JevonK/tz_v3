@@ -21,6 +21,7 @@
             <th class='text-center nowrap'>金额</th>
             <th class='text-center nowrap'>红包数量</th>
             <th class='text-center nowrap'>红包领取数量</th>
+            <th class='text-center nowrap'>兑换码</th>
             <th></th>
         </tr>
         </thead>
@@ -50,6 +51,9 @@
             </td>
             <td class='text-center nowrap'>
                 {$vo.residue_num|default='--'}
+            </td>
+            <td class='text-center nowrap'>
+                {$vo.code|default='--'}
             </td>
             <td class='text-center nowrap'>
                 <div class="nowrap margin-bottom-5">

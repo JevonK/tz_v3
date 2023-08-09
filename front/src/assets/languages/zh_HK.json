@@ -40,7 +40,8 @@
 		"type16": "儲蓄金-申購",
 		"type17": "儲蓄金-贖回",
 		"type18": "儲蓄金-收益",
-		"type19": "间属投资-收益"
+		"type19": "间属投资-收益",
+		"type20": "红包领取"
 	},
 	"home": {
 		"index": "首頁",
@@ -130,6 +131,7 @@
 		"userLocked": "用戶被鎖定，請聯繫客服",
 		"loginSuccess": "登錄成功",
 		"loginFirst": "請先登錄",
+		"receive": "領取",
 		"loginAgain": "登錄失效，請重新登錄"
 	},
 	"register": {

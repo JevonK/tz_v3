@@ -40,7 +40,8 @@
 		"type16": "Einsparungen (Abonnieren)",
 		"type17": "Einsparungen (Einlösung)",
 		"type18": "Einsparungen (Einkommen)",
-		"type19": "Intermediary investment (income)"
+		"type19": "Intermediary investment (income)",
+		"type20": "红包领取"
 	},
 	"home": {
 		"index": "Startseite",
@@ -92,6 +93,7 @@
 		"fundingAccount": "Funding-Konto",
 		"fundingTips": "Alle Kontoguthaben werden in US-Dollar abgerechnet und dann gemäß dem aktuellen Wechselkurs umgerechnet. Wenn der Wechselkurs schwankt, schwanken die Guthaben entsprechend.",
 		"recharge": "Aufladen",
+		"receive": "Receive",
 		"withdraw": "Zurückziehen",
 		"inviteRecord": "Investitionsrekord",
 		"fundingDetails": "Finanzierungsdetails",
