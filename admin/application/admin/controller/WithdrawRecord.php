@@ -107,7 +107,7 @@ class WithdrawRecord extends Controller
         //流水添加
         addFunding($uid,$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']));
         //余额返还
-        setNumber('LcUser', 'money', $withdrawRecord['money'], 1, "id = $uid");
+        setNumber('LcUser', 'withdrawable', $withdrawRecord['money'], 1, "id = $uid");
         sysoplog('财务管理', '拒绝提现');
         $this->_save($this->table, ['status' => '2', 'time2' => date('Y-m-d H:i:s')]);
     }

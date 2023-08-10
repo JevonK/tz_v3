@@ -3,6 +3,9 @@
 {if auth("remove")}
 <button data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}" data-confirm="确定要删除这些记录吗？" class='layui-btn layui-btn-sm layui-btn-primary'>删除记录</button>
 {/if}
+{if auth("agree")}
+<button data-action='{:url("agree")}' data-rule="id#{key}" data-csrf="{:systoken('agree')}" data-confirm="确定要同意这些记录吗？" class='layui-btn layui-btn-sm layui-btn-primary'>批量同意</button>
+{/if}
 {/block}
 {block name="content"}
 <div class="think-box-shadow">

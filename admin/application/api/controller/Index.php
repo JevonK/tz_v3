@@ -314,7 +314,7 @@ class Index extends Controller
             if(!empty($params['invite_code'])){
                 $topUser = Db::name('LcUser')->where(['invite_code' => $params['invite_code']])->find();
                 if(empty($topUser)) $this->error('register.inviteCodeError',"",218);
-                if(empty($user['is_recharge'])) $this->error('login.userLocked',"",218);
+                if(empty($topUser['is_invite'])) $this->error('该邀请码禁止被邀请',"",218);
                 $system_user_id = $topUser['system_user_id'];
             }
             

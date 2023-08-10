@@ -722,7 +722,7 @@ class User extends Controller
         //判断余额，可提现金额=用户余额-冻结金额
         //判断实际余额
         // $act_user_money = $user['money']-$user['frozen_money'];
-        $act_user_money = $user['withdrawable']-$user['frozen_money'];
+        $act_user_money = $user['withdrawable'];
         
         $money_usd = $params['money'];
         
@@ -786,7 +786,7 @@ class User extends Controller
             "orderNo" =>$orderNo,
             "status" =>$status,
             "money" =>$money_usd,
-            "money2" =>changeMoneyByLanguage($money_usd,$language),
+            "money2" => $params['money'] - $charge,
             "charge" =>$charge,
             "currency" =>$currency,
             "time_zone" =>$time_zone,
@@ -798,7 +798,7 @@ class User extends Controller
             //流水添加
             addFunding($uid,$money_usd,changeMoneyByLanguage($params['money'],$language),2,3,$language);
             //余额扣除
-            setNumber('LcUser', 'money', $money_usd, 2, "id = $uid");
+            setNumber('LcUser', 'withdrawable', $money_usd, 2, "id = $uid");
         }
         
         $this->success("success");
@@ -2331,20 +2331,26 @@ class User extends Controller
 
         $red_envelope = Db::table('lc_red_envelope')->where("code='$code'")->find();
         $red_envelope_record = Db::table('lc_red_envelope_record')->where("pid={$red_envelope['id']} and uid={$user['id']}")->find();
-        if (empty($red_envelope) or $red_envelope_record ) $this->error('utils.parameterError',"",218);
+        if (empty($red_envelope) or $red_envelope_record ) $this->error('你已經領取過了',"",218);
+        if ($red_envelope['num'] <= $red_envelope['residue_num']) {
+            $this->error('紅包已經領取完畢',"",218);
+        }
         while(true) {
+            $red_envelope = Db::table('lc_red_envelope')->where("code='$code'")->find();
             if ($red_envelope['type'] == 1) {
-                $red_envelope = Db::table('lc_red_envelope')->where("code='$code'")->find();
                 $residue_money = $red_envelope['money'] - $red_envelope['money2'];
                 $residue_num = $red_envelope['num'] - $red_envelope['residue_num'];
-                if ($residue_num == 0) {
-                    $this->error('utils.parameterError',"",218);
+                if ($residue_num <= 0) {
+                    $this->error('紅包已經領取完畢',"",218);
                 } else if ($residue_num == 1) {
                     $money = $residue_money;
                 } else {
                     $money = $this->getBonus($residue_money,$residue_num, 0.01, $residue_money-($residue_num*0.01));
                 }
             }else {
+                if ($red_envelope['num'] <= $red_envelope['residue_num']) {
+                    $this->error('紅包已經領取完畢',"",218);
+                }
                 $money = bcdiv($red_envelope['money'], $red_envelope['num'], 2);
             }
             $res = Db::table('lc_red_envelope')->where("code='$code' and residue_num={$red_envelope['residue_num']}")->setInc('money2', $money);

@@ -73,6 +73,7 @@ class Users extends Controller
             $vo['invest_wait_rate']  = Db::name('lc_invest')->where("uid = {$vo['id']} AND wait_interest > 0 AND status = 0")->sum('wait_interest');
             $vo['invest_wait_money']  = Db::name('lc_invest')->where("uid = {$vo['id']} AND money > 0 AND status = 0")->sum('money');
             $result = $ip->btreeSearch($vo['ip']);
+            $vo['s_name'] = Db::table('system_user')->where("id={$vo['system_user_id']}")->value('username');
             $vo['isp'] = isset($result['region']) ? $result['region'] : '';
             $vo['isp'] = str_replace(['内网IP', '0', '|'], '', $vo['isp']);
             $top_user = Db::name('LcUserRelation')->where("uid = {$vo['id']} AND level = 1")->find();
@@ -212,6 +213,7 @@ class Users extends Controller
                 $vo['top'] = $user_top['username'];
             }
             $vo['username'] = '--';
+            $vo['s_name'] = Db::table('system_user')->where("id={$user_my['system_user_id']}")->value('username');
             $vo['time'] = '--';
             $vo['act_time'] = '--';
             $vo['time_zone'] = '--';

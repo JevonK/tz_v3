@@ -92,6 +92,7 @@
             </td>
             <td class='text-left '>
                 我的上级：{$vo.top|default='--'}<br>
+                我的管理员上级：{$vo.s_name|default='--'}<br>
                 直接下级：{$vo.tema_direct_count}（人）<br>
                 间接下级：{$vo.tema_indirect_count}（人）<br>
                 团队余额：${$vo.tema_all_money|number_format=2}
