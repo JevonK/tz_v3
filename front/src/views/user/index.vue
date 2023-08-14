@@ -15,84 +15,116 @@
 				</div>
 				<div class="user_name">
 					<div class="user_all">
-						<p class="user_nickname">{{data.username}}</p>
+						<p class="user_nickname">
+							{{data.username}}
+							<img :src="data.vip_img" style="width: 70px;position: relative;top: 9px;" alt="" srcset="">
+						</p>
+
 					</div>
 				</div>
 			</div>
 			<div class="invite_code">
 				<p class="invite_tips">{{$t('user.invite_code')}}</p>
-				<div class="flex_center copy" v-clipboard="()=>data.invite_code" v-clipboard:success="copy">
+				<div class="flex_center copy" @click="show_share = true">
 					<p>{{data.invite_code}}</p>
 					<img class="copy_img" src="../img/user/copy.png">
 				</div>
 			</div>
 		</div>
-		<div class="block_div flex_center money1">
-			<div>
-				<p @click="showMsg()">{{$t('recharge.money')}}
-					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
-				</p>
-				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(fundBalanceUsd)}}</p>
-				<p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p>
-			</div>
-			<div class="recharge">
-				<p @click="$router.push('/recharge')">{{$t('user.recharge')}}</p>
-				<!-- <p @click="$router.push('/withdraw')">{{$t('user.withdraw')}}</p> -->
-			</div>
-		</div>
-		<div class="block_div flex_center money1 money2">
-			<div>
-				<p @click="showMsg()">{{$t('user.withdrawAccount')}}
-					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
-				</p>
-				<p>{{common.currency_symbol_basic()}}{{common.precision_basic(data.withdrawable)}}</p>
-				<p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p>
-			</div>
-			<div class="recharge">
-				<!-- <p @click="$router.push('/recharge')">{{$t('user.recharge')}}</p> -->
-				<p class="withdraw" @click="$router.push('/withdraw')">{{$t('user.withdraw')}}</p>
-			</div>
-		</div>
-		<div class="block_div flex_center money1 money2">
-			<div>
-				<p @click="showMsg()">{{$t('vip.points')}}
-					<van-icon name="question-o" size="14" style="left: 2px;top:1px;" />
-				</p>
-				<p>{{data.point}}</p>
-				<p class="money_usd">--</p>
-			</div>
-		</div>
 		<div class="block_div flex_center user_yw">
-			<div @click="$router.push('/invest/record')">
-				<img src="../img/user/order.png" alt="" />
-				<p>{{$t('user.inviteRecord')}}</p>
+			<div >
+				<p>Total earnings</p>
+				<p>{{data.invest_reward}}</p>
 			</div>
-			<div @click="$router.push('/funding/record')">
-				<img src="../img/user/details.png" alt="" />
-				<p>{{$t('user.fundingDetails')}}</p>
+			<div >
+				<p>Total assets</p>
+				<p>{{data.invest_sum}}</p>
 			</div>
-			<div @click="$router.push('/service')">
-				<img src="../img/user/kf.png" alt="" />
-				<p>{{$t('user.onlineService')}}</p>
+			<div >
+				<p>Total withdrawal</p>
+				<p>{{data.withdraw_sum}}</p>
+			</div>
+			<div >
+				<p>Total recharge</p>
+				<p>{{data.recharge_sum}}</p>
+			</div>
+			<div >
+				<p>Points </p>
+				<p>{{data.point}}</p>
+			</div>
+			<div >
+				<p>Today's earnings</p>
+				<p>{{data.day_invest_reward}}</p>
 			</div>
 		</div>
 		<div class="block_div list">
-			<van-cell is-link v-for="(item,index) in menus1" :key="index" @click="$router.push(item.url)">
-				<template #title>
-					<img :src="require('../img/'+item.logo)" alt="">
-					<span class="custom-title">{{item.title}}</span>
-				</template>
-			</van-cell>
+			<template v-for="(item,index) in menus1">
+				<van-cell v-if="item.url == 'signout'" :key="index" is-link @click="logout">
+					<template #title>
+						<van-icon name="revoke" style="font-size: 23px;margin-right: 6%;" />
+						<span class="custom-title">{{item.title}}</span>
+					</template>
+				</van-cell>
+				<van-cell v-else-if="item.url == 'download'" is-link @click="jump(data.version.url)">
+					<template #title>
+						<van-icon name="down" style="font-size: 23px;margin-right: 6%;" />
+						<span class="custom-title">{{item.title}}</span>
+					</template>
+				</van-cell>
+				<van-cell v-else is-link  @click="$router.push(item.url)">
+					<template #title>
+						<img :src="require('../img/'+item.logo)" alt="">
+						<span class="custom-title">{{item.title}}</span>
+					</template>
+				</van-cell>
+			</template>
 		</div>
 		<div class="block_div list">
-			<van-cell is-link v-for="(item,index) in menus2" :key="index" @click="$router.push(item.url)">
-				<template #title>
-					<img :src="require('../img/'+item.logo)" alt="">
-					<span class="custom-title">{{item.title}}</span>
-				</template>
-			</van-cell>
+			<template v-for="(item,index) in menus2">
+				<van-cell v-if="item.url == 'signout'" :key="index" is-link @click="logout">
+					<template #title>
+						<van-icon name="revoke" />
+						<span class="custom-title">{{item.title}}</span>
+					</template>
+				</van-cell>
+				<van-cell v-else is-link  @click="$router.push(item.url)">
+					<template #title>
+						<img :src="require('../img/'+item.logo)" alt="">
+						<span class="custom-title">{{item.title}}</span>
+					</template>
+				</van-cell>
+			</template>
+			
 		</div>
-		<button class="basic_btn logout_btn" @click="logout">{{$t('user.signOut')}}</button>
+		<!-- <button class="basic_btn logout_btn" @click="logout">{{$t('user.signOut')}}</button> -->
+		<van-popup v-model:show="show_share" position="bottom" closeable close-icon-position="top-left">
+			<div class="share_wrap">
+				<div class="share">
+					<div class="invite_friend">
+						<p></p>
+					</div>
+					<div class="share_code">
+						<!-- <img :src="data.share_code"> -->
+					</div>
+					<div class="invite_code flex_center">
+						<p>{{$t('user.invite_code')}}:</p>
+						<p class="code_link" v-clipboard="()=>data.invite_code" v-clipboard:success="copy">
+							{{data.invite_code}}
+							<img class="copy_img" src="../img/user/copy.png">
+						</p>
+					</div>
+					<div class="invite_code flex_center">
+						<p>{{$t('team.inviteLink')}}</p>
+						<div class="flex_center invite_link">
+							<p class="code_link" v-clipboard="()=>data.share_link" v-clipboard:success="copy">
+								{{data.share_link}}
+							</p>
+							<img class="copy_img" src="../img/user/copy.png">
+						</div>
+					</div>
+				</div>
+			</div>
+		</van-popup>
 	</div>
 </template>
 
@@ -105,10 +137,15 @@
 	import {
 		Icon,
 		Cell,
+		Popup,
+		Row,
+		Col,
+		Grid,
+		GridItem,
 		CellGroup
 	} from "vant";
 
-	Vue.use(Cell).use(CellGroup).use(Icon).use(Clipboard);
+	Vue.use(GridItem).use(Row).use(Col).use(Grid).use(Popup).use(Cell).use(CellGroup).use(Icon).use(Clipboard);
 
 	export default {
 		name: "user",
@@ -116,16 +153,25 @@
 		data() {
 			return {
 				currency: '',
-				menus1: [{
-						"title": this.$t('savings.savings'),
+				show_share:false,
+				menus1: [
+					// {
+					// 	"title": this.$t('savings.savings'),
+					// 	"value": '',
+					// 	"logo": "user/savings.png",
+					// 	"url": "/savings"
+					// },
+					// {
+					// 	"title": this.$t('user.vip'),
+					// 	"value": '',
+					// 	"logo": "user/vip.png",
+					// 	"url": "/vip"
+					// },
+					{
+						"title": this.$t('user.inviteRecord'),
 						"value": '',
-						"logo": "user/savings.png",
-						"url": "/savings"
-					},{
-						"title": this.$t('user.vip'),
-						"value": '',
-						"logo": "user/vip.png",
-						"url": "/vip"
+						"logo": "user/order.png",
+						"url": "/invest/record"
 					},
 					{
 						"title": this.$t('user.rewards'),
@@ -134,40 +180,34 @@
 						"url": "/rewards"
 					},
 					{
-						"title": this.$t('user.rechargeRecord'),
-						"value": '',
-						"logo": "user/recharge.png",
-						"url": "/recharge/record"
-					},
-					{
-						"title": this.$t('user.withdrawRecord'),
-						"value": '',
-						"logo": "user/cash.png",
-						"url": "/withdraw/record"
-					},
-					{
-						"title": this.$t('user.withdrawAccount'),
-						"value": '',
-						"logo": "user/moneybag.png",
-						"url": "/wallet"
-					},
-					{
-						"title": this.$t('user.certificationCenter'),
-						"value": '',
-						"logo": "user/auth1.png",
-						"url": "/auth"
-					},
-					{
-						"title": '红包',
-						"value": '',
-						"logo": "user/auth1.png",
-						"url": "/red_envelope"
-					},
-					{
-						"title": '收货地址',
+						"title": 'Address',
 						"value": '',
 						"logo": "user/auth1.png",
 						"url": "/address"
+					},
+					{
+						"title": 'Edit password',
+						"value": '',
+						"logo": "user/auth1.png",
+						"url": "/edit_password"
+					},
+					{
+						"title": this.$t('user.faq'),
+						"value": '',
+						"logo": "user/question.png",
+						"url": "/questions"
+					},
+					{
+						"title": this.$t('user.signOut'),
+						"value": '',
+						"logo": "signout",
+						"url": "signout"
+					},
+					{
+						"title": 'Download APP',
+						"value": '',
+						"logo": "download",
+						"url": "download"
 					}
 				],
 				menus2: [
@@ -181,18 +221,18 @@
 					// 	"logo": "user/secret.png",
 					// 	"url": "/language"
 					// },
-					{
-						"title": this.$t('user.languagePreference'),
-						"value": '',
-						"logo": "user/language.png",
-						"url": "/language"
-					},
-					{
-						"title": this.$t('user.faq'),
-						"value": '',
-						"logo": "user/question.png",
-						"url": "/questions"
-					}
+					// {
+					// 	"title": this.$t('user.languagePreference'),
+					// 	"value": '',
+					// 	"logo": "user/language.png",
+					// 	"url": "/language"
+					// },
+					// {
+					// 	"title": this.$t('user.faq'),
+					// 	"value": '',
+					// 	"logo": "user/question.png",
+					// 	"url": "/questions"
+					// }
 				],
 				data: {},
 				fundBalance: 0.00,
@@ -215,6 +255,14 @@
 		methods: {
 			copy() {
 				this.$toast(this.$t('recharge.copySuccess'));
+			},
+			jump(url) {
+				if (url.indexOf('http') == 0) {
+					console.log('http');
+					window.location.href = url;
+				} else {
+					this.$router.push(url);
+				}
 			},
 			showMsg() {
 				this.$dialog.alert({
@@ -264,6 +312,51 @@
 <style lang="less" scoped>
 	.user_wrap {
 		margin-bottom: 60px;
+	}
+
+	.share_wrap {
+		text-align: center;
+
+		.share {
+			margin-top: 6%;
+		}
+
+		.invite_code {
+			margin: 10px 20px 20px 20px;
+			justify-content: space-between;
+
+			.code_link {
+				color: #FF0000;
+				font-weight: bold;
+				overflow: hidden;
+				// white-space: nowrap;
+				text-overflow: ellipsis;
+				margin-left: -40%;
+			}
+
+			.invite_link {
+				max-width: 50%;
+			}
+
+			img {
+				width: 16px;
+				height: 16px;
+			}
+		}
+
+		.invite_friend {
+			padding: 10px;
+			font-size: 16px;
+			font-weight: bold;
+		}
+
+		.share_code {
+			margin-bottom: 20px;
+		}
+
+		img {
+			max-width: 60%;
+		}
 	}
 
 	.red_top_bg {
@@ -397,13 +490,22 @@
 		margin-bottom: 10px;
 		justify-content: space-between;
 		text-align: center;
+		flex-wrap: wrap !important;
+		top: -60px;
 
 		div {
-			width: 33.33%;
+			width: 50%;
 		}
 
-		p {
+		p:nth-child(1) {
 			margin-top: 8px;
+			font-size: 14px;
+		}
+		p:nth-child(2) {
+			margin-top: 10px;
+			font-size: 17px;
+			font-weight: 700;
+			color: cadetblue;
 		}
 
 		img {
@@ -462,7 +564,7 @@
 	}
 
 	.list {
-		margin-top: 10px;
+		margin-top: -55px;
 
 		img {
 			vertical-align: middle;

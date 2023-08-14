@@ -19,8 +19,8 @@
 						<div class="flex_center">
 							<p>{{$t('fundType.type'+item.fund_type)}}</p>
 							<p v-bind:class="{color_red: item.type==1,color_green: item.type==2}">
-								{{currency_symbol_basic}}{{precision_basic(item.money)}}<span class="currency"></span>
-							<br><span class="money_usd">≈ {{precision(item.money2)}} {{item.currency}}</span>
+								{{precision_basic(item.money)}}<span class="currency"></span>
+							<br><span class="money_usd">≈ {{precision(item.money2)}} USDT</span>
 							</p>
 						</div>
 					</div>

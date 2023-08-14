@@ -101,12 +101,12 @@ class RechargeRecord extends Controller
             // setUserMember($uid,$user_1['value']);
             
             //添加冻结金额
-            $info = Db::name('LcInfo')->find(1);
-            if($info['recharge_need_flow']){
-                setNumber('LcUser', 'frozen_money', $rechargeRecord['money'], 1, "id = $uid");
-            }
+            // $info = Db::name('LcInfo')->find(1);
+            // if($info['recharge_need_flow']){
+            //     setNumber('LcUser', 'frozen_money', $rechargeRecord['money'], 1, "id = $uid");
+            // }
             //团队充值奖励
-            setTemRechargeReward($uid,$rechargeRecord['money']);
+            // setTemRechargeReward($uid,$rechargeRecord['money']);
         }
         
         sysoplog('财务管理', '同意充值');

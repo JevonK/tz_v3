@@ -39,11 +39,23 @@ export default new Router({
             component: () =>
                 import(/* webpackChunkName: "home" */ "./views/user/index.vue")
         },
+        {
+            path: "/wallet_home",
+            name: "wallet_home",
+            component: () =>
+                import(/* webpackChunkName: "home" */ "./views/wallet/index.vue")
+        },
 		{
 		    path: "/service",
 		    name: "service",
 		    component: () =>
 		        import(/* webpackChunkName: "home" */ "./views/user/service.vue")
+		},
+		{
+		    path: "/edit_password",
+		    name: "edit_password",
+		    component: () =>
+		        import(/* webpackChunkName: "home" */ "./views/user/edit_password.vue")
 		},
 		{
 		    path: "/service/:code",

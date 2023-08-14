@@ -167,15 +167,15 @@ class Index extends Controller
             //提现笔数
             $this->withdraw_count = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 1")->count();
             //提现金额
-            $this->withdraw_sum = Db::name('LcUserWithdrawRecord')->where("status = 1")->sum('money');
+            $this->withdraw_sum = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 1")->sum('rr.money');
             //投资笔数
-            $this->invest_count = Db::name('LcInvest')->count();
+            $this->invest_count = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->count();
             //投资人数
-            $this->invest_user_count = Db::name('LcInvest')->group('uid')->count();
+            $this->invest_user_count = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->group('uid')->count();
             //投资金额
-            $this->invest_sum = Db::name('LcInvest')->sum('money');
+            $this->invest_sum = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->sum('rr.money');
             //投资收益
-            $this->invest_reward = Db::name('LcUserFunding')->where("type = 1 AND fund_type = 6")->sum('money');
+            $this->invest_reward = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.type = 1 AND rr.fund_type = 6")->sum('rr.money');
             //系统操作（增加）
             $funding_sys_1_sum = Db::name('LcUserFunding')->where("type = 1 AND fund_type = 1")->sum('money');
             //系统操作（减少）

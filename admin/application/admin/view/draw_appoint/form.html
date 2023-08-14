@@ -5,7 +5,7 @@
         <div class="layui-form-item layui-row layui-col-space15">
             <label class="layui-col-xs4 relative">
                 <span class="color-green">选择奖品</span>
-                <select class="layui-select" name="draw_prize_id" required>
+                <select class="layui-select" name="draw_prize_id" lay-search required>
                     {foreach $vo['prizes'] as $k=>$v}
                     <option value="{$v.id}">{$v.title_zh_cn}</option>
                     {/foreach}

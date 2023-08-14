@@ -8,16 +8,16 @@
 				:description="$t('withdraw.accountPlaceholder')" close-on-click-action @select="onSelect" />
 			<div class="block_div item">
 				<div class="">
-					<p class="withdraw_money_tips">红包码</p>
+					<p class="withdraw_money_tips">Red envelope code</p>
 					<div class="flex_center">
 						<van-field v-model="wallet.money" type="text"
-							:placeholder="'请输入红包领取码'" />
+							:placeholder="'Please enter the red envelope claim code'" />
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="basic_btn btn" :class="wallet.money?'':'no_touch'" @click="submit()">
-			领取
+			Receive
 		</div>
 	</div>
 </template>
@@ -75,13 +75,16 @@
 			changeAmount() {},
 			submit() {
 				if (this.wallet.money == "") {
-					this.$toast(this.$t('withdraw.amountEmpty'));
+					this.$toast("Please fill in the red envelope code");
 					return false;
 				}
 				Fetch('/user/red_envelope_redemption', {
 					'code' : this.wallet.money,
 				}).then(r => {
-					this.$router.replace('/user');
+					if (r.code == 1) {
+						this.$toast("Congratulations on winning:" + r.data.money);
+					}
+					// this.$router.replace('/user');
 				})
 			},
 			showMsg() {

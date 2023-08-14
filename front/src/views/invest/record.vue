@@ -24,8 +24,8 @@
 									value-class="value_class" :border="false" :value="item.rate+'%'" />
 								<van-cell :title="$t('invest.income')" value-class="value_class" :border="false"
 									:value="common.currency_symbol_basic()+common.precision_basic(item.total_interest)" />	
-								<van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
-									:value="$t('index.method'+item.type)" />
+								<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
+									:value="$t('index.method'+item.type)" /> -->
 								<van-cell :title="$t('invest.endTime')" value-class="value_class" :border="false"
 									:value="item.time2_actual" />
 							</van-cell-group>

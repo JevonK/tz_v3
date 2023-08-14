@@ -11,6 +11,7 @@ export default {
 		return localStorage.getItem('currency');
 	},
 	currency_symbol_basic(money) {
-		return localStorage.getItem('currency_symbol_basic');
+		// return localStorage.getItem('currency_symbol_basic');
+		return "";
 	}
 }

@@ -32,7 +32,7 @@
 				</div>
 			</div>
 			<div class="zp-num">
-				<span>{{$t('draw.draw_num')}}</span>
+				<span>{{$t('draw.drawNum')}}</span>
 				<span>{{draw_num}}</span>
 			</div>
 		</div>

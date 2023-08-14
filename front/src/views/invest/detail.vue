@@ -17,14 +17,16 @@
 						:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
 					<van-cell :title="$t('invest.amount')" value-class="value_class" :border="false"
 						:value="common.currency_symbol_basic()+common.precision_basic(item.min)" />
-					<van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
-						:value="$t('index.method'+item.type)" />
+					<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
+						:value="$t('index.method'+item.type)" /> -->
+					<van-cell :title="$t('invest.income')" value-class="value_class" :border="true" 
+						:value="common.currency_symbol_basic() + income " />
 				</van-cell-group>
 			</div>
 		</div>
 		
-		<div class="block_div proCharts" ref='charts'>
-		</div>
+		<!-- <div class="block_div proCharts" ref='charts'>
+		</div> -->
 		
 		<div class="block_div item_detail">
 			<div class="title">
@@ -34,7 +36,7 @@
 		</div>
 		<div class="btn-gr">
 			<div class="basic_btn btn" @click="showPopupClick(false)">
-				{{$t('invest.investBalance')}}
+				{{$t('invest.investBalance')}} 5%
 			</div>
 			<div class="basic_btn btn" @click="showPopupClick(true)">
 				{{$t('invest.investWithdrawal')}}
@@ -56,8 +58,8 @@
 							:value="common.currency_symbol_basic()+common.precision_basic(item.min)" />
 						<van-cell v-else :title="$t('invest.amount')" value-class="value_class" :border="false"
 							:value="common.currency_symbol_basic()+common.precision_basic(item.min*item.withdrawal_purchase/100)" />
-						<van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
-							:value="$t('index.method'+item.type)" />
+						<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
+							:value="$t('index.method'+item.type)" /> -->
 						<van-cell v-if="!is_withdrawal_purchase" v-show="user.login" :title="$t('invest.paymentType')" value-class="value_class"
 							:border="false"
 							:value="$t('user.fundingAccount')+' ('+common.currency_symbol_basic()+common.precision_basic(user.balance)+')'" />
@@ -136,7 +138,7 @@
 					this.item = r.data.item;
 					this.user = r.data.user;
 					this.change();
-					this.mycharts(this.item.k_x,this.item.k_y_12m);
+					// this.mycharts(this.item.k_x,this.item.k_y_12m);
 				})
 			},
 			change() {
@@ -158,10 +160,10 @@
 					this.$toast(this.$t('invest.investNum') + this.item.num + this.$t('utils.times' + times));
 					return false;
 				}
-				if (this.user.balance-this.item.min<0) {
-					this.$toast(this.$t('invest.moneyNotEnough'));
-					return false;
-				}
+				// if (this.user.balance-this.item.min<0) {
+				// 	this.$toast(this.$t('invest.moneyNotEnough'));
+				// 	return false;
+				// }
 				if (this.user.limit_today) {
 					this.$toast(this.$t('invest.investNumEmpty'));
 					return false;

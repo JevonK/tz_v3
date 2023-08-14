@@ -55,6 +55,9 @@
                 {if $vo.type == 3}
                 <span class="color-desc">未中奖</span>
                 {/if}
+                {if $vo.type == 4}
+                <span class="color-green">产品</span>
+                {/if}
             </td>
             <td class='text-center nowrap'>
                 {$vo.probability|default='--'}

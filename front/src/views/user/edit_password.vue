@@ -4,12 +4,14 @@
 			<div class="back_left" @click="$router.back()"></div>
 		</div>
 		<div class="withdraw_wrap">
+			<van-action-sheet v-model="show" :actions="wallets" cancel-text=""
+				:description="$t('withdraw.accountPlaceholder')" close-on-click-action @select="onSelect" />
 			<div class="block_div item">
 				<div class="">
-					<p class="withdraw_money_tips">Shipping address</p>
+					<p class="withdraw_money_tips">Change password</p>
 					<div class="flex_center">
-						<van-field v-model="wallet.money" type="text"
-							:placeholder="'Please enter the shipping address'" />
+						<van-field v-model="wallet.money" type="password"
+							:placeholder="'Please enter a new password'" />
 					</div>
 				</div>
 			</div>
@@ -86,11 +88,11 @@
 			changeAmount() {},
 			submit() {
 				if (this.wallet.money == "") {
-					this.$toast(this.$t('withdraw.amountEmpty'));
+					this.$toast("Please enter a new password");
 					return false;
 				}
-				Fetch('/user/add_address', {
-					'address' : this.wallet.money,
+				Fetch('/user/edit_password', {
+					'password' : this.wallet.money,
 				}).then(r => {
 					this.$router.replace('/user');
 				})

@@ -21,6 +21,15 @@
 					{{$t('home.team')}}
 				</p>
 			</router-link>
+			<router-link to="/wallet_home" class="footer_item" :class="show_icon_type === 'wallet' ? 'footer_item_active' : ''">
+				<span class="footer_icon " >
+					<van-icon v-if="show_icon_type === 'wallet'" name="bill" style="transform: scale(2.1); top: 8px; left: 7px;" />
+					<van-icon v-else name="bill-o" style="transform: scale(2.1); top: 8px; left: 7px; " />
+				</span>
+				<p class="footer_info">
+					{{$t('home.wallet')}}
+				</p>
+			</router-link>
 			<router-link to="/user" class="footer_item" :class="show_icon_type === 'user' ? 'footer_item_active' : ''">
 				<span class="footer_icon footer_icon_user" />
 				<p class="footer_info">

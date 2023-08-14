@@ -45,8 +45,9 @@
 	},
 	"home": {
 		"index": "Home",
-		"invest": "Invest",
+		"invest": "Product",
 		"team": "Team",
+		"wallet": "Wallet",
 		"my": "Account"
 	},
 	"index": {
@@ -63,7 +64,9 @@
 		"exchangeRate": "Today's exchange rate",
 		"notice": "Announcement",
 		"downApp": "App download",
-		"recommendedItem": "Recommendation"
+		"recommendedItem": "Recommendation",
+		"news" : "News Announcement"
+		
 	},
 	"invest": {
 		"info": "Project information",
@@ -94,7 +97,7 @@
 		"fundingTips": "All account funds are settled in US dollars, and then converted according to the current exchange rate. If the exchange rate fluctuates, the funds will fluctuate accordingly.",
 		"recharge": "Recharge",
 		"withdraw": "Withdraw",
-		"inviteRecord": "Investment records",
+		"inviteRecord": "My Product",
 		"fundingDetails": "Funding details",
 		"onlineService": "Online service",
 		"vip": "VIP center",
@@ -102,7 +105,7 @@
 		"rechargeRecord": "Recharge record",
 		"receive": "Receive",
 		"withdrawRecord": "Withdrawal record",
-		"withdrawAccount": "Withdrawal account",
+		"withdrawAccount": "Bank account",
 		"certificationCenter": "Certification center",
 		"languagePreference": "Language preferences",
 		"luckyDraw": "Lucky draw",

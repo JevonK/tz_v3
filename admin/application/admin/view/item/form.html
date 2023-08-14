@@ -52,7 +52,7 @@
             <label class="layui-col-xs2 relative">
                 <span class="color-green">还款类型</span>
                 <select class="layui-select" name="type" required>
-                    {foreach ['1'=>'每日付息到期还本','2'=>'到期还本付息（日）','3'=>'到期还本付息（时）'] as $k=>$v}
+                    {foreach ['1'=>'每日付息到期还本','2'=>'到期还本付息（日）','3'=>'到期还本付息（时）','4'=>'按日反息 到期不反本（日）'] as $k=>$v}
                     <!--{eq name='$vo.type' value='$k.""'}-->
                     <option selected value="{$k}">{$v}</option>
                     <!--{else}-->
@@ -86,6 +86,13 @@
                 <input name="day" required class="layui-input" placeholder="请输入周期（天）" value="{$vo.day|default=''}">
             </label>
             <label class="layui-col-xs1 relative">
+                <span class="color-green">不可领取设置</span></span>
+                <input type="checkbox" name="not_receive[]" <?php echo (in_array(1, $vo['not_receive']) ? 'checked' : ''); ?> value="1" title="周一到周五" lay-skin="primary">
+                <input type="checkbox" name="not_receive[]" <?php echo (in_array(2, $vo['not_receive']) ? 'checked' : ''); ?> value="2" title="周六" lay-skin="primary"> 
+                <input type="checkbox" name="not_receive[]" <?php echo (in_array(3, $vo['not_receive']) ? 'checked' : ''); ?> value="3" title="周日" lay-skin="primary"> 
+   
+            </label>
+            <label class="layui-col-xs1 relative">
                 <span class="color-green">投资金额</span>
                 <input name="min" required class="layui-input" placeholder="请输入最小投资金额" value="{$vo.min|default=''}">
             </label>
@@ -115,66 +122,10 @@
             </label>
         </div>
         <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（简体）</span>
-                <input name="title_zh_cn"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_zh_cn|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（繁体）</span>
-                <input name="title_zh_hk"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_zh_hk|default=''}">
-            </label>
+            
             <label class="layui-col-xs2 relative">
                 <span class="color-green">项目名称（英文）</span>
                 <input name="title_en_us"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_en_us|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（泰语）</span>
-                <input name="title_th_th"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_th_th|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（越南）</span>
-                <input name="title_vi_vn"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_vi_vn|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（日语）</span>
-                <input name="title_ja_jp"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_ja_jp|default=''}">
-            </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（韩语）</span>
-                <input name="title_ko_kr"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_ko_kr|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（马来）</span>
-                <input name="title_ms_my"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_ms_my|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（葡萄牙）</span>
-                <input name="title_pt_pt"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_pt_pt|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（西班牙）</span>
-                <input name="title_es_es"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_es_es|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（土耳其）</span>
-                <input name="title_tr_tr"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_tr_tr|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（印尼）</span>
-                <input name="title_id_id"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_id_id|default=''}">
-            </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（德语）</span>
-                <input name="title_de_de"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_de_de|default=''}">
-            </label>
-            <label class="layui-col-xs2 relative">
-                <span class="color-green">项目名称（法语）</span>
-                <input name="title_fr_fr"  class="layui-input" placeholder="请输入项目名称" value="{$vo.title_fr_fr|default=''}">
             </label>
         </div>
         <!--<div class="layui-form-item">-->
@@ -207,72 +158,8 @@
         </div>
         <div class="layui-form-item layui-row layui-col-space15">
             <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（简体）</span>
-                <textarea name="content_zh_cn">{$vo.content_zh_cn|default='简体'|raw}</textarea>
-            </label>
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（繁体）</span>
-                <textarea name="content_zh_hk">{$vo.content_zh_hk|default='繁体'|raw}</textarea>
-            </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs6 relative">
                 <span class="color-green">项目详情（英文）</span>
                 <textarea name="content_en_us">{$vo.content_en_us|default='英文'|raw}</textarea>
-            </label>
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（泰语）</span>
-                <textarea name="content_th_th">{$vo.content_th_th|default='泰语'|raw}</textarea>
-            </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（越南）</span>
-                <textarea name="content_vi_vn">{$vo.content_vi_vn|default='越南'|raw}</textarea>
-            </label>
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（日语）</span>
-                <textarea name="content_ja_jp">{$vo.content_ja_jp|default='日语'|raw}</textarea>
-            </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（韩语）</span>
-                <textarea name="content_ko_kr">{$vo.content_ko_kr|default='韩语'|raw}</textarea>
-            </label>
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（马来）</span>
-                <textarea name="content_ms_my">{$vo.content_ms_my|default='马来'|raw}</textarea>
-            </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（葡萄牙）</span>
-                <textarea name="content_pt_pt">{$vo.content_pt_pt|default='葡萄牙'|raw}</textarea>
-            </label>
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（西班牙）</span>
-                <textarea name="content_es_es">{$vo.content_es_es|default='西班牙'|raw}</textarea>
-            </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（土耳其）</span>
-                <textarea name="content_tr_tr">{$vo.content_tr_tr|default='土耳其'|raw}</textarea>
-            </label>
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（印尼）</span>
-                <textarea name="content_id_id">{$vo.content_id_id|default='印尼'|raw}</textarea>
-            </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（德语）</span>
-                <textarea name="content_de_de">{$vo.content_de_de|default='德语'|raw}</textarea>
-            </label>
-            <label class="layui-col-xs6 relative">
-                <span class="color-green">项目详情（法语）</span>
-                <textarea name="content_fr_fr">{$vo.content_fr_fr|default='法语'|raw}</textarea>
             </label>
         </div>
         <div class="layui-form-item text-center">
@@ -289,20 +176,20 @@
 <script>
     window.form.render();
     require(['ckeditor', 'angular'], function () {
-        window.createEditor('[name="content_zh_cn"]', {height: 100});
-        window.createEditor('[name="content_zh_hk"]', {height: 100});
+        // window.createEditor('[name="content_zh_cn"]', {height: 100});
+        // window.createEditor('[name="content_zh_hk"]', {height: 100});
         window.createEditor('[name="content_en_us"]', {height: 100});
-        window.createEditor('[name="content_th_th"]', {height: 100});
-        window.createEditor('[name="content_vi_vn"]', {height: 100});
-        window.createEditor('[name="content_ja_jp"]', {height: 100});
-        window.createEditor('[name="content_ko_kr"]', {height: 100});
-        window.createEditor('[name="content_ms_my"]', {height: 100});
-        window.createEditor('[name="content_pt_pt"]', {height: 100});
-        window.createEditor('[name="content_es_es"]', {height: 100});
-        window.createEditor('[name="content_tr_tr"]', {height: 100});
-        window.createEditor('[name="content_id_id"]', {height: 100});
-        window.createEditor('[name="content_de_de"]', {height: 100});
-        window.createEditor('[name="content_fr_fr"]', {height: 100});
+        // window.createEditor('[name="content_th_th"]', {height: 100});
+        // window.createEditor('[name="content_vi_vn"]', {height: 100});
+        // window.createEditor('[name="content_ja_jp"]', {height: 100});
+        // window.createEditor('[name="content_ko_kr"]', {height: 100});
+        // window.createEditor('[name="content_ms_my"]', {height: 100});
+        // window.createEditor('[name="content_pt_pt"]', {height: 100});
+        // window.createEditor('[name="content_es_es"]', {height: 100});
+        // window.createEditor('[name="content_tr_tr"]', {height: 100});
+        // window.createEditor('[name="content_id_id"]', {height: 100});
+        // window.createEditor('[name="content_de_de"]', {height: 100});
+        // window.createEditor('[name="content_fr_fr"]', {height: 100});
         var app = angular.module("GoodsForm", []).run(callback);
         angular.bootstrap(document.getElementById(app.name), [app.name]);
 
@@ -314,6 +201,6 @@
             };
         }
 
-    })
+    }) 
 </script>
 {/block}

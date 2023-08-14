@@ -69,7 +69,8 @@ class User extends Controller
         }
         
         $user = Db::name("LcUser")->find($uid);
-        $uname = substr($user['username'],0,2).'***'.substr($user['username'],strlen($user['username'])-2,strlen($user['username']));
+        // $uname = substr($user['username'],0,2).'***'.substr($user['username'],strlen($user['username'])-2,strlen($user['username']));
+        $uname = $user['username'];
         $currency = Db::name('LcCurrency')->where(['country' => $language])->find();
         $member = Db::name("LcUserMember")->find($user['mid']);
         
@@ -80,6 +81,28 @@ class User extends Controller
         $signin_today = Db::name('LcUserSignin')->where("time >= '$today' AND time <= '$now' AND uid = '{$uid}'")->select();
         //判断今日是否奖励
         if(empty($signin_today)) $signin = false;
+
+        $version = Db::name('LcVersion')->field("app_name as name ,down_url as url , app_logo as logo,show")->find(1);
+
+        $qrCode = new QrCode();
+        $qrCode->setText(getInfo('domain') . '/#/register?code=' . $user['invite_code']);
+        $qrCode->setSize(300);
+        $shareCode = $qrCode->getDataUri();
+        $shareLink = getInfo('domain') . '/#/register?code=' . $user['invite_code'];
+
+        //充值金额
+        $recharge_sum = Db::name('LcUserRechargeRecord')->where('uid', $uid)->where("status = 1")->sum('money');
+        //提现金额
+        $withdraw_sum = Db::name('LcUserWithdrawRecord')->where('uid', $uid)->where("status = 1")->sum('money');
+        // 總資產
+        $invest_sum = Db::name('LcInvest')->where('uid', $uid)->where("status = 0")->sum('money');
+        //投资收益
+        $invest_reward = Db::name('LcUserFunding')->where('uid', $uid)->where("type = 1 AND fund_type = 6")->sum('money');
+        // 今日收益
+        $now = date('Y-m-d H:i:s');//现在
+        $today = date('Y-m-d 00:00:00');//今天0点
+        $day_invest_reward = Db::name('LcUserFunding')->where('uid', $uid)->where("time BETWEEN '$today' AND '$now' AND type = 1 AND fund_type = 6")->sum('money');
+
         
         $data = array(
             "username" => $uname,
@@ -93,11 +116,20 @@ class User extends Controller
             "withdrawable" => $user['withdrawable'],
             "integral" => $user['integral'],
             "point" => $user['point'],
+            "recharge_sum" => $recharge_sum,
+            "withdraw_sum" => $withdraw_sum,
+            "invest_sum" => $invest_sum,
+            "invest_reward" => $invest_reward,
+            "day_invest_reward" => $day_invest_reward,
             "address" => $user['address'],
             "invite_code" => $user['invite_code'],
             "user_icon" => getInfo('user_img'),
             "vip_name" => $member['name'],
+            "vip_img" => $member['logo'],
+            "share_code" => $shareCode,
+            "share_link" => $shareLink,
             "signin" => $signin,
+            "version" => $version,
         );
         
         
@@ -1066,7 +1098,8 @@ class User extends Controller
         $this->checkToken($language);
         $uid = $this->userInfo['id'];
         $user = Db::name("LcUser")->find($uid);
-        $uname = substr($user['username'],0,2).'***'.substr($user['username'],strlen($user['username'])-2,strlen($user['username']));
+        // $uname = substr($user['username'],0,2).'***'.substr($user['username'],strlen($user['username'])-2,strlen($user['username']));
+        $uname = $user['username'];
         
         //时区转换，按当前用户时区统计
         $time_zone = getTimezoneByLanguage($language);
@@ -1091,6 +1124,8 @@ class User extends Controller
         $qrCode->setSize(300);
         $shareCode = $qrCode->getDataUri();
         $shareLink = getInfo('domain') . '/#/register?code=' . $user['invite_code'];
+
+        $vip = Db::name("LcUserMember")->where("id={$user['mid']}")->find();
         
         $user_info = array(
             "username" => $uname,
@@ -1100,6 +1135,7 @@ class User extends Controller
             "invite_code" => $user['invite_code'],
             "user_icon" => getInfo('user_img'),
             "share_code" => $shareCode,
+            "vip_img" => $vip['logo'],
             "share_link" => $shareLink
         );
         $report = array(
@@ -1135,9 +1171,10 @@ class User extends Controller
         
         $page = $params["page"];
         $listRows = $params["listRows"];
+        $level = $params["level"];
         
-        $list = Db::name('LcUser u,lc_user_relation ur')->field('u.id,u.username,u.act_time,ur.level')->where("ur.parentid = $uid AND ur.uid = u.id")->order("u.act_time desc")->page($page,$listRows)->select();
-        $length = Db::name('LcUser u,lc_user_relation ur')->where("ur.parentid = $uid AND ur.uid = u.id")->order("u.act_time desc")->count();
+        $list = Db::name('LcUser u,lc_user_relation ur,lc_user_member um')->field('u.id,u.username,u.act_time,ur.level,um.logo')->where("ur.parentid = $uid and ur.level=$level and um.id=u.mid AND ur.uid = u.id")->order("u.act_time desc")->page($page,$listRows)->select();
+        $length = Db::name('LcUser u,lc_user_relation ur')->where("ur.parentid = $uid and ur.level=$level AND ur.uid = u.id")->order("u.act_time desc")->count();
         
         foreach ($list as &$user) {
             $uid2 = $user['id'];
@@ -1298,17 +1335,17 @@ class User extends Controller
 
         // 判断vip等级是否满足
         if ($user['mid'] < $item['vip_level']) {
-            $this->error('vip等级不满足',"",218);
+            $this->error('vip level not met',"",218);
         }
 
         // 判断积分是否足够
-        if (!empty($item['need_integral']) && $item['need_integral'] > $user['point'] && !$params['is_withdrawal_purchase']) {
-            $this->error('积分不够',"",218);
-        }
+        // if (!empty($item['need_integral']) && $item['need_integral'] > $user['point'] && !$params['is_withdrawal_purchase']) {
+        //     $this->error('Insufficient points',"",218);
+        // }
 
         // 判断项目是否上架
         if (empty($item['show'])) {
-            $this->error('没有上架',"",218);
+            $this->error('Not listed',"",218);
         }
         
          $money_usd = $item['min'];
@@ -1375,6 +1412,7 @@ class User extends Controller
             "day" =>$item['day'],
             "rate" =>$item['rate'],
             "type" =>$item['type'],
+            "not_receive" =>$item['not_receive'],
             "is_distribution" =>$item['is_distribution'],
             "currency" =>$currency,
             "time_zone" =>$time_zone,
@@ -1555,6 +1593,15 @@ class User extends Controller
         
         $list = Db::name('LcInvest')->field("id,itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual,time,time2,total_num,wait_num,pause_time")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
         $length = Db::name('LcInvest')->where("uid = $uid")->count();
+        $w = date("w");//获取星期几;
+        $is_w = 0;
+        if (in_array($w, [1,2,3,4,5])) {
+            $is_w = 1;
+        } else if($w == 6) {
+            $is_w = 2;
+        } else if($w == 0) {
+            $is_w = 3;
+        }
         
         foreach ($list as &$invest) {
             $invest['is_receive'] = date('Y-m-d H:i:s') > $invest['time2'] ? 1 : 0;
@@ -1572,6 +1619,10 @@ class User extends Controller
                 }
             }
             if ($invest['status'] == 1) {
+                $invest['is_receive'] = 0;
+            }
+            $invest['not_receive'] = empty($invest['not_receive']) ? [] : json_decode($invest['not_receive']);
+            if(in_array($is_w, $invest['not_receive'])) {
                 $invest['is_receive'] = 0;
             }
             $invest['title'] = "--";
@@ -1650,10 +1701,10 @@ class User extends Controller
         // 是否存在必中
         $draw_appoint  = Db::table('lc_draw_appoint')->where('uid', $uid)->whereNull('use_time')->find();
         if ($draw_appoint) {
-            $draw = Db::name('LcDrawPrize')->where('id', $draw_appoint['draw_prize_id'])->field("id,title_$language as title,img,type,probability,money")->find();
+            $draw = Db::name('LcDrawPrize')->where('id', $draw_appoint['draw_prize_id'])->field("id,title_$language as title,img,type,probability,money,item_id")->find();
             Db::table('lc_draw_appoint')->where('id', $draw_appoint['id'])->update(['time_zone' => $time_zone, 'act_use_time' => $act_time, 'use_time' => $time]);
         }else {
-            $prizeList  = Db::name('LcDrawPrize')->field("id,title_$language as title,img,type,probability,money")->order('sort asc,id desc')->select();
+            $prizeList  = Db::name('LcDrawPrize')->field("id,title_$language as title,img,type,probability,money,item_id")->order('sort asc,id desc')->select();
 
             //概率算法
             $list = [];
@@ -1688,6 +1739,48 @@ class User extends Controller
             if(getInfo('recharge_need_flow')){
                 setNumber('LcUser', 'frozen_money', $draw['money'], 1, "id = $uid");
             }
+        }
+
+        if ($draw['type'] == 4) {
+            //时区转换
+            $item = Db::name('LcItem')->find($draw['item_id']);
+            $money_usd = $item['min'];
+            $time = date('Y-m-d H:i:s');
+            $time_zone = getTimezoneByLanguage($language);
+            $time_actual = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+            $currency = getCurrencyByLanguage($language);
+        
+            $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' day'));
+            $total_interest = $money_usd * $item['rate'] / 100;
+            $total_num = 1;
+            $time2_actual = dateTimeChangeByZone($time2, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+            $orderNo = 'ST' . date('YmdHis') . rand(1000, 9999) . rand(100, 999);
+            //添加投资记录
+            $insert = array(
+                "uid" =>$uid,
+                "itemid" =>$item['id'],
+                "orderNo" =>$orderNo,
+                "money" =>$item['min'],
+                "money2" =>$money_usd,
+                "total_interest" =>$total_interest,
+                "wait_interest" =>$total_interest,
+                "total_num" =>$total_num,
+                "wait_num" =>$total_num,
+                "day" =>$item['day'],
+                "rate" =>$item['rate'],
+                "type" =>$item['type'],
+                "is_draw" => 1,
+                "not_receive" =>$item['not_receive'],
+                "is_distribution" =>$item['is_distribution'],
+                "currency" =>$currency,
+                "time_zone" =>$time_zone,
+                "time" =>$time,
+                "time_actual" =>$time_actual,
+                "time2" =>$time2,
+                "time2_actual" =>$time2_actual,
+            );
+            
+            Db::name('LcInvest')->insertGetId($insert);
         }
         
         $data = array(
@@ -2116,6 +2209,7 @@ class User extends Controller
         $now = date('Y-m-d H:i:s');
         $invest_list1 = [];
         $invest_list2 = [];
+        $invest_list3 = [];
         $savings_list1 = [];
         switch ($type) {
             case 1:
@@ -2129,6 +2223,10 @@ class User extends Controller
             case 3:
                 //储蓄金定期
                 $savings_list1 = Db::name("LcSavingsSubscribe")->where("id = $id and type=2 AND status = 0")->select();
+                break;
+            case 4:
+                //按日反息 到期不反本（日）
+                $invest_list3 = Db::name("LcInvest")->where("id = $id and type=4 AND status = 0")->select();
                 break;
         }
         if (empty($invest_list1)&&empty($invest_list2)&&empty($savings_list1)) $this->error('error');
@@ -2190,9 +2288,11 @@ class User extends Controller
             //最后一期
             if($v['wait_num']==1){
                 Db::name('LcInvest')->where('id', $v['id'])->update(['status' => 1,'wait_num' => 0,'wait_interest' => 0]);
-                //返还本金
-                addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
-                setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
+                if($v['is_draw'] != 1) {
+                    //返还本金
+                    addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
+                    setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
+                }
                 
             }else{
                 $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . $wait_day . ' day'));
@@ -2252,12 +2352,90 @@ class User extends Controller
             setNumber('LcUser', 'withdrawable', $total_interest, 1, "id = {$v['uid']}");
             
             //本金
-            addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
-            setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
+            if($v['is_draw'] != 1) {
+                addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
+                setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
+            }
             
             
             //添加收益
             setNumber('LcUser', 'income', $total_interest, 1, "id = {$v['uid']}");
+            
+            $noInvest = false;
+        }
+        //按日反息 到期不反本（日）
+        foreach ($invest_list3 as $k => $v) {
+            // 判断是否隔天没有领取
+            $wait_day = 0;
+            $Date_1=date("Y-m-d");
+            $Date_2=date("Y-m-d", strtotime($v['time']));
+            $d1=strtotime($Date_1);
+            $d2=strtotime($Date_2);
+            $day_diff=round(($d1-$d2)/3600/24);
+            if (!empty($day_diff)) {
+                $wait_day = $day_diff - ($v['total_num'] - $v['wait_num']) - 1;
+            }
+            
+            //判断返还时间
+            $return_num = $v['wait_num'] - 1;
+            $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*$wait_day)));
+            if($return_time > $now && empty($wait_day)) continue;
+            
+            $time_zone = $v['time_zone'];
+            $language = getLanguageByTimezone($time_zone);
+            
+            $money = $v['money'];
+            //每日利息=总利息/总期数
+            $day_interest = $v['total_interest']/$v['total_num'];
+
+            // 添加返利
+            if ($v['is_distribution']) {
+                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
+                $fusers = array_reverse($fusers); 
+                foreach($fusers as $key => $val) {
+                    $level = '';
+                    switch ($key) {
+                        case 1:
+                            $level = $val['level_b'];
+                            break;
+                        case 2:
+                            $level = $val['level_c'];
+                            break;
+                        case 3:
+                            $level = $val['level_d'];
+                            break;
+                        
+                    }
+                    $interest_rate = floor($day_interest*$level*100) / 100;
+                    // 添加收益
+                    setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
+                    // 添加总收益
+                    setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
+                    //流水添加
+                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,19,$language);
+                }
+            }
+            
+            
+            //最后一期
+            if($v['wait_num']==1){
+                // Db::name('LcInvest')->where('id', $v['id'])->update(['status' => 1,'wait_num' => 0,'wait_interest' => 0]);
+                // //返还本金
+                // addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
+                // setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
+                
+            }else{
+                $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . $wait_day . ' day'));
+                $time = date('Y-m-d H:i:s', strtotime($v['time'].'+' . $wait_day . ' day'));
+                Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time' => $time, 'time2' => $time2, 'time2_actual' => $time2]);
+            }
+            
+            //利息
+            addFunding($v['uid'],$day_interest,changeMoneyByLanguage($day_interest,$language),1,6,$language, 2);
+            setNumber('LcUser', 'withdrawable', $day_interest, 1, "id = {$v['uid']}");
+            
+            //添加收益
+            setNumber('LcUser', 'income', $day_interest, 1, "id = {$v['uid']}");
             
             $noInvest = false;
         }
@@ -2370,7 +2548,7 @@ class User extends Controller
             'time' => $time
         ];
         Db::table('lc_red_envelope_record')->insert($record_data);
-        $this->success('success');
+        $this->success('success',['money' => $money]);
     }
 
     // 随机红包处理
@@ -2403,6 +2581,17 @@ class User extends Controller
         $this->checkToken($language);
         $uid = $this->userInfo['id'];
         Db::name('LcUser')->where("id=$uid")->update(['address' => $address]);
+        $this->success('success');
+    }
+
+    // 添加收货地址
+    public function edit_password() {
+        $params = $this->request->param();
+        $language = $params["language"];
+        $password = $params["password"];
+        $this->checkToken($language);
+        $uid = $this->userInfo['id'];
+        Db::name('LcUser')->where("id=$uid")->update(['password' => md5($password)]);
         $this->success('success');
     }
 }

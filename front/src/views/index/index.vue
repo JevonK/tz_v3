@@ -5,9 +5,9 @@
 			<div class="logo">
 				<img :src="logo">
 			</div>
-			<div class="language" @click="$router.push('/language')">
+			<!-- <div class="language" @click="$router.push('/language')">
 				<img :src="language_logo">
-			</div>
+			</div> -->
 		</div>
 		<!-- 轮播图 -->
 		<div class="swiper_container">
@@ -22,7 +22,7 @@
 			<van-notice-bar background="#FFFFFF" left-icon="volume-o" :text="notice.title" />
 		</div>
 		<!-- 快捷菜单 -->
-		<div class="block_div  work_box">
+		<!-- <div class="block_div  work_box">
 			<div class="flex_center">
 				<div v-for="(item,index) in menus" class="item" @click='jump(item.url)'>
 					<div class="item_img"><img :src="require('../img/'+item.logo)" alt=""></div>
@@ -35,9 +35,9 @@
 					<p class="item_title">{{item.title}}</p>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<!-- 货币价格 -->
-		<div class="currency_tips">
+		<!-- <div class="currency_tips">
 			{{$t('index.exchangeRate')}}
 		</div>
 		<div class="block_div currency_wrap">
@@ -59,14 +59,26 @@
 					</div>
 				</van-swipe-item>
 			</van-swipe>
-		</div>
+		</div> -->
 
 		<!-- 项目列表 -->
 		<div class="currency_tips">
 			{{$t('index.recommendedItem')}}
+			<span class="see-more" @click="$router.push('/invest')">See more >></span>
 		</div>
+		
 		<div class="items">
-			<div v-for="(item,index) in items" class="block_div item"
+			  <van-grid :border="false" :column-num="3" gutter="10">
+				<van-grid-item v-for="(item,index) in items" v-if="index < 3">
+				  <van-image
+				  height="80"
+					:src="item.img2"
+				  />
+				  <p class="grid-title">{{item.title}}</p>
+				  <p class="grid-price">{{common.currency_symbol_basic()}}{{common.precision_basic(item.min)}}</p>
+				</van-grid-item>
+			  </van-grid>
+			<!-- <div v-for="(item,index) in items" class="block_div item"
 				@click="$router.push('/invest/detail/'+item.id)">
 				<div class="logo">
 					<img v-lazy="item.img2" />
@@ -82,7 +94,21 @@
 						<div><span class="detail_name">{{$t('invest.income')}}</span><span class="detail_num">{{common.currency_symbol_basic()}}{{change(item)}}</span></div>
 					</div>
 				</div>
-			</div>
+			</div> -->
+		</div>
+		<!-- 新聞 -->
+		<div class="currency_tips">
+			{{$t('index.news')}}
+		</div>
+		
+		<div class="items">
+			<van-card
+				v-for="(item, index) in news"
+				@click="$router.push('/article/'+item.id)"
+				:desc="item.title_en_us"
+				:title="item.time"
+				:thumb="item.img2"
+				/>
 		</div>
 		<!-- APP -->
 		<div v-if="!isApp&&app.show" id="download_app" class="flex_center">
@@ -121,15 +147,20 @@
 		Swipe,
 		SwipeItem,
 		Progress,
+		Grid,
+		GridItem,
+		Card,
 		Dialog,
 		Field,
 		Popup,
 		NoticeBar,
 		Lazyload,
-		Search
+		Image,
+		Search,
+		Icon
 	} from "vant";
 
-	Vue.use(Progress).use(Dialog).use(Field).use(Popup).use(NoticeBar).use(Lazyload).use(Search);
+	Vue.use(Icon).use(Card).use(Image).use(Grid).use(GridItem).use(Progress).use(Dialog).use(Field).use(Popup).use(NoticeBar).use(Lazyload).use(Search);
 
 	export default {
 		name: "Index",
@@ -182,6 +213,7 @@
 				banners: [],
 				items: [],
 				langs: [],
+				news: [],
 				isApp: true,
 				app: {
 					"show": false,
@@ -253,6 +285,7 @@
 					this.notice = r.data.notice;
 					this.langs = r.data.langs;
 					this.items = r.data.items;
+					this.news = r.data.news;
 					this.loading = true;
 
 					this.app = r.data.version;
@@ -282,6 +315,12 @@
 <style lang="less" scoped>
 	.home_wrap {
 		margin-bottom: 60px;
+	}
+	.see-more {
+		float: right;
+		margin-right: 20px;
+		text-decoration: underline;
+		color: #0F6EFF;
 	}
 
 	.red_top_bg {
@@ -504,5 +543,13 @@
 	}
 	/deep/.van-notice-bar{
 		border-radius:  0 0 5px 5px;
+	}
+	.grid-title {
+		font-size: 16px;
+		padding: 10px;
+	}
+	.grid-price {
+		font-size: 16px;
+		color: #ed6a0c;
 	}
 </style>

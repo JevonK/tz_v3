@@ -3,16 +3,16 @@
 		<div class="back_left" @click="$router.back()">
 			<img src="../img/common/back_b.png">
 		</div>
-		<div class="language" @click="$router.push('/language')">
+		<!-- <div class="language" @click="$router.push('/language')">
 			<img :src="language_logo">
-		</div>
+		</div> -->
 		<div class="logo">
 			<img :src="config.logo" />
 		</div>
 		<div class="form_div">
 			<form class="form">
 				<div v-if="!config.register_phone" class="item">
-					<input v-model.trim="data.username" type="text" class="inp" :placeholder="$t('login.username')">
+					<input v-model.trim="data.username" type="text" class="inp" :placeholder="$t('login.phone')">
 				</div>
 				<div v-if="config.register_phone" class="item">
 					<input v-model.trim="data.username" type="number" class="inp" :placeholder="$t('login.phone')">

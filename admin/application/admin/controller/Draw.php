@@ -57,6 +57,9 @@ class Draw extends Controller
     protected function _form_filter(&$vo){
         if ($this->request->isGet()) {
             if(!isset($vo['type'])) $vo['type'] = '3';
+            if(!isset($vo['item_id'])) $vo['item_id'] = '';
+            $this->items = Db::name('LcItem')->select();
+            // var_dump($vo);die;
         }
     }
 

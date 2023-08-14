@@ -33,7 +33,7 @@ export const hideLoading = () => {
 let ssid = localStorage.getItem('ssid');
 
 export default async (url, data, opt, isLoad = true) => {
-	let lang = localStorage.getItem("lang") || "en_us";
+	let lang = "en_us";
 
 	if (isLoad) {
 		showLoading();
@@ -44,8 +44,9 @@ export default async (url, data, opt, isLoad = true) => {
 		method: 'post',
 		...opt
 	};
+	localStorage.setItem('lang',lang)
 	var token = localStorage.getItem('token');
-	var language = localStorage.getItem("lang") || "en_us";
+	var language = "en_us";
 	return (set.method === 'post' ? axios.post(url, {
 		...data,
 		token,

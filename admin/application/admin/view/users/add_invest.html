@@ -5,7 +5,7 @@
                 <span class="color-green">选择项目</span>
                 <select class="layui-select" name="item_id" required>
                     {foreach $vo['projects'] as $k=>$v}
-                    <option value="{$v.id}">{$v.title_zh_cn}</option>
+                    <option value="{$v.id}">{$v.title_en_us}</option>
                     {/foreach}
                 </select>
             </label>

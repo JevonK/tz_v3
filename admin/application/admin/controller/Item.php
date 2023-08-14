@@ -117,10 +117,15 @@ class Item extends Controller
             $vo['index_type'] = isset($vo['index_type'])?$vo['index_type']:1;
             $vo['show'] = isset($vo['show'])?$vo['show']:1;
             $vo['type'] = isset($vo['type'])?$vo['type']:1;
+            $vo['is_distribution'] = isset($vo['is_distribution'])?$vo['is_distribution']:0;
             if (empty($vo['class']) && $this->request->get('class', '0')) $vo['class'] = $this->request->get('class', '0');
             $this->class = Db::name("LcItemClass")->order('id asc')->select();
             $this->class = Data::arr2table($this->class);
             $this->viplists = Db::name("LcUserMember")->select();
+            $vo['not_receive'] = empty($vo['not_receive']) ? [] : json_decode($vo['not_receive']);
+        }
+        if ($this->request->isPost()) {
+            $vo['not_receive'] = isset($vo['not_receive']) ? json_encode($vo['not_receive']) : '[]';
         }
         if (empty($vo['add_time'])) $vo['add_time'] = date("Y-m-d H:i:s");
     }

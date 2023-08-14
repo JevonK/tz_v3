@@ -106,6 +106,8 @@ class Index extends Controller
         $langs = Db::name('LcCurrency')->field("logo,symbol,price")->where(['show' => 1])->order('sort asc,id desc')->select();
         
         $items = Db::name('LcItem')->field("title_$language as title,img2,min,day,rate,id,type")->where(['show' => 1])->order('sort asc,id desc')->limit(10)->select();
+
+        $news = Db::name('LcArticle')->where("type=13 and `show`=1")->select();
         // foreach ($items as &$item) {
         //     $item['min'] = changeMoneyByLanguage($item['min'],$language);
         //     $item['max'] = changeMoneyByLanguage($item['max'],$language);
@@ -117,6 +119,7 @@ class Index extends Controller
             'popup' => $popup,
             'items' => $items,
             'langs' => $langs,
+            'news'  => $news,
             "version" => $version
         );
         $this->success("success", $data);

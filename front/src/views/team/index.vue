@@ -9,12 +9,13 @@
 					<div class="user_name">
 						<div class="user_all">
 							<p class="user_nickname">{{user_info.username}}</p>
+							<p v-if="user_info.vip_img"><img :src="user_info.vip_img" style="width: 60px;" alt="" srcset=""></p>
 						</div>
 					</div>
 				</div>
 				<div class="invite_code">
 					<p class="invite_tips">{{$t('user.invite_code')}}</p>
-					<div class="flex_center copy" v-clipboard="()=>user_info.invite_code" v-clipboard:success="copy">
+					<div class="flex_center copy" @click="show_share = true">
 						<p>{{user_info.invite_code}}</p>
 						<img class="copy_img" src="../img/user/copy.png">
 					</div>
@@ -60,21 +61,29 @@
 			<div class="team_list_title">
 				{{$t('team.teamList')}}
 			</div>
+			<van-tabs v-model:active="active" @change="onChangeTab">
+				<van-tab title="B"></van-tab>
+				<van-tab title="C"></van-tab>
+				<van-tab title="D"></van-tab>
+			</van-tabs>
 			<div class="list_item">
 				<van-list v-model="loading" offset="0" :finished="finished"  @load="onLoad">
 					<div class="item" v-for="(item,index) in list">
 						<div class="flex_center">
 							<p>{{item.act_time}}</p>
-							<p v-if="item.level==1" class="color_red">{{$t('team.direct')}}</p>
-							<p v-if="item.level!=1">{{$t('team.indirect')}}</p>
+							<!-- <p v-if="item.level==1" class="color_red">{{$t('team.direct')}}</p>
+							<p v-if="item.level!=1">{{$t('team.indirect')}}</p> -->
 						</div>
 						<div class="flex_center">
-							<p>{{item.username}}</p>
-							<p>{{common.currency_symbol_basic()+common.precision_basic(item.recharge_sum)}}</p>
+							<p>
+								{{item.username}}
+								<img :src="item.logo" style="position: relative;top: 5px;width: 55px;" alt="" srcset="">
+							</p>
+							<!-- <p>{{common.currency_symbol_basic()+common.precision_basic(item.recharge_sum)}}</p> -->
 						</div>
 						<div class="flex_center">
 							<p>{{$t('team.username')}}</p>
-							<p>{{$t('team.totalRecharge')}}</p>
+							<!-- <p>{{$t('team.totalRecharge')}}</p> -->
 						</div>
 					</div>
 				</van-list>
@@ -110,9 +119,9 @@
 			</div>
 		</van-popup>
 		<!-- 客服图标 -->
-		<div class="kefu share_btn" @click="show_share = true;">
+		<!-- <div class="kefu share_btn" @click="show_share = true;">
 			<img class="kefu_img" src="../img/user/share.png">
-		</div>
+		</div> -->
 	</div>
 </template>
 
@@ -124,15 +133,17 @@
 		Icon,
 		List,
 		Empty,
+		Tab, Tabs,
 		Popup
 	} from "vant";
 
-	Vue.use(Icon).use(Clipboard).use(List).use(Empty).use(Popup);
+	Vue.use(Tab).use(Tabs).use(Icon).use(Clipboard).use(List).use(Empty).use(Popup);
 	export default {
 		name: "team",
 		data() {
 			return {
 				user_info: [],
+				active: 0,
 				report: {
 					"direct_count": 0,
 					"indirect_count": 0,
@@ -149,7 +160,8 @@
 				finished: false,
 				list: [],
 				page: 1,
-				listRows: 8
+				listRows: 8,
+				tab_value: 1
 			};
 		},
 		created() {
@@ -176,7 +188,8 @@
 			onLoad() {
 				Fetch('/user/teamList', {
 					page: this.page,
-					listRows: this.listRows
+					listRows: this.listRows,
+					level: (this.active + 1)
 				}).then(r => {
 					if (r.data.length == 0) this.empty = true;
 					var list = r.data.list;
@@ -190,7 +203,13 @@
 					this.page = this.page + 1;
 					this.loading = false;
 				});
-			}
+			},
+			onChangeTab() {
+				this.page = 1;
+				this.loading = true;
+				this.list = [];
+				this.onLoad();
+			},
 		}
 	};
 </script>
@@ -517,8 +536,9 @@
 				color: #FF0000;
 				font-weight: bold;
 				overflow: hidden;
-				white-space: nowrap;
+				// white-space: nowrap;
 				text-overflow: ellipsis;
+				margin-left: -40%;
 			}
 
 			.invite_link {
