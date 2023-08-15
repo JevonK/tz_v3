@@ -1388,7 +1388,7 @@ class User extends Controller
             $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' hour'));
         }
         //每日付息到期还本
-        elseif($item['type']==1){
+        elseif($item['type']==1 || $item['type'] == 4){
             //日利率
             $total_interest = $money_usd * $item['rate'] * $item['day'] / 100;
             //返息期数
@@ -1607,9 +1607,9 @@ class User extends Controller
             $invest['is_receive'] = date('Y-m-d H:i:s') > $invest['time2'] ? 1 : 0;
             $item = Db::name('LcItem')->find($invest['itemid']);
             // 判断是否有领取
-            if ($invest['type'] == 1) {
+            if ($invest['type'] == 1 || $invest['type'] == 4) {
                 $Date_1=date("Y-m-d");
-                $Date_2=date("Y-m-d", strtotime($invest['time']));
+                $Date_2=date("Y-m-d", strtotime($invest['time_actual']));
                 $d1=strtotime($Date_1);
                 $d2=strtotime($Date_2);
                 $day_diff=round(($d1-$d2)/3600/24);
@@ -2229,14 +2229,14 @@ class User extends Controller
                 $invest_list3 = Db::name("LcInvest")->where("id = $id and type=4 AND status = 0")->select();
                 break;
         }
-        if (empty($invest_list1)&&empty($invest_list2)&&empty($savings_list1)) $this->error('error');
+        if (empty($invest_list1)&&empty($invest_list2)&&empty($invest_list3)&&empty($savings_list1)) $this->error('error');
         
         //每日付息到期还本处理
         foreach ($invest_list1 as $k => $v) {
             // 判断是否隔天没有领取
             $wait_day = 0;
             $Date_1=date("Y-m-d");
-            $Date_2=date("Y-m-d", strtotime($v['time']));
+            $Date_2=date("Y-m-d", strtotime($v['time_actual']));
             $d1=strtotime($Date_1);
             $d2=strtotime($Date_2);
             $day_diff=round(($d1-$d2)/3600/24);
@@ -2368,17 +2368,18 @@ class User extends Controller
             // 判断是否隔天没有领取
             $wait_day = 0;
             $Date_1=date("Y-m-d");
-            $Date_2=date("Y-m-d", strtotime($v['time']));
+            $Date_2=date("Y-m-d", strtotime($v['time_actual']));
             $d1=strtotime($Date_1);
             $d2=strtotime($Date_2);
             $day_diff=round(($d1-$d2)/3600/24);
             if (!empty($day_diff)) {
-                $wait_day = $day_diff - ($v['total_num'] - $v['wait_num']) - 1;
+                $wait_day = $day_diff - ($v['total_num'] - $v['wait_num']);
             }
+
             
             //判断返还时间
             $return_num = $v['wait_num'] - 1;
-            $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*$wait_day)));
+            $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*($wait_day-1))));
             if($return_time > $now && empty($wait_day)) continue;
             
             $time_zone = $v['time_zone'];
@@ -2425,8 +2426,8 @@ class User extends Controller
                 // setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
                 
             }else{
-                $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . $wait_day . ' day'));
-                $time = date('Y-m-d H:i:s', strtotime($v['time'].'+' . $wait_day . ' day'));
+                $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . ($wait_day - 1) . ' day'));
+                $time = date('Y-m-d H:i:s', strtotime($v['time'].'+' . ($wait_day - 1) . ' day'));
                 Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time' => $time, 'time2' => $time2, 'time2_actual' => $time2]);
             }
             

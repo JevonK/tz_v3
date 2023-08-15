@@ -37,7 +37,7 @@
             <td class='list-table-check-td think-checkbox'><input class="list-check-box" value='{$vo.id}' type='checkbox'></td>
             <td class='list-table-sort-td'><input data-action-blur="{:request()->url()}" data-value="id#{$vo.id};action#sort;sort#{value}" data-loading="false" value="{$vo.sort}" class="list-sort-input"></td>
             <td class='text-left' style="max-width: 250px;overflow: hidden;">
-                名称：{$vo.title_zh_cn|default='--'}<br>
+                名称：{$vo.title_en_us|default='--'}<br>
                 分类：{$vo.item_class.zh_cn|default='--'}<br>
                 状态：
                 {if $vo.show == 1}
