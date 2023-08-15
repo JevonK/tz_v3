@@ -19,6 +19,7 @@ use library\Controller;
 use library\service\AdminService;
 use library\service\MenuService;
 use think\Db;
+use app\libs\onePay\Tool;
 
 /**
  * 应用入口
@@ -591,5 +592,39 @@ class Index extends Controller
         }
         echo "success";die;
 
+    }
+    /**
+     * onePay 支付回调
+     */
+    public function one_pay_callback() {
+        $tool = new Tool();
+        $str = file_get_contents("php://input");   //获取post数据
+        $res = $tool->parseData($str);  //解析数据结果为数组.
+        $language = 'en_us';
+        if ($res) {
+            if ($res['orderType'] == 1) {
+                $rechargeRecord = Db::name('LcUserRechargeRecord')->where("status=0 and orderNo='{$res['channelNo']}'")->find();
+                if ($rechargeRecord) {
+                    $update_data = [
+                        'voucher' => $res['merchantNo'],
+                        'remark' =>$res['remark'],
+                        'time2' => date('Y-m-d H:i:s')
+                    ];
+                    if ($res['status'] == 2) {
+                        $update_data['status'] = 1;
+                        Db::name('LcUserRechargeRecord')->where("id='{$rechargeRecord['id']}'")->update($update_data);
+                        //添加余额
+                        addFunding($rechargeRecord['uid'],$res['amount'],changeMoneyByLanguage($res['amount'],$language),1,2,$language);
+                        setNumber('LcUser', 'money', $res['amount'], 1, "id = {$rechargeRecord['uid']}");
+                    } else if($res['status'] == 3) {
+                        $update_data['status'] = 2;
+                        Db::name('LcUserRechargeRecord')->where("id='{$rechargeRecord['id']}'")->update($update_data);
+                    }
+                }
+            } else if ($res['orderType'] == 2) {
+
+            }
+        }
+        echo 'success';die;
     }
 }

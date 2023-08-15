@@ -158,7 +158,7 @@
 				// 因为动画时间为 3s ，所以这里3s后获取结果，其实结果早就定下了，只是何时显示，告诉用户
 				setTimeout(() => {
 					this.loading = false
-					if (this.list[this.winner]['type'] == 1 || this.list[this.winner]['type'] == 2) {
+					if (this.list[this.winner]['type'] == 1 || this.list[this.winner]['type'] == 2 || this.list[this.winner]['type'] == 4) {
 						Dialog.alert({
 							message: this.$t('draw.congratulation') + this.list[this.winner]['title'],
 							confirmButtonText: this.$t('utils.confirm')

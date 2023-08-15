@@ -20,7 +20,7 @@
 					<van-field v-model="money" type="number" :placeholder="$t('recharge.moneyMinPlaceholder')+common.currency_symbol_basic()+minMoney" />
 				</div>
 			</div>
-			<div class="block_div recharge_method_wrap">
+			<!-- <div class="block_div recharge_method_wrap">
 				<p class="tips">{{$t('recharge.method')}}</p>
 				<div class="recharge_item">
 					<div class="flex_center item" v-for="(item,index) in rechargeMethod"
@@ -34,7 +34,7 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="block_div flex_center recharge_detail_wrap">
 				<div>
 					{{$t('recharge.money')}} <span class="detail_money">{{common.currency_symbol_basic()}}{{money}}</span>
@@ -99,15 +99,22 @@
 					this.$toast(this.$t('recharge.moneyMinError')+this.common.currency_symbol_basic()+this.minMoney);
 					return false;
 				}
+				Fetch('/user/recharge',{
+					'money': this.money,
+					'id': 20,
+				}).then(r => {
+					console.log(r.data);
+					window.location.href = r.data.paymentUrl
+				})
 				//银行卡
-				if (this.rechargeMethod[this.active]['type'] == 4) {
-					this.$router.replace('/recharge/bank?money=' + this.money + "&id=" + this.rechargeMethod[this.active][
-						'id'
-					]);
-				} else {
-					this.$router.replace('/recharge/qrcode?money=' + this.money + "&id=" + this.rechargeMethod[this.active]
-						['id']);
-				}
+				// if (this.rechargeMethod[this.active]['type'] == 4) {
+				// 	this.$router.replace('/recharge/bank?money=' + this.money + "&id=" + this.rechargeMethod[this.active][
+				// 		'id'
+				// 	]);
+				// } else {
+				// 	this.$router.replace('/recharge/qrcode?money=' + this.money + "&id=" + this.rechargeMethod[this.active]
+				// 		['id']);
+				// }
 			}
 		}
 	};

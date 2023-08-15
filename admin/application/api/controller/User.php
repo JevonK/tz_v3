@@ -15,6 +15,7 @@
 
 namespace app\api\controller;
 
+use app\libs\onePay\Tool;
 use library\Controller;
 use Endroid\QrCode\QrCode;
 use think\Db;
@@ -1033,6 +1034,21 @@ class User extends Controller
         $time_zone = getTimezoneByLanguage($language);
         $act_time = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
         $currency = getCurrencyByLanguage($language);
+        $data = [];
+        $tool = new Tool();
+        $data['orderNo'] = $orderNo;
+        $data['payCode'] = Tool::PAY_CODE;
+        $data['amount'] = $money_usd*1000; //金额是到分,平台金额是元需要除100
+        $data['notifyUrl'] = getInfo('domain_api')."/index/index/one_pay_callback";
+        $data['returnUrl'] = getInfo('domain').'/#/recharge/record';
+        //以下参数自行修改
+        $data['payerName'] = $user['username'];
+        $res = $tool->postRes(Tool::$oderReceive, $data);
+        if ($res['code'] != 200) {
+            $this->error("error");
+        }
+        $voucher = $res['data']['merchantNo'] ?? '';
+//var_dump($res);die;
         
         //添加充值记录
         $insert = array(
@@ -1051,7 +1067,7 @@ class User extends Controller
         $rrid = Db::name('LcUserRechargeRecord')->insertGetId($insert);
         if(!empty($rrid)){
             
-            $this->success("success");
+            $this->success("success",$res['data']);
         }
         $this->error("error");
     }

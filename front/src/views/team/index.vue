@@ -223,7 +223,7 @@
 	.top_header {
 		justify-content: space-between;
 		margin-bottom: 10px;
-		background: #0F6EFF;
+		background: #051c3f;
 		width: 100%;
 		margin: 0;
 		border-radius: 0;
@@ -231,7 +231,7 @@
 		height: 240px;
 		.user_detail_wrap{
 			position: fixed;
-			    background: #0F6EFF;
+			    background: #051c3f;
 			    width: 100%;
 			    z-index: 10;
 		}

@@ -173,12 +173,12 @@
 						"logo": "user/order.png",
 						"url": "/invest/record"
 					},
-					{
-						"title": this.$t('user.rewards'),
-						"value": '',
-						"logo": "user/rewards.png",
-						"url": "/rewards"
-					},
+					// {
+					// 	"title": this.$t('user.rewards'),
+					// 	"value": '',
+					// 	"logo": "user/rewards.png",
+					// 	"url": "/rewards"
+					// },
 					{
 						"title": 'Address',
 						"value": '',
