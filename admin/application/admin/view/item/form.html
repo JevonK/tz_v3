@@ -86,10 +86,10 @@
                 <input name="day" required class="layui-input" placeholder="请输入周期（天）" value="{$vo.day|default=''}">
             </label>
             <label class="layui-col-xs1 relative">
-                <span class="color-green">不可领取设置</span></span>
-                <input type="checkbox" name="not_receive[]" <?php echo (in_array(1, $vo['not_receive']) ? 'checked' : ''); ?> value="1" title="周一到周五" lay-skin="primary">
-                <input type="checkbox" name="not_receive[]" <?php echo (in_array(2, $vo['not_receive']) ? 'checked' : ''); ?> value="2" title="周六" lay-skin="primary"> 
-                <input type="checkbox" name="not_receive[]" <?php echo (in_array(3, $vo['not_receive']) ? 'checked' : ''); ?> value="3" title="周日" lay-skin="primary"> 
+                <span class="color-green">不可领取设置</span><br>
+                <p><input type="checkbox" name="not_receive[]" lay-ignore <?php echo (in_array(1, $vo['not_receive']) ? 'checked' : ''); ?> value="1" title="周一到周五" lay-skin="primary">周一到周五</p>
+                <p><input type="checkbox" name="not_receive[]" lay-ignore <?php echo (in_array(2, $vo['not_receive']) ? 'checked' : ''); ?> value="2" title="周六" lay-skin="primary"> 周六</p>
+                <p><input type="checkbox" name="not_receive[]" lay-ignore <?php echo (in_array(3, $vo['not_receive']) ? 'checked' : ''); ?> value="3" title="周日" lay-skin="primary"> 周日</p>
    
             </label>
             <label class="layui-col-xs1 relative">
