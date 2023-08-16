@@ -819,7 +819,7 @@ class User extends Controller
             "orderNo" =>$orderNo,
             "status" =>$status,
             "money" =>$money_usd,
-            "money2" => $params['money'] - $charge,
+            "money2" => changeMoneyByLanguage($money_usd,$language),
             "charge" =>$charge,
             "currency" =>$currency,
             "time_zone" =>$time_zone,
@@ -1015,14 +1015,14 @@ class User extends Controller
         $voucher = '';
         
         //优盾USDT充值，需填写hash
-        if($rechargeMethod['type']==5){
-            if(empty($params['hash'])) $this->error('utils.parameterError',"",218);
-            $hash = $params['hash'];
-        //其他充值方式需上传凭证    
-        }else{
-            if(empty($params['voucher'])) $this->error('utils.parameterError',"",218);
-            $voucher = $params['voucher'];
-        }
+        // if($rechargeMethod['type']==5){
+        //     if(empty($params['hash'])) $this->error('utils.parameterError',"",218);
+        //     $hash = $params['hash'];
+        // //其他充值方式需上传凭证    
+        // }else{
+        //     if(empty($params['voucher'])) $this->error('utils.parameterError',"",218);
+        //     $voucher = $params['voucher'];
+        // }
         
         //金额转换
         $money_usd = $params['money'];
@@ -1038,17 +1038,19 @@ class User extends Controller
         $tool = new Tool();
         $data['orderNo'] = $orderNo;
         $data['payCode'] = Tool::PAY_CODE;
-        $data['amount'] = $money_usd*1000; //金额是到分,平台金额是元需要除100
+        $data['amount'] = $money_usd*100; //金额是到分,平台金额是元需要除100
         $data['notifyUrl'] = getInfo('domain_api')."/index/index/one_pay_callback";
         $data['returnUrl'] = getInfo('domain').'/#/recharge/record';
         //以下参数自行修改
         $data['payerName'] = $user['username'];
         $res = $tool->postRes(Tool::$oderReceive, $data);
+        $res = !empty($res) ? json_decode($res, true) : [];
+        // print_r($data);
+        // var_dump($res);die;
         if ($res['code'] != 200) {
             $this->error("error");
         }
         $voucher = $res['data']['merchantNo'] ?? '';
-//var_dump($res);die;
         
         //添加充值记录
         $insert = array(
@@ -1404,7 +1406,7 @@ class User extends Controller
             $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' hour'));
         }
         //每日付息到期还本
-        elseif($item['type']==1 || $item['type'] == 4){
+        elseif($item['type']==1){
             //日利率
             $total_interest = $money_usd * $item['rate'] * $item['day'] / 100;
             //返息期数
@@ -1637,7 +1639,7 @@ class User extends Controller
             if ($invest['status'] == 1) {
                 $invest['is_receive'] = 0;
             }
-            $invest['not_receive'] = empty($invest['not_receive']) ? [] : json_decode($invest['not_receive']);
+            $invest['not_receive'] = empty($item['not_receive']) ? [] : json_decode($item['not_receive']);
             if(in_array($is_w, $invest['not_receive'])) {
                 $invest['is_receive'] = 0;
             }
@@ -2245,7 +2247,7 @@ class User extends Controller
                 $invest_list3 = Db::name("LcInvest")->where("id = $id and type=4 AND status = 0")->select();
                 break;
         }
-        if (empty($invest_list1)&&empty($invest_list2)&&empty($invest_list3)&&empty($savings_list1)) $this->error('error');
+        if (empty($invest_list1)&&empty($invest_list2)&&empty($savings_list1)) $this->error('error');
         
         //每日付息到期还本处理
         foreach ($invest_list1 as $k => $v) {
@@ -2389,13 +2391,12 @@ class User extends Controller
             $d2=strtotime($Date_2);
             $day_diff=round(($d1-$d2)/3600/24);
             if (!empty($day_diff)) {
-                $wait_day = $day_diff - ($v['total_num'] - $v['wait_num']);
+                $wait_day = $day_diff - ($v['total_num'] - $v['wait_num']) - 1;
             }
-
             
             //判断返还时间
             $return_num = $v['wait_num'] - 1;
-            $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*($wait_day-1))));
+            $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*$wait_day)));
             if($return_time > $now && empty($wait_day)) continue;
             
             $time_zone = $v['time_zone'];
@@ -2442,8 +2443,8 @@ class User extends Controller
                 // setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
                 
             }else{
-                $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . ($wait_day - 1) . ' day'));
-                $time = date('Y-m-d H:i:s', strtotime($v['time'].'+' . ($wait_day - 1) . ' day'));
+                $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . $wait_day . ' day'));
+                $time = date('Y-m-d H:i:s', strtotime($v['time'].'+' . $wait_day . ' day'));
                 Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time' => $time, 'time2' => $time2, 'time2_actual' => $time2]);
             }
             

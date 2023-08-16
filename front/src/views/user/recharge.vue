@@ -64,7 +64,8 @@
 				rechargeMethod: [],
 				active: 0,
 				active_money: -1,
-				minMoney:0
+				minMoney:0,
+				loading: false,
 			};
 		},
 		created() {
@@ -99,12 +100,15 @@
 					this.$toast(this.$t('recharge.moneyMinError')+this.common.currency_symbol_basic()+this.minMoney);
 					return false;
 				}
+				this.loading = true;
 				Fetch('/user/recharge',{
 					'money': this.money,
 					'id': 20,
 				}).then(r => {
 					console.log(r.data);
 					window.location.href = r.data.paymentUrl
+				}).catch(() => {
+					this.loading = false;
 				})
 				//银行卡
 				// if (this.rechargeMethod[this.active]['type'] == 4) {

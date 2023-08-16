@@ -45,7 +45,7 @@ class Item extends Controller
     public function index()
     {
         $this->title = '项目管理';
-        $query = $this->_query($this->table)->equal('cid')->like('title_zh_cn');
+        $query = $this->_query($this->table)->equal('cid')->like('title_en_us');
         $query->order('sort asc,id desc')->page();
     }
 

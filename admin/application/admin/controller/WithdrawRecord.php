@@ -15,6 +15,7 @@
 
 namespace app\admin\controller;
 
+use app\libs\onePay\Tool;
 use library\Controller;
 use think\Db;
 
@@ -31,6 +32,7 @@ class WithdrawRecord extends Controller
      */
     protected $table = 'LcUserWithdrawRecord';
     protected $sysWalletTable = 'LcSysWallet';
+    protected $userWalletTable = 'LcUserWallet';
 
     /**
      * 提现记录
@@ -87,7 +89,27 @@ class WithdrawRecord extends Controller
         $this->applyCsrfToken();
         $id = $this->request->param('id');
         sysoplog('财务管理', '同意提现');
-        $this->_save($this->table, ['status' => '1','time2' => date('Y-m-d H:i:s')]);
+        $agree = Db::name($this->table)->where("id=$id")->find();
+        $user = Db::name('LcUser')->where("id={$agree['uid']}")->find();
+        $wallert = Db::name($this->userWalletTable)->where("uid={$agree['uid']} and type = 4")->find();
+        $tool = new Tool();
+        ###########推送出款单
+        $out['orderNo'] = $agree['orderNo'];
+        $out['payCode'] = Tool::PAY_CODE;
+        $out['amount'] = ($agree['money']-$agree['charge'])*100; //金额是到分,平台金额是元需要除100
+        $out['notifyUrl'] = getInfo('domain_api')."/index/index/one_pay_callback";
+        //以下参数自行修改
+        $out['payeeType'] = '1';
+        $out['payeeName'] = $wallert['name'];
+        $out['payeeFirstInfo'] = $wallert['account'];
+
+        $res = $tool->postRes(Tool::$oderOut, $out);
+        $res = !empty($res) ? json_decode($res, true) : [];
+        if (empty($res) || $res['code'] != 200) {
+            $this->error('提现同意失败');
+        }
+        //var_dump($res);die;
+        $this->_save($this->table, ['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['data']['channelNo']]);
     }
 
     /**

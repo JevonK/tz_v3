@@ -600,14 +600,16 @@ class Index extends Controller
         $tool = new Tool();
         $str = file_get_contents("php://input");   //获取post数据
         $res = $tool->parseData($str);  //解析数据结果为数组.
+        $curr_date = date('Y-m-d H:i:s');
+        file_put_contents('pay.log', "【".$curr_date."】:".json_encode($res).PHP_EOL,FILE_APPEND);
         $language = 'en_us';
         if ($res) {
-            if ($res['orderType'] == 1) {
-                $rechargeRecord = Db::name('LcUserRechargeRecord')->where("status=0 and orderNo='{$res['channelNo']}'")->find();
+            if ($res['orderType'] == 1) { // 充值
+                $rechargeRecord = Db::name('LcUserRechargeRecord')->where("status=0 and orderNo='{$res['merchantNo']}'")->find();
                 if ($rechargeRecord) {
                     $update_data = [
-                        'voucher' => $res['merchantNo'],
-                        'remark' =>$res['remark'],
+                        'voucher' => $res['channelNo'],
+                        'remark' =>$res['remark'] ?? '',
                         'time2' => date('Y-m-d H:i:s')
                     ];
                     if ($res['status'] == 2) {
@@ -621,8 +623,19 @@ class Index extends Controller
                         Db::name('LcUserRechargeRecord')->where("id='{$rechargeRecord['id']}'")->update($update_data);
                     }
                 }
-            } else if ($res['orderType'] == 2) {
-
+            } else if ($res['orderType'] == 2) { // 提现
+                $withdrawRecord = Db::name('LcUserWithdrawRecord')->where("status=0 and orderNo='{$res['merchantNo']}'")->find();
+                $update_data = [
+                    'remark' =>$res['remark'] ?? '',
+                    'payment_received_time' => date('Y-m-d H:i:s')
+                ];
+                if ($res['status'] == 2) {
+                    $update_data['status'] = 1;
+                    Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
+                } else if($res['status'] == 3) {
+                    $update_data['status'] = 2;
+                    Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
+                }
             }
         }
         echo 'success';die;

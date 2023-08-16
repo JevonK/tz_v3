@@ -5,12 +5,12 @@ class Tool
 {
 	//XXX替换对应的国家对应的地址
     const HOST_URL = 'https://api-pkr.onepay.news'; //网关地址切换正式环境不需要替换
-    const PAY_CODE = '1001';    //订单中的支付编码
+    const PAY_CODE = 'PKR601';    //订单中的支付编码
 
 	public $method = 'AES-128-CBC'; //AES加密定义不要更改
 		
 	//以下3个参数需要开启正式商户号后替换.
-    public $password = 'RZ5W5Cm8J805Frqv'; //AES密钥
+    public $password = 'RZ5W5Cm8J805Frqv'; //AES密钥q
 	public $authorizationKey = '43fLP97t46';  //请求头中的商户Key
     //
     //推送入款单

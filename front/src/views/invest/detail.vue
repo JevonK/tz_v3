@@ -35,11 +35,11 @@
 			<div class="content" v-html="item.content"></div>
 		</div>
 		<div class="btn-gr">
-			<div class="basic_btn btn" @click="showPopupClick(true)">
-				{{$t('invest.investWithdrawal')}}
-			</div>
 			<div class="basic_btn btn" @click="showPopupClick(false)">
 				{{$t('invest.investBalance')}}
+			</div>
+			<div class="basic_btn btn" @click="showPopupClick(true)">
+				{{$t('invest.investWithdrawal')}}
 			</div>
 		</div>
 		
