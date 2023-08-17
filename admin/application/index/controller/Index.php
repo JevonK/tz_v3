@@ -600,6 +600,7 @@ class Index extends Controller
         $tool = new Tool();
         $str = file_get_contents("php://input");   //获取post数据
         $res = $tool->parseData($str);  //解析数据结果为数组.
+        // $res = json_decode($str, true);
         $curr_date = date('Y-m-d H:i:s');
         file_put_contents('pay.log', "【".$curr_date."】:".json_encode($res).PHP_EOL,FILE_APPEND);
         $language = 'en_us';
@@ -624,17 +625,24 @@ class Index extends Controller
                     }
                 }
             } else if ($res['orderType'] == 2) { // 提现
-                $withdrawRecord = Db::name('LcUserWithdrawRecord')->where("status=0 and orderNo='{$res['merchantNo']}'")->find();
-                $update_data = [
-                    'remark' =>$res['remark'] ?? '',
-                    'payment_received_time' => date('Y-m-d H:i:s')
-                ];
-                if ($res['status'] == 2) {
-                    $update_data['status'] = 1;
-                    Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
-                } else if($res['status'] == 3) {
-                    $update_data['status'] = 2;
-                    Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
+                $withdrawRecord = Db::name('LcUserWithdrawRecord')->where("status=4 and orderNo='{$res['merchantNo']}'")->find();
+                if ($withdrawRecord) {
+                    $update_data = [
+                        'remark' =>$res['remark'] ?? '',
+                        'payment_received_time' => date('Y-m-d H:i:s')
+                    ];
+                    if ($res['status'] == 2) { // 成功
+                        $update_data['status'] = 1;
+                        Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
+                    } else if($res['status'] == 3) { // 失败
+                        $update_data['status'] = 2;
+                        Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
+                        //失败时返还提现金额
+                        //流水添加
+                        addFunding($withdrawRecord['uid'],$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']));
+                        //余额返还
+                        setNumber('LcUser', 'withdrawable', $withdrawRecord['money'], 1, "id = {$withdrawRecord['uid']}");
+                    }
                 }
             }
         }

@@ -89,27 +89,32 @@ class WithdrawRecord extends Controller
         $this->applyCsrfToken();
         $id = $this->request->param('id');
         sysoplog('财务管理', '同意提现');
-        $agree = Db::name($this->table)->where("id=$id")->find();
-        $user = Db::name('LcUser')->where("id={$agree['uid']}")->find();
-        $wallert = Db::name($this->userWalletTable)->where("uid={$agree['uid']} and type = 4")->find();
+        $ids = explode(',',$id);
         $tool = new Tool();
-        ###########推送出款单
-        $out['orderNo'] = $agree['orderNo'];
-        $out['payCode'] = Tool::PAY_CODE;
-        $out['amount'] = ($agree['money']-$agree['charge'])*100; //金额是到分,平台金额是元需要除100
-        $out['notifyUrl'] = getInfo('domain_api')."/index/index/one_pay_callback";
-        //以下参数自行修改
-        $out['payeeType'] = '1';
-        $out['payeeName'] = $wallert['name'];
-        $out['payeeFirstInfo'] = $wallert['account'];
-
-        $res = $tool->postRes(Tool::$oderOut, $out);
-        $res = !empty($res) ? json_decode($res, true) : [];
-        if (empty($res) || $res['code'] != 200) {
-            $this->error('提现同意失败');
+        $ids = Db::name($this->table)->whereIn('id',$ids)->where('status', 0)->column('id');
+        foreach ($ids as $id) {
+            $agree = Db::name($this->table)->where("id=$id")->find();
+            $wallert = Db::name($this->userWalletTable)->where("uid={$agree['uid']} and type = 4")->find();
+            ###########推送出款单
+            $out['orderNo'] = $agree['orderNo'];
+            $out['payCode'] = Tool::PAY_CODE;
+            $out['amount'] = ($agree['money']-$agree['charge'])*100; //金额是到分,平台金额是元需要除100
+            $out['notifyUrl'] = getInfo('domain_api')."/index/index/one_pay_callback";
+            //以下参数自行修改
+            $out['payeeType'] = '1';
+            $out['payeeName'] = $wallert['name'];
+            $out['payeeFirstInfo'] = $wallert['account'];
+    
+            $res = $tool->postRes(Tool::$oderOut, $out);
+            $res = !empty($res) ? json_decode($res, true) : [];
+            if (empty($res) || $res['code'] != 200) {
+                $this->error('提现同意失败');
+            }
+            Db::name($this->table)->where("id=$id")->update(['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['data']['channelNo']]);
+            //var_dump($res);die;
+            // $this->_save($this->table, ['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['data']['channelNo']]);
         }
-        //var_dump($res);die;
-        $this->_save($this->table, ['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['data']['channelNo']]);
+        $this->success('success');
     }
 
     /**
@@ -122,16 +127,22 @@ class WithdrawRecord extends Controller
     {
         $this->applyCsrfToken();
         $id = $this->request->param('id');
-        $withdrawRecord = Db::name($this->table)->find($id);
-        $uid = $withdrawRecord['uid'];
-        
-        //拒绝时返还提现金额
-        //流水添加
-        addFunding($uid,$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']));
-        //余额返还
-        setNumber('LcUser', 'withdrawable', $withdrawRecord['money'], 1, "id = $uid");
+        $ids = explode(',',$id);
+        $ids = Db::name($this->table)->whereIn('id',$ids)->where('status', 0)->column('id');
+        foreach ($ids as $id) {
+            $withdrawRecord = Db::name($this->table)->find($id);
+            $uid = $withdrawRecord['uid'];
+            
+            //拒绝时返还提现金额
+            //流水添加
+            addFunding($uid,$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']));
+            //余额返还
+            setNumber('LcUser', 'withdrawable', $withdrawRecord['money'], 1, "id = $uid");
+            Db::name($this->table)->where("id=$id")->update(['status' => '2', 'time2' => date('Y-m-d H:i:s')]);
+
+        }
         sysoplog('财务管理', '拒绝提现');
-        $this->_save($this->table, ['status' => '2', 'time2' => date('Y-m-d H:i:s')]);
+        $this->success('success');
     }
     
     /**

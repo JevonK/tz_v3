@@ -69,7 +69,7 @@
 		
 		<div class="items">
 			  <van-grid :border="false" :column-num="3" gutter="10">
-				<van-grid-item v-for="(item,index) in items" v-if="index < 3">
+				<van-grid-item v-for="(item,index) in items" v-if="index < 3" @click="$router.push('/invest/detail/'+item.id)">
 				  <van-image
 				  height="80"
 					:src="item.img2"

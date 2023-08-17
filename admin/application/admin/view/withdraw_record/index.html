@@ -6,6 +6,9 @@
 {if auth("agree")}
 <button data-action='{:url("agree")}' data-rule="id#{key}" data-csrf="{:systoken('agree')}" data-confirm="确定要同意这些记录吗？" class='layui-btn layui-btn-sm layui-btn-primary'>批量同意</button>
 {/if}
+{if auth("refuse")}
+<button data-action='{:url("refuse")}' data-rule="id#{key}" data-csrf="{:systoken('refuse')}" data-confirm="确定要拒绝这些提现吗？" class='layui-btn layui-btn-sm layui-btn-primary'>批量拒绝</button>
+{/if}
 {/block}
 {block name="content"}
 <div class="think-box-shadow">

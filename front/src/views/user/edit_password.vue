@@ -17,7 +17,7 @@
 			</div>
 		</div>
 		<div class="basic_btn btn" :class="wallet.money?'':'no_touch'" @click="submit()">
-			添加
+			Submit
 		</div>
 	</div>
 </template>
