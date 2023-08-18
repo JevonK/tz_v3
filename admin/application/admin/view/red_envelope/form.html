@@ -4,6 +4,28 @@
     <div class="layui-card-body padding-left-40">
         <div class="layui-form-item layui-row layui-col-space15">
             <label class="layui-col-xs3 relative">
+                <span class="color-green">类型</span>
+                <select class="layui-select" name="type">
+                    {foreach ['1'=>'随机','2'=>'固定'] as $k=>$v}
+                    <!--{eq name='$vo.type ?? 2' value='$k.""'}-->
+                    <option selected value="{$k}">{$v}</option>
+                    <!--{else}-->
+                    <option value="{$k}">{$v}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
+            <label class="layui-col-xs3 relative">
+                <span class="color-green">金额</span></span>
+                <input name="money" class="layui-input" placeholder="请输入现金奖励金额" value="{$vo.money|default='0'}">
+            </label>
+            <label class="layui-col-xs3 relative">
+                <span class="color-green">红包数量</span>
+                <input name="num" class="layui-input" placeholder="请输入现金奖励金额" value="{$vo.money|default='1'}">
+            </label>
+        </div>
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs3 relative">
                 <span class="color-green">红包名称（简体）</span>
                 <input name="title_zh_cn"  class="layui-input" placeholder="请输入红包名称" value="{$vo.title_zh_cn|default=''}">
             </label>
@@ -66,28 +88,7 @@
                 <input name="title_fr_fr"  class="layui-input" placeholder="请输入红包名称" value="{$vo.title_fr_fr|default=''}">
             </label>
         </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs3 relative">
-                <span class="color-green">类型</span>
-                <select class="layui-select" name="type">
-                    {foreach ['1'=>'随机','2'=>'固定'] as $k=>$v}
-                    <!--{eq name='$vo.type' value='$k.""'}-->
-                    <option selected value="{$k}">{$v}</option>
-                    <!--{else}-->
-                    <option value="{$k}">{$v}</option>
-                    <!--{/eq}-->
-                    {/foreach}
-                </select>
-            </label>
-            <label class="layui-col-xs3 relative">
-                <span class="color-green">金额</span></span>
-                <input name="money" class="layui-input" placeholder="请输入现金奖励金额" value="{$vo.money|default='0'}">
-            </label>
-            <label class="layui-col-xs3 relative">
-                <span class="color-green">红包数量</span>
-                <input name="num" class="layui-input" placeholder="请输入现金奖励金额" value="{$vo.money|default='0'}">
-            </label>
-        </div>
+        
     </div>
     <div class="hr-line-dashed"></div>
     <div class="layui-form-item text-center">

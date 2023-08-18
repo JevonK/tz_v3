@@ -44,10 +44,11 @@
 	import Fetch from '../../utils/fetch'
 	import {
 		List,
+		Dialog,
 		Cell,
 		CellGroup
 	} from 'vant';
-	Vue.use(List).use(Cell).use(CellGroup);
+	Vue.use(List).use(Cell).use(CellGroup).use(Dialog);
 	export default {
 		name: "recharge",
 		components: {
@@ -112,7 +113,12 @@
 					'invest_id' : item['id'],
 					'type' : item['type'],
 				}).then((res) => {
-					window.location.reload();
+					Dialog.alert({
+						message: item['title'] + " income：" + res.data.income,
+						confirmButtonText: this.$t('utils.confirm')
+					}).then(() => {
+						window.location.reload();
+					})
 					this.loading = false;
 				}).catch((res) => {
 					this.loading = false;

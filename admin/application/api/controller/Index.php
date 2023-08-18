@@ -107,7 +107,7 @@ class Index extends Controller
         
         $items = Db::name('LcItem')->field("title_$language as title,img2,min,day,rate,id,type")->where(['show' => 1])->order('sort asc,id desc')->limit(10)->select();
 
-        $news = Db::name('LcArticle')->where("type=13 and `show`=1")->select();
+        $news = Db::name('LcArticle')->where("type=13 and `show`=1")->order('release_time desc')->select();
         // foreach ($items as &$item) {
         //     $item['min'] = changeMoneyByLanguage($item['min'],$language);
         //     $item['max'] = changeMoneyByLanguage($item['max'],$language);
@@ -317,7 +317,7 @@ class Index extends Controller
             if(!empty($params['invite_code'])){
                 $topUser = Db::name('LcUser')->where(['invite_code' => $params['invite_code']])->find();
                 if(empty($topUser)) $this->error('register.inviteCodeError',"",218);
-                if(empty($topUser['is_invite'])) $this->error('该邀请码禁止被邀请',"",218);
+                if(empty($topUser['is_invite'])) $this->error('This invitation code is forbidden to be invited',"",218);
                 $system_user_id = $topUser['system_user_id'];
             }
             
@@ -361,6 +361,61 @@ class Index extends Controller
                 if(getInfo('reward_need_flow')){
                     setNumber('LcUser', 'frozen_money', $reward['register'], 1, "id = $uid");
                 }
+            }
+            // 注册奖励送产品
+            if ($reward['item_id'] > 0) {
+                //时区转换
+                $item = Db::name('LcItem')->find($reward['item_id']);
+                $money_usd = $item['min'];
+                $time = date('Y-m-d H:i:s');
+                $time_zone = getTimezoneByLanguage($language);
+                $time_actual = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+                $currency = getCurrencyByLanguage($language);
+            
+                $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' day'));
+                $total_interest = $money_usd * $item['rate'] / 100;
+                $total_num = 1;
+                $time2_actual = dateTimeChangeByZone($time2, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
+                $orderNo = 'ST' . date('YmdHis') . rand(1000, 9999) . rand(100, 999);
+                //到期还本付息（时）
+                if($item['type']==3){
+                    //按时
+                    $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' hour'));
+                }
+                //每日付息到期还本
+                elseif($item['type']==1 || $item['type']==4){
+                    //日利率
+                    $total_interest = $money_usd * $item['rate'] * $item['day'] / 100;
+                    //返息期数
+                    $total_num = $item['day'];
+                }
+                //添加投资记录
+                $insert = array(
+                    "uid" =>$uid,
+                    "itemid" =>$item['id'],
+                    "orderNo" =>$orderNo,
+                    "money" =>$item['min'],
+                    "money2" =>$money_usd,
+                    "total_interest" =>$total_interest,
+                    "wait_interest" =>$total_interest,
+                    "total_num" =>$total_num,
+                    "wait_num" =>$total_num,
+                    "day" =>$item['day'],
+                    "rate" =>$item['rate'],
+                    "type" =>$item['type'],
+                    "is_draw" => 1,
+                    "source" => 3,
+                    "not_receive" =>$item['not_receive'],
+                    "is_distribution" =>$item['is_distribution'],
+                    "currency" =>$currency,
+                    "time_zone" =>$time_zone,
+                    "time" =>$time,
+                    "time_actual" =>$time_actual,
+                    "time2" =>$time2,
+                    "time2_actual" =>$time2_actual,
+                );
+                
+                Db::name('LcInvest')->insertGetId($insert);
             }
             //邀请奖励
             if(!empty($params['invite_code'])){

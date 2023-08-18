@@ -89,6 +89,7 @@ class Info extends Controller
     public function reward()
     {
         $this->title = '奖励配置';
+        $this->items = Db::name('LcItem')->select();
         $this->_form($this->reward_table, 'reward');
     }
     /**
@@ -103,6 +104,7 @@ class Info extends Controller
      */
     public function reward_edit()
     {
+        $this->items = Db::name('LcItem')->select();
         $this->_form($this->reward_table, 'reward_form');
     }
     /**

@@ -8,6 +8,19 @@
                 <input name="register" class="layui-input" placeholder="请输入注册赠送" value="{$vo.register|default='0.00'}" required>
             </label>
             <label class="layui-col-xs3 relative">
+                <span class="color-green">注册赠送产品</span>
+                <select class="layui-select" name="item_id">
+                    <option value="0">暂不设置</option>
+                    {foreach $items as $k=>$v}
+                    <!--{eq name='$vo.item_id' value="$v['id']"}-->
+                    <option selected value="{$v['id']}">{$v['title_en_us']}</option>
+                    <!--{else}-->
+                    <option value="{$v['id']}">{$v['title_en_us']}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </label>
+            <label class="layui-col-xs3 relative">
                 <span class="color-green">邀请注册赠送</span>
                 <input name="invite" class="layui-input" placeholder="请输入邀请注册赠送" value="{$vo.invite|default='0.00'}" required>
             </label>

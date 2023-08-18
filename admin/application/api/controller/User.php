@@ -1773,6 +1773,18 @@ class User extends Controller
             $total_num = 1;
             $time2_actual = dateTimeChangeByZone($time2, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
             $orderNo = 'ST' . date('YmdHis') . rand(1000, 9999) . rand(100, 999);
+            //到期还本付息（时）
+            if($item['type']==3){
+                //按时
+                $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' hour'));
+            }
+            //每日付息到期还本
+            elseif($item['type']==1 || $item['type']==4){
+                //日利率
+                $total_interest = $money_usd * $item['rate'] * $item['day'] / 100;
+                //返息期数
+                $total_num = $item['day'];
+            }
             //添加投资记录
             $insert = array(
                 "uid" =>$uid,
@@ -1788,6 +1800,7 @@ class User extends Controller
                 "rate" =>$item['rate'],
                 "type" =>$item['type'],
                 "is_draw" => 1,
+                "source" => 2,
                 "not_receive" =>$item['not_receive'],
                 "is_distribution" =>$item['is_distribution'],
                 "currency" =>$currency,
@@ -2306,7 +2319,7 @@ class User extends Controller
             //最后一期
             if($v['wait_num']==1){
                 Db::name('LcInvest')->where('id', $v['id'])->update(['status' => 1,'wait_num' => 0,'wait_interest' => 0]);
-                if($v['is_draw'] != 1) {
+                if($v['is_draw'] == 0) {
                     //返还本金
                     addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
                     setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
@@ -2509,7 +2522,7 @@ class User extends Controller
         if($noInvest){
             $this->error('error');
         }
-        $this->success('success');
+        $this->success('success',['income' => $day_interest ?? 0]);
     }
 
     // 兑换红包金额
@@ -2527,9 +2540,9 @@ class User extends Controller
 
         $red_envelope = Db::table('lc_red_envelope')->where("code='$code'")->find();
         $red_envelope_record = Db::table('lc_red_envelope_record')->where("pid={$red_envelope['id']} and uid={$user['id']}")->find();
-        if (empty($red_envelope) or $red_envelope_record ) $this->error('你已經領取過了',"",218);
+        if (empty($red_envelope) or $red_envelope_record ) $this->error('You have already received',"",218);
         if ($red_envelope['num'] <= $red_envelope['residue_num']) {
-            $this->error('紅包已經領取完畢',"",218);
+            $this->error('The red envelope has been received',"",218);
         }
         while(true) {
             $red_envelope = Db::table('lc_red_envelope')->where("code='$code'")->find();
@@ -2537,7 +2550,7 @@ class User extends Controller
                 $residue_money = $red_envelope['money'] - $red_envelope['money2'];
                 $residue_num = $red_envelope['num'] - $red_envelope['residue_num'];
                 if ($residue_num <= 0) {
-                    $this->error('紅包已經領取完畢',"",218);
+                    $this->error('The red envelope has been received',"",218);
                 } else if ($residue_num == 1) {
                     $money = $residue_money;
                 } else {
@@ -2545,7 +2558,7 @@ class User extends Controller
                 }
             }else {
                 if ($red_envelope['num'] <= $red_envelope['residue_num']) {
-                    $this->error('紅包已經領取完畢',"",218);
+                    $this->error('The red envelope has been received',"",218);
                 }
                 $money = bcdiv($red_envelope['money'], $red_envelope['num'], 2);
             }

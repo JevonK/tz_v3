@@ -36,10 +36,12 @@
 		</div>
 		<div class="btn-gr">
 			<div class="basic_btn btn" @click="showPopupClick(false)">
-				{{$t('invest.investBalance')}}
+				<!-- {{$t('invest.investBalance')}} -->
+				Recharge Wallet
 			</div>
 			<div class="basic_btn btn" @click="showPopupClick(true)">
-				{{$t('invest.investWithdrawal')}}
+				<!-- {{$t('invest.investWithdrawal')}} -->
+				Balance Wallet
 			</div>
 		</div>
 		

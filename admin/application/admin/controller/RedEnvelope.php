@@ -45,7 +45,7 @@ class RedEnvelope extends Controller
     {
         $this->title = '红包列表';
         $query = $this->_query($this->table);
-        $query->order('id asc')->page();
+        $query->order('id desc')->page();
     }
 
     /**

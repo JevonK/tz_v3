@@ -41,7 +41,7 @@
 		"type17": "Savings (redeem)",
 		"type18": "Savings (income)",
 		"type19": "Intermediary investment (income)",
-		"type20": "红包领取"
+		"type20": "Red envelope collection"
 	},
 	"home": {
 		"index": "Home",
@@ -77,8 +77,8 @@
 		"endTime": "Expiration time: ",
 		"detail": "Project details",
 		"investNow": "Invest now",
-		"investBalance": "Balance invest",
-		"investWithdrawal": "Withdrawal invest",
+		"investBalance": "Balance Wallet",
+		"investWithdrawal": "Withdrawal Wallet",
 		"orderInfo": "Order details",
 		"moneyPlaceholder": "Please enter the investment amount",
 		"income": "Income: ",

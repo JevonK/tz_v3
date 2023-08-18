@@ -109,7 +109,11 @@
 				:desc="item.title_en_us"
 				:title="item.release_time"
 				:thumb="item.img2"
-				/>
+				>
+				<template #footer>
+					<span class="read-num">Reading Volume：{{ item.read_num }}</span>
+				</template>
+			</van-card>
 		</div>
 		<!-- APP -->
 		<div v-if="!isApp&&app.show" id="download_app" class="flex_center">
@@ -552,5 +556,8 @@
 	.grid-price {
 		font-size: 16px;
 		color: #ed6a0c;
+	}
+	.read-num {
+		color: #5d5d5d;
 	}
 </style>

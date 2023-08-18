@@ -673,6 +673,17 @@ function getInfo($value)
 }
 
 /**
+ * @description：获取配置参数表
+ * @date: 2020/5/14 0014
+ * @param $value
+ * @return mixed
+ */
+function getSysConfig($value)
+{
+    return Db::name('SystemConfig')->where('name', $value)->value('value');
+}
+
+/**
  * @description：获取奖励配置
  * @date: 2020/5/14 0014
  * @param $value
