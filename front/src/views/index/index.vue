@@ -104,9 +104,10 @@
 		<div class="items">
 			<van-card
 				v-for="(item, index) in news"
+				:key="index"
 				@click="$router.push('/article/'+item.id)"
 				:desc="item.title_en_us"
-				:title="item.time"
+				:title="item.release_time"
 				:thumb="item.img2"
 				/>
 		</div>

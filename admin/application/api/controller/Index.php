@@ -763,6 +763,7 @@ class Index extends Controller
         $language = $params["language"];
         $id = $this->request->param('id');
         $article = Db::name('LcArticle')->field("title_$language,content_$language")->find($id);
+        Db::name('LcArticle')->where("id=$id")->setInc('read_num');
         $data = array(
             'title' => $article["title_$language"],
             'content' => $article["content_$language"]

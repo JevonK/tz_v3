@@ -23,6 +23,7 @@
             <th class='text-left nowrap' width="30%">文章标题</th>
             <th class='text-left nowrap' width="15%">文章类型</th>
             <th class='text-left nowrap' width="15%">文章状态</th>
+            <th class='text-left nowrap' width="15%">阅读量</th>
             <th class='text-left nowrap' width="15%">发布时间</th>
             <th></th>
         </tr>
@@ -52,7 +53,10 @@
                 {/if}
             </td>
             <td class='text-left nowrap'>
-                {$vo.time|default='--'}
+                {$vo.read_num|default='--'}
+            </td>
+            <td class='text-left nowrap'>
+                {$vo.release_time|default='--'}
             </td>
             <td class='text-left nowrap'>
 

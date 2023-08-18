@@ -41,6 +41,11 @@
                 <span class="color-green">文章标题（英文）</span>
                 <input name="title_en_us"  class="layui-input" placeholder="请输入文章名称" value="{$vo.title_en_us|default=''}">
             </label>
+            <label class="layui-col-xs3 relative">
+                <span class="color-green">发表时间</span>
+                <input name="release_time" type="text" id="time" class="layui-input" placeholder="请输入发布时间"  value="{$vo.release_time|default=''}">
+            </label>
+        </div>
         <div class="layui-form-item">
             <span class="color-green">项目封面图片（尺寸： 750:390）</span>
             <table class="layui-table">
@@ -75,6 +80,14 @@
 {block name='script'}
 <script>
     window.form.render();
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+         //日期时间选择器
+        laydate.render({
+            elem: '#time'
+            ,type: 'datetime'
+        });
+    })
     require(['ckeditor', 'angular'], function () {
         window.createEditor('[name="content_zh_cn"]', {height: 100});
         window.createEditor('[name="content_zh_hk"]', {height: 100});
