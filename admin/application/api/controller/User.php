@@ -1397,7 +1397,7 @@ class User extends Controller
         $currency = getCurrencyByLanguage($language);
        
         $time2 = date('Y-m-d H:i:s', strtotime($time.'+' . $item['day'] . ' day'));
-        $total_interest = $money_usd * $item['rate'] / 100;
+        $total_interest = $item['min'] * $item['rate'] / 100;
         $total_num = 1;
         
         //到期还本付息（时）
@@ -1408,7 +1408,7 @@ class User extends Controller
         //每日付息到期还本
         elseif($item['type']==1 || $item['type']==4){
             //日利率
-            $total_interest = $money_usd * $item['rate'] * $item['day'] / 100;
+            $total_interest = $item['min'] * $item['rate'] * $item['day'] / 100;
             //返息期数
             $total_num = $item['day'];
         }
