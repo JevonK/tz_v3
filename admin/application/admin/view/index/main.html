@@ -228,6 +228,12 @@
                 <div class="text-right" style="float: right;width: 20%;">
                     <form class="layui-form layui-form-pane form-search" action="{:request()->url()}" onsubmit="return false" method="get" autocomplete="off">
                     <input data-date-range name="i_time" value="{$Think.get.i_time|default=''}" placeholder="请选择时间（系统时区）" class="layui-input margin-bottom-15">
+                    <select name="user_id" lay-ignore >
+                        <option value="">请选择用户</option>
+                        {foreach $users as $k=>$v}
+                        <option value="{$v.id}">{$v.username}</option>
+                        {/foreach}
+                    </select>
                     <button class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe615;</i> 搜 索</button>
                     </form>
                 </div>

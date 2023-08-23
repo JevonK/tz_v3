@@ -139,11 +139,20 @@ class Index extends Controller
             $yesterday = date('Y-m-d 00:00:00', strtotime($now)-86400);//昨天0点
             $tomorrow = date('Y-m-d 00:00:00', strtotime($now)+86400);//明天0点
             $i_time = $this->request->param('i_time');
+            $user_id = $this->request->param('user_id');
             $auth = $this->app->session->get('user');
             $ids = [];
             if ($auth['username'] != 'admin') {
                 $ids = Db::table('system_user')->where('f_user_id',$auth['id'])->column('id');
                 $ids[] = $auth['id'];
+                $this->users = Db::table('system_user')->where('f_user_id',$auth['id'])->select();
+            }else {
+                $this->users = Db::table('system_user')->select();
+            }
+
+            if ($user_id) {
+                $ids = [];
+                $ids[] = $user_id;
             }
             
             //用户数量
