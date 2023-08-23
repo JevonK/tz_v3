@@ -169,18 +169,18 @@ class Users extends Controller
         $username = $this->request->param('username');
         $type = $this->request->param('type');
         $auth = $this->app->session->get('user');
-        $where = '';
+        $where = '1 ';
         if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']} )";
+            $where .= " and (system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']} )";
         }
         $user = Db::name('LcUser')->where($where)->where(['username' => $username])->find();
-        $where = '1=2';
+        $where = '1 ';
         if(!empty($user)){
             $uid = $user['id'];
             if($type == 1){
-                $where = "parentid = $uid";
+                $where = " parentid = $uid";
             }else{
-                $where = "uid = $uid";
+                $where = " uid = $uid";
             }
         }
         
@@ -213,7 +213,9 @@ class Users extends Controller
                 $vo['top'] = $user_top['username'];
             }
             $vo['username'] = '--';
-            $vo['s_name'] = Db::table('system_user')->where("id={$user_my['system_user_id']}")->value('username');
+            if (!empty($user_my['system_user_id'])) {
+                $vo['s_name'] = Db::table('system_user')->where("id={$user_my['system_user_id']}")->value('username');
+            }
             $vo['time'] = '--';
             $vo['act_time'] = '--';
             $vo['time_zone'] = '--';

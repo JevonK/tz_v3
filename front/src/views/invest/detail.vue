@@ -11,7 +11,7 @@
 			</div>
 			<div class="detail">
 				<van-cell-group :border="false">
-					<van-cell :title="item.type==1?$t('index.dailyRate'):$t('index.rate')" value-class="value_class"
+					<van-cell :title="(item.type==1 || item.type== 4)?$t('index.dailyRate'):$t('index.rate')" value-class="value_class"
 						:border="false" :value="item.rate+'%'" />
 					<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
 						:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />

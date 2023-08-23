@@ -123,6 +123,8 @@ class User extends Controller
             "invest_reward" => $invest_reward,
             "day_invest_reward" => $day_invest_reward,
             "address" => $user['address'],
+            "address_name" => $user['address_name'],
+            "address_phone" => $user['address_phone'],
             "invite_code" => $user['invite_code'],
             "user_icon" => getInfo('user_img'),
             "vip_name" => $member['name'],
@@ -1624,6 +1626,7 @@ class User extends Controller
         foreach ($list as &$invest) {
             $invest['is_receive'] = date('Y-m-d H:i:s') > $invest['time2'] ? 1 : 0;
             $item = Db::name('LcItem')->find($invest['itemid']);
+            $invest['img'] = $item['img2'];
             // 判断是否有领取
             if ($invest['type'] == 1 || $invest['type'] == 4) {
                 $Date_1=date("Y-m-d");
@@ -2260,7 +2263,7 @@ class User extends Controller
                 $invest_list3 = Db::name("LcInvest")->where("id = $id and type=4 AND status = 0")->select();
                 break;
         }
-        if (empty($invest_list1)&&empty($invest_list2)&&empty($invest_list3)&&empty($savings_list1)) $this->error('error');
+        if (empty($invest_list1)&&empty($invest_list2)&&empty($invest_list3)&&empty($savings_list1)) $this->error('error',"", 218);
         
         //每日付息到期还本处理
         foreach ($invest_list1 as $k => $v) {
@@ -2587,10 +2590,10 @@ class User extends Controller
     {
         $num-=1;
         if ($num * $min >= $money) {
-            throw new \Exception('最小金额超出范围');
+            throw new \Exception('Minimum amount out of range');
         }
         if ($num * $max <= $money) {
-            throw new \Exception('最大金额太小');
+            throw new \Exception('The maximum amount is too small');
         }
         $kmix = max($min, $money - $num * $max); //最小金额
         $kmax = min($max, $money - $num * $min); //最大金额
@@ -2609,9 +2612,11 @@ class User extends Controller
         $params = $this->request->param();
         $language = $params["language"];
         $address = $params["address"];
+        $name = $params["name"];
+        $phone = $params["phone"];
         $this->checkToken($language);
         $uid = $this->userInfo['id'];
-        Db::name('LcUser')->where("id=$uid")->update(['address' => $address]);
+        Db::name('LcUser')->where("id=$uid")->update(['address' => $address, 'address_name' => $name, 'address_phone' => $phone]);
         $this->success('success');
     }
 
@@ -2619,9 +2624,14 @@ class User extends Controller
     public function edit_password() {
         $params = $this->request->param();
         $language = $params["language"];
-        $password = $params["password"];
+        $password = $params["new_password"];
+        $old_password = $params["old_password"];
+        $md5_old_password = md5($old_password);
         $this->checkToken($language);
         $uid = $this->userInfo['id'];
+        if (!Db::name('LcUser')->where("id=$uid and password='$md5_old_password'")->find()) {
+            $this->error('Old password error',"",218);
+        }
         Db::name('LcUser')->where("id=$uid")->update(['password' => md5($password)]);
         $this->success('success');
     }

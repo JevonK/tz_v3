@@ -10,13 +10,25 @@
 				<div class="">
 					<p class="withdraw_money_tips">Change password</p>
 					<div class="flex_center">
-						<van-field v-model="wallet.money" type="password"
+						<van-field v-model="wallet.old_password" label="Old password" type="password"
+							:placeholder="'Please enter a old password'" />
+					</div>
+				</div>
+				<div class="">
+					<div class="flex_center">
+						<van-field v-model="wallet.new_password" label="New password" type="password"
 							:placeholder="'Please enter a new password'" />
+					</div>
+				</div>
+				<div class="">
+					<div class="flex_center">
+						<van-field v-model="wallet.verify_password" label="Verify new password" type="password"
+							:placeholder="'Please enter a verify new password'" />
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="basic_btn btn" :class="wallet.money?'':'no_touch'" @click="submit()">
+		<div class="basic_btn btn"  @click="submit()">
 			Submit
 		</div>
 	</div>
@@ -47,8 +59,9 @@
 				show: false,
 				wallets: [],
 				wallet: {
-					money: '',
-					id: 0,
+					old_password: '',
+					new_password: '',
+					verify_password: '',
 				},
 				withdraw_num: 0,
 				withdraw_min: 0,
@@ -71,12 +84,6 @@
 				if (window.plus) {
 					isapp = 1;
 				}
-				Fetch('/user/info', {
-					isapp: isapp
-				}).then((r) => {
-					this.data = r.data;
-					this.wallet.money = r.data.address
-				});
 			},
 			onSelect(item) {
 				if (item.value == 0) {
@@ -87,12 +94,16 @@
 			},
 			changeAmount() {},
 			submit() {
-				if (this.wallet.money == "") {
-					this.$toast("Please enter a new password");
+				if (this.wallet.new_password == "" || this.wallet.old_password == "" || this.wallet.verify_password == "") {
+					this.$toast("Please enter a password");
+					return false;
+				}
+				if (this.wallet.new_password != this.wallet.verify_password) {
+					this.$toast("The new password does not match the verified password");
 					return false;
 				}
 				Fetch('/user/edit_password', {
-					'password' : this.wallet.money,
+					...this.wallet,
 				}).then(r => {
 					this.$router.replace('/user');
 				})

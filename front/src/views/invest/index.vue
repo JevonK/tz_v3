@@ -56,11 +56,7 @@
 			return {
 				data: [],
 				show_tabs:false,
-				tabs: [{
-						id: 0,
-						title: this.$t('tabs.all')
-					}
-
+				tabs: [
 				],
 				active: 0,
 				empty: false,
@@ -103,10 +99,7 @@
 			},
 			start() {
 				Fetch('/index/item_class').then((r) => {
-					var tabs1 = [{
-						id: 0,
-						title: this.$t('tabs.all')
-					}];
+					var tabs1 = [];
 					r.data.classes.forEach(item => {
 						tabs1.push({
 							id: item.id,
@@ -115,6 +108,10 @@
 					})
 					this.tabs = tabs1;
 					this.show_tabs = true;
+					this.active = 0;
+					if (this.tabs) {
+						this.onLoad();
+					}
 				});
 			},
 			sort(index) {
@@ -129,7 +126,7 @@
 				Fetch('/index/item_list', {
 					page: this.page,
 					listRows: this.listRows,
-					type: this.tabs[this.active]['id']
+					type: this.tabs[this.active]['id'] || 0
 				}).then(r => {
 					if (r.data.length == 0) this.empty = true;
 					var list = r.data.list;

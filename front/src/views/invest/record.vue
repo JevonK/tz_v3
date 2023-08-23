@@ -11,25 +11,31 @@
 							<p class="color_blue" v-if="item.status==0">{{$t('tabs.ongoing')}}</p>
 							<p class="color_green" v-if="item.status==1">{{$t('tabs.done')}}</p>
 						</div>
-						<div class="detail">
-							<div class="title">
-								{{item.title}}
+						<div class="detail-f">
+							<div class="detail" >
+								<div class="title">
+									{{item.title}}
+								</div>
+								<van-cell-group :border="false">
+									<van-cell :title="$t('invest.amount')" value-class="value_class" :border="false"
+										:value="common.currency_symbol_basic()+common.precision_basic(item.money)" />
+									<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
+										:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
+									<van-cell :title="(item.type==1 || item.type==4)?$t('index.dailyRate'):$t('index.rate')"
+										value-class="value_class" :border="false" :value="item.rate+'%'" />
+									<van-cell :title="$t('invest.income')" value-class="value_class" :border="false"
+										:value="common.currency_symbol_basic()+common.precision_basic(item.total_interest)" />	
+									<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
+										:value="$t('index.method'+item.type)" /> -->
+									<!-- <van-cell :title="$t('invest.endTime')" value-class="value_class" :border="false"
+										:value="item.time2_actual" /> -->
+								</van-cell-group>
 							</div>
-							<van-cell-group :border="false">
-								<van-cell :title="$t('invest.amount')" value-class="value_class" :border="false"
-									:value="common.currency_symbol_basic()+common.precision_basic(item.money)" />
-								<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
-									:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
-								<van-cell :title="item.type==1?$t('index.dailyRate'):$t('index.rate')"
-									value-class="value_class" :border="false" :value="item.rate+'%'" />
-								<van-cell :title="$t('invest.income')" value-class="value_class" :border="false"
-									:value="common.currency_symbol_basic()+common.precision_basic(item.total_interest)" />	
-								<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
-									:value="$t('index.method'+item.type)" /> -->
-								<van-cell :title="$t('invest.endTime')" value-class="value_class" :border="false"
-									:value="item.time2_actual" />
-							</van-cell-group>
-							<p v-if="item.is_receive == 1 && item.pause_time == 0" class="receive" @click="receive_click(item)">Receive</p>
+							<div class="detail-img" style="float: left;">
+								<img :src="item.img" alt="">
+								<p v-if="item.is_receive == 1 && item.pause_time == 0" class="receive" @click="receive_click(item)">Receive</p>
+								<p v-else class="receive-disabled" :color="'#707070b0'" >Receive</p>
+							</div>
 						</div>
 					</div>
 				</van-list>
@@ -159,6 +165,8 @@
 
 				.detail {
 					line-height: 2;
+					float: left;
+					width: 70%;
 
 					.title {
 						font-size: 14px;
@@ -169,6 +177,16 @@
 					.value_class {
 						font-weight: bold;
 						color: #3CB371;
+					}
+				}
+				.detail-f {
+					overflow: hidden;
+				}
+				.detail-img {
+					width: 30%;
+					img {
+						width: 100%;
+						height: 186px;
 					}
 				}
 
@@ -185,9 +203,20 @@
 		border-radius: 8px;
 		text-align: center;
 	}
+	.receive-disabled {
+		padding: 5px 10px;
+		background: #8e8e8f;
+		margin: 0 10px 8px 0;
+		color: #FFFFFF;
+		border-radius: 8px;
+		text-align: center;
+	}
 
 	/deep/ .van-cell {
 		font-size: unset;
 		padding: 5px 0;
+		.van-cell__value {
+			text-align: left;
+		}
 	}
 </style>

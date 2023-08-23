@@ -20,7 +20,7 @@
 									<br><br><span class="color_red">{{$t('withdraw.withdrawFailTips')}}</span>
 								</span>
 							</p>
-							<p class="color_green">{{currency_symbol_basic}}{{precision_basic(item.money)}}
+							<p class="color_green">{{precision_basic(item.money)}}
 								<br>
 								<span class="money_usd" v-if="item.wtype!=1">≈ {{common.precision(item.money2)}} {{item.currency}}</span>
 								<span class="money_usd" v-if="item.wtype==1">≈ {{common.precision_basic(item.money)}} USDT</span>

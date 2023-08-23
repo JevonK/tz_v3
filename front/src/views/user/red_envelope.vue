@@ -8,10 +8,10 @@
 				:description="$t('withdraw.accountPlaceholder')" close-on-click-action @select="onSelect" />
 			<div class="block_div item">
 				<div class="">
-					<p class="withdraw_money_tips">Red envelope code</p>
+					<p class="withdraw_money_tips">Reward</p>
 					<div class="flex_center">
 						<van-field v-model="wallet.money" type="text"
-							:placeholder="'Please enter the red envelope claim code'" />
+							:placeholder="'Please Enter Reward Code'" />
 					</div>
 				</div>
 			</div>

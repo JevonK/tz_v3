@@ -88,10 +88,15 @@
 			return {
 				currency: '',
 				menus1: [{
-						"title": this.$t('user.luckyDraw'),
+						"title": 'Reward Redemption',
 						"value": '',
-						"logo": "index/luckyDraw.png",
-						"url": "/draw"
+						"logo": "user/auth1.png",
+						"url": "/red_envelope"
+					},{
+						"title": this.$t('user.withdrawAccount'),
+						"value": '',
+						"logo": "user/moneybag.png",
+						"url": "/wallet"
 					},{
 						"title": this.$t('user.fundingDetails'),
 						"value": '',
@@ -115,19 +120,13 @@
 						"value": '',
 						"logo": "user/cash.png",
 						"url": "/withdraw/record"
-					},
-					{
-						"title": this.$t('user.withdrawAccount'),
+					},{
+						"title": this.$t('user.luckyDraw'),
 						"value": '',
-						"logo": "user/moneybag.png",
-						"url": "/wallet"
-					},
-					{
-						"title": 'Reward Redemption',
-						"value": '',
-						"logo": "user/auth1.png",
-						"url": "/red_envelope"
+						"logo": "index/luckyDraw.png",
+						"url": "/draw"
 					}
+					
 				],
 				menus2: [
 					// {

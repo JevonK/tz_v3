@@ -8,13 +8,26 @@
 				<div class="">
 					<p class="withdraw_money_tips">Shipping address</p>
 					<div class="flex_center">
-						<van-field v-model="wallet.money" type="text"
-							:placeholder="'Please enter the shipping address'" />
+						<van-field v-model="wallet.name" label="Name" type="text"
+							:placeholder="'Please enter the Name'" />
+					</div>
+				</div>
+				<div class="">
+					<div class="flex_center">
+						<van-field v-model="wallet.phone" label="Phone" type="text"
+							:placeholder="'Please enter the Phone'" />
+					</div>
+				</div>
+				<div class="">
+					<div class="flex_center">
+						<van-field v-model="wallet.address" label="Address" type="text"
+							:placeholder="'Please enter the address'" />
 					</div>
 				</div>
 			</div>
+			
 		</div>
-		<div class="basic_btn btn" :class="wallet.money?'':'no_touch'" @click="submit()">
+		<div class="basic_btn btn" @click="submit()">
 			Submit
 		</div>
 	</div>
@@ -45,8 +58,9 @@
 				show: false,
 				wallets: [],
 				wallet: {
-					money: '',
-					id: 0,
+					name: '',
+					phone: '',
+					address: ''
 				},
 				withdraw_num: 0,
 				withdraw_min: 0,
@@ -73,7 +87,9 @@
 					isapp: isapp
 				}).then((r) => {
 					this.data = r.data;
-					this.wallet.money = r.data.address
+					this.wallet.address = r.data.address
+					this.wallet.name = r.data.address_name
+					this.wallet.phone = r.data.address_phone
 				});
 			},
 			onSelect(item) {
@@ -85,12 +101,12 @@
 			},
 			changeAmount() {},
 			submit() {
-				if (this.wallet.money == "") {
+				if (this.wallet.address == "" || this.wallet.name == "" || this.wallet.phone == "") {
 					this.$toast(this.$t('withdraw.amountEmpty'));
 					return false;
 				}
 				Fetch('/user/add_address', {
-					'address' : this.wallet.money,
+					...this.wallet,
 				}).then(r => {
 					this.$router.replace('/user');
 				})
