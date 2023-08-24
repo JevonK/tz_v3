@@ -225,6 +225,7 @@
 		margin-bottom: 10px;
 		background: #051c3f;
 		width: 100%;
+		max-width: 750px;
 		margin: 0;
 		border-radius: 0;
 		color: #FFFFFF;
@@ -233,6 +234,7 @@
 			position: fixed;
 			    background: #051c3f;
 			    width: 100%;
+				max-width: 750px;
 			    z-index: 10;
 		}
 

@@ -88,12 +88,12 @@
 			return {
 				currency: '',
 				menus1: [
-					// {
-					// 	"title": this.$t('user.luckyDraw'),
-					// 	"value": '',
-					// 	"logo": "index/luckyDraw.png",
-					// 	"url": "/draw"
-					// },
+					{
+						"title": this.$t('user.luckyDraw'),
+						"value": '',
+						"logo": "index/luckyDraw.png",
+						"url": "/draw"
+					},
 					{
 						"title": 'Reward Redemption',
 						"value": '',
@@ -104,18 +104,19 @@
 						"value": '',
 						"logo": "user/moneybag.png",
 						"url": "/wallet"
-					},{
+					},
+					{
 						"title": this.$t('user.fundingDetails'),
 						"value": '',
 						"logo": "user/details.png",
 						"url": "/funding/record"
 					},
-					{
-						"title": this.$t('user.rewards'),
-						"value": '',
-						"logo": "user/rewards.png",
-						"url": "/rewards"
-					},
+					// {
+					// 	"title": this.$t('user.rewards'),
+					// 	"value": '',
+					// 	"logo": "user/rewards.png",
+					// 	"url": "/rewards"
+					// },
 					{
 						"title": this.$t('user.rechargeRecord'),
 						"value": '',
@@ -266,6 +267,7 @@
 		z-index: 10;
 		background: #051C3F;
 		width: 100%;
+		max-width: 750px;
 		margin-left: unset;
 
 		.user_detail {

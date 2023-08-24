@@ -1200,7 +1200,7 @@ class User extends Controller
             $uid2 = $user['id'];
             $recharge_sum = Db::name('lc_user_recharge_record')->where("uid=$uid2 AND status=1")->sum('money');
             $user['recharge_sum'] = $recharge_sum;
-            $user['username'] = substr($user['username'],0,2).'***'.substr($user['username'],strlen($user['username'])-2,strlen($user['username']));
+            $user['username'] = substr($user['username'],0,3).'***'.substr($user['username'],strlen($user['username'])-3,strlen($user['username']));
         }
         
         $data = array(

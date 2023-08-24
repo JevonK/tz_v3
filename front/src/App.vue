@@ -183,6 +183,7 @@
 		bottom: 0;
 		height: 60px;
 		z-index: 4;
+		max-width: 750px;
 	}
 
 	#app .footer .footer_item {

@@ -11,14 +11,14 @@
 			</div>
 			<div class="detail">
 				<van-cell-group :border="false">
-					<van-cell :title="(item.type==1 || item.type== 4)?$t('index.dailyRate'):$t('index.rate')" value-class="value_class"
-						:border="false" :value="item.rate+'%'" />
 					<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
 						:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
 					<van-cell :title="$t('invest.amount')" value-class="value_class" :border="false"
 						:value="common.currency_symbol_basic()+common.precision_basic(item.min)" />
 					<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
 						:value="$t('index.method'+item.type)" /> -->
+					<van-cell v-if="item.type==1 || item.type== 4" :title="(item.type==1 || item.type== 4)?$t('index.dailyRate'):$t('index.rate')" value-class="value_class"
+						:border="false" :value="common.precision_basic(income/item.day)" />
 					<van-cell :title="$t('invest.income')" value-class="value_class" :border="true" 
 						:value="common.currency_symbol_basic() + income " />
 				</van-cell-group>
@@ -52,8 +52,6 @@
 				</div>
 				<div class="detail">
 					<van-cell-group :border="false">
-						<van-cell :title="item.type==1?$t('index.dailyRate'):$t('index.rate')" value-class="value_class"
-							:border="false" :value="item.rate+'%'" />
 						<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
 							:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
 						<van-cell v-if="!is_withdrawal_purchase" :title="$t('invest.amount')" value-class="value_class" :border="false"
@@ -62,6 +60,8 @@
 							:value="common.currency_symbol_basic()+common.precision_basic(item.min*item.withdrawal_purchase/100)" />
 						<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
 							:value="$t('index.method'+item.type)" /> -->
+						<van-cell v-if="item.type==1 || item.type==4" :title="(item.type==1 || item.type==4)?$t('index.dailyRate'):$t('index.rate')" value-class="value_class"
+							:border="false" :value="common.precision_basic(income/item.day)" />
 						<van-cell v-if="!is_withdrawal_purchase" v-show="user.login" :title="$t('invest.paymentType')" value-class="value_class"
 							:border="false"
 							:value="$t('user.fundingAccount')+' ('+common.currency_symbol_basic()+common.precision_basic(user.balance)+')'" />
@@ -144,7 +144,7 @@
 				})
 			},
 			change() {
-				if (this.item.type == 1) {
+				if (this.item.type == 1 || this.item.type == 4) {
 					this.income = this.common.precision_basic(this.item.min * this.item.rate * this.item.day / 100);
 				} else {
 					this.income = this.common.precision_basic(this.item.min * this.item.rate / 100);
@@ -373,6 +373,7 @@
 
 	.btn-gr {
 		width: 100%;
+		max-width: 750px;
 		position: fixed;
 		bottom: 8px;
 	}

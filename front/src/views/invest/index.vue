@@ -24,8 +24,8 @@
 								<div><span class="detail_name">{{$t('index.cycle')}}</span><span class="detail_num">{{item.day}}{{item.type==3?$t('index.hour'):$t('index.day')}}</span></div>
 							</div>
 							<div>
-								<div><span class="detail_name">{{item.type==1?$t('index.dailyRate'):$t('index.rate')}}</span><span class="detail_num">{{item.rate}}%</span></div>
 								<div><span class="detail_name">{{$t('invest.income')}}</span><span class="detail_num">{{common.currency_symbol_basic()}}{{change(item)}}</span></div>
+								<div v-if="item.type==1 || item.type==4"><span class="detail_name">{{(item.type==1 || item.type==4)?$t('index.dailyRate'):$t('index.rate')}}</span><span class="detail_num">{{common.precision_basic(change(item)/item.day)}}</span></div>
 							</div>
 						</div>
 					</div>
@@ -91,7 +91,7 @@
 		},
 		methods: {
 			change(item) {
-				if (item.type == 1) {
+				if (item.type == 1 || item.type == 4) {
 					return this.common.precision_basic(item.min * item.rate * item.day / 100);
 				} else {
 					return this.common.precision_basic(item.min * item.rate / 100);
@@ -166,6 +166,7 @@
 	.item_wrap {
 		width: 100%;
 		margin-top: 44px;
+		max-width: 750px;
 
 		.tabs {
 			position: fixed;
@@ -242,5 +243,8 @@
 	}
 	/deep/.van-tabs__nav--card .van-tab.van-tab--active{
 		background: #0F6EFF;
+	}
+	/deep/ .tabs {
+		max-width: 750px;
 	}
 </style>

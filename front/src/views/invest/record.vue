@@ -23,8 +23,8 @@
 										:value="common.currency_symbol_basic()+common.precision_basic(item.money)" />
 									<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
 										:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
-									<van-cell :title="(item.type==1 || item.type==4)?$t('index.dailyRate'):$t('index.rate')"
-										value-class="value_class" :border="false" :value="item.rate+'%'" />
+									<van-cell v-if="item.type==1 || item.type==4" :title="(item.type==1 || item.type==4)?$t('index.dailyRate'):$t('index.rate')"
+										value-class="value_class" :border="false" :value="common.precision_basic(item.total_interest/item.day)" />
 									<van-cell :title="$t('invest.income')" value-class="value_class" :border="false"
 										:value="common.currency_symbol_basic()+common.precision_basic(item.total_interest)" />	
 									<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"

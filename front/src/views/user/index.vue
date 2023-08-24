@@ -399,6 +399,7 @@
 		z-index: 10;
 		background: #051C3F;
 		width: 100%;
+		max-width: 750px;
 		margin-left: unset;
 
 		.user_detail {
