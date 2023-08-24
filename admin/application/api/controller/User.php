@@ -2409,11 +2409,12 @@ class User extends Controller
             if (!empty($day_diff)) {
                 $wait_day = $day_diff - ($v['total_num'] - $v['wait_num']);
             }
-            
             //判断返还时间
             $return_num = $v['wait_num'] - 1;
             $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*($wait_day-1))));
-            if($return_time > $now && empty($wait_day)) continue;
+            if($return_time > $now) continue;
+            if ($wait_day < 1) continue;
+
             
             $time_zone = $v['time_zone'];
             $language = getLanguageByTimezone($time_zone);

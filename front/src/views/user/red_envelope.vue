@@ -82,7 +82,14 @@
 					'code' : this.wallet.money,
 				}).then(r => {
 					if (r.code == 1) {
-						this.$toast("Congratulations on winning:" + r.data.money);
+						this.$dialog.alert({
+							closeOnClickOverlay: true,
+							confirmButtonText: this.$t('utils.confirm'),
+							showConfirmButton: true,
+							message: "Congratulations on winning:" + r.data.money,
+						}).catch(() => {
+							// on close
+						});
 					}
 					// this.$router.replace('/user');
 				})

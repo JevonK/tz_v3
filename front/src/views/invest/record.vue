@@ -17,7 +17,9 @@
 									{{item.title}}
 								</div>
 								<van-cell-group :border="false">
-									<van-cell :title="$t('invest.amount')" value-class="value_class" :border="false"
+									<van-cell v-if="item.source == 3" :title="$t('invest.amount')" value-class="value_class" :border="false"
+										:value="'Registration Gifts'" />
+									<van-cell v-else :title="$t('invest.amount')" value-class="value_class" :border="false"
 										:value="common.currency_symbol_basic()+common.precision_basic(item.money)" />
 									<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
 										:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />

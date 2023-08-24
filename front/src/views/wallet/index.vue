@@ -87,7 +87,14 @@
 		data() {
 			return {
 				currency: '',
-				menus1: [{
+				menus1: [
+					// {
+					// 	"title": this.$t('user.luckyDraw'),
+					// 	"value": '',
+					// 	"logo": "index/luckyDraw.png",
+					// 	"url": "/draw"
+					// },
+					{
 						"title": 'Reward Redemption',
 						"value": '',
 						"logo": "user/auth1.png",
@@ -120,11 +127,6 @@
 						"value": '',
 						"logo": "user/cash.png",
 						"url": "/withdraw/record"
-					},{
-						"title": this.$t('user.luckyDraw'),
-						"value": '',
-						"logo": "index/luckyDraw.png",
-						"url": "/draw"
 					}
 					
 				],
