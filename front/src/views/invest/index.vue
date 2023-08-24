@@ -186,6 +186,8 @@
 
 			.logo {
 				position: relative;
+				width: 90%;
+				margin: 0 auto;
 				div{
 					position: absolute;
 					bottom: 0px;

@@ -45,13 +45,14 @@ class Invest extends Controller
     {
         $this->title = '已投项目管理';
         $auth = $this->app->session->get('user');
-        $where = '';
+        $status = $this->request->param('status', '');
+        $where = '1 ';
         if (isset($auth['username']) and $auth['username'] != 'admin') {
             $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
         }
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username,it.title_en_us as title');
         $query->where($where)->join('lc_user u','i.uid=u.id');
-        $query->join('lc_item it','i.itemid=it.id')->like('it.title_zh_cn#it_title,u.username#u_username')->dateBetween('i.time#i_time')->order('i.id desc')->page();
+        $query->join('lc_item it','i.itemid=it.id')->like('it.title_zh_cn#it_title,u.username#u_username,i.status#status')->dateBetween('i.time#i_time')->order('i.id desc')->page();
     }
 
     /**
