@@ -16,22 +16,26 @@
 								<div class="title">
 									{{item.title}}
 								</div>
-								<van-cell-group :border="false">
-									<van-cell v-if="item.source == 3" :title="$t('invest.amount')" value-class="value_class" :border="false"
-										:value="'Registration Gifts'" />
-									<van-cell v-else :title="$t('invest.amount')" value-class="value_class" :border="false"
-										:value="common.currency_symbol_basic()+common.precision_basic(item.money)" />
-									<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
-										:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
-									<van-cell v-if="item.type==1 || item.type==4" :title="(item.type==1 || item.type==4)?$t('index.dailyRate'):$t('index.rate')"
-										value-class="value_class" :border="false" :value="common.precision_basic(item.total_interest/item.day)" />
-									<van-cell :title="$t('invest.income')" value-class="value_class" :border="false"
-										:value="common.currency_symbol_basic()+common.precision_basic(item.total_interest)" />	
-									<!-- <van-cell :title="$t('invest.type')" value-class="value_class" :border="false"
-										:value="$t('index.method'+item.type)" /> -->
-									<!-- <van-cell :title="$t('invest.endTime')" value-class="value_class" :border="false"
-										:value="item.time2_actual" /> -->
-								</van-cell-group>
+								<p class="detail-p" v-if="item.source == 3">
+									<span class="lable-class">{{ $t('invest.amount') }}</span>
+									<span class="value_class">0</span>
+								</p>
+								<p class="detail-p" v-else>
+									<span class="lable-class">{{ $t('invest.amount') }}</span>
+									<span class="value_class">{{ common.currency_symbol_basic()+common.precision_basic(item.money) }}</span>
+								</p>
+								<p class="detail-p">
+									<span class="lable-class"> {{ $t('invest.cycle') }}</span>
+									<span class="value_class">{{  item.day+(item.type==3?$t('index.hour'):$t('index.day')) }}</span>
+								</p>
+								<p class="detail-p" v-if="item.type==1 || item.type==4">
+									<span class="lable-class">{{ (item.type==1 || item.type==4)?$t('index.dailyRate'):$t('index.rate') }}</span>
+									<span class="value_class">{{ common.precision_basic(item.total_interest/item.day) }}</span>
+								</p>
+								<p class="detail-p">
+									<span class="lable-class">{{ $t('invest.income') }}</span>
+									<span class="value_class">{{ common.currency_symbol_basic()+common.precision_basic(item.total_interest) }}</span>
+								</p>
 							</div>
 							<div class="detail-img" style="float: left;">
 								<img :src="item.img" alt="">
@@ -169,6 +173,10 @@
 					line-height: 2;
 					float: left;
 					width: 70%;
+					.detail-p {
+						padding: 5px 0;
+						overflow: hidden;
+					}
 
 					.title {
 						font-size: 14px;
@@ -176,9 +184,19 @@
 						margin-bottom: 10px;
 					}
 
+					.lable-class {
+						float: left;
+					}
 					.value_class {
 						font-weight: bold;
 						color: #3CB371;
+						word-break:normal; 
+						width:100px; 
+						display:block; 
+						white-space:pre-wrap;
+						word-wrap : break-word ;
+						overflow: hidden ;
+						float: left;
 					}
 				}
 				.detail-f {
@@ -188,7 +206,8 @@
 					width: 30%;
 					img {
 						width: 100%;
-						height: 186px;
+						height: 100px;
+						margin-top: 36px;
 					}
 				}
 
@@ -204,6 +223,7 @@
 		color: #FFFFFF;
 		border-radius: 8px;
 		text-align: center;
+		width: 100%;
 	}
 	.receive-disabled {
 		padding: 5px 10px;
@@ -212,6 +232,7 @@
 		color: #FFFFFF;
 		border-radius: 8px;
 		text-align: center;
+		width: 100%;
 	}
 
 	/deep/ .van-cell {

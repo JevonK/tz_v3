@@ -96,7 +96,7 @@ class User extends Controller
         //提现金额
         $withdraw_sum = Db::name('LcUserWithdrawRecord')->where('uid', $uid)->where("status = 1")->sum('money');
         // 總資產
-        $invest_sum = Db::name('LcInvest')->where('uid', $uid)->where("status = 0")->sum('money');
+        $invest_sum = Db::name('LcInvest')->where('uid', $uid)->where("status = 0 and source!=3")->sum('money');
         //投资收益
         $invest_reward = Db::name('LcUserFunding')->where('uid', $uid)->where("type = 1 AND fund_type = 6")->sum('money');
         // 今日收益
@@ -1611,7 +1611,7 @@ class User extends Controller
         $page = $params["page"];
         $listRows = $params["listRows"];
         
-        $list = Db::name('LcInvest')->field("id,itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual,time,time2,total_num,wait_num,pause_time")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
+        $list = Db::name('LcInvest')->field("id,itemid,money,day,rate,total_interest,wait_interest,type,status,currency,time_zone,time_actual,time2_actual,time,time2,total_num,wait_num,pause_time,source")->where("uid = $uid")->order("time_actual desc")->page($page,$listRows)->select();
         $length = Db::name('LcInvest')->where("uid = $uid")->count();
         $w = date("w");//获取星期几;
         $is_w = 0;
