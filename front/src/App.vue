@@ -22,10 +22,7 @@
 				</p>
 			</router-link>
 			<router-link to="/wallet_home" class="footer_item" :class="show_icon_type === 'wallet' ? 'footer_item_active' : ''">
-				<span class="footer_icon " >
-					<van-icon v-if="show_icon_type === 'wallet'" name="bill" style="transform: scale(2.1); top: 8px; left: 7px;" />
-					<van-icon v-else name="bill-o" style="transform: scale(2.1); top: 8px; left: 7px; " />
-				</span>
+				<span class="footer_icon footer_icon_wallet" />
 				<p class="footer_info">
 					{{$t('home.wallet')}}
 				</p>
@@ -227,6 +224,9 @@
 	#app .footer .footer_item .footer_icon.footer_icon_user {
 		background-image: url(./views/img/home/user.png);
 	}
+	#app .footer .footer_item .footer_icon.footer_icon_wallet {
+		background-image: url(./views/img/home/wallet.png);
+	}
 
 	#app .footer .footer_item .footer_info {
 		font-size: 12px;
@@ -250,6 +250,9 @@
 
 	#app .footer .footer_item.footer_item_active .footer_icon.footer_icon_user {
 		background-image: url(./views/img/home/user_cur.png);
+	}
+	#app .footer .footer_item.footer_item_active .footer_icon.footer_icon_wallet {
+		background-image: url(./views/img/home/wallet_cur.png);
 	}
 
 	.loading_wrap {

@@ -5,11 +5,11 @@
 			<div class="bind_item">
 				<p class="item_name">{{$t('wallet.bank')}}</p>
 				<div class="block_div item_input">
-					<van-field v-model="account.bank" type="text" :placeholder="$t('wallet.bank')" />
+					<!-- <van-field v-model="account.bank" type="text" :placeholder="$t('wallet.bank')" /> -->
 
-					<!-- <van-dropdown-menu>
+					<van-dropdown-menu>
 						<van-dropdown-item v-model="value1" :options="option1" />
-					</van-dropdown-menu> -->
+					</van-dropdown-menu>
 				</div>
 			</div>
 			<div class="bind_item">
@@ -95,8 +95,8 @@
 				})
 			},
 			submit() {
-				// this.account.bank = this.option1[this.value1]['text'];
-				// this.account.bank_id = this.option1[this.value1]['id'];
+				this.account.bank = this.option1[this.value1]['text'];
+				this.account.bank_id = this.option1[this.value1]['id'];
 				if (this.account.name.length > 16 || this.account.name.length < 2) {
 					this.$toast(this.$t('wallet.nameError'));
 					return false;

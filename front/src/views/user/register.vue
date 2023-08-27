@@ -33,7 +33,7 @@
 				<div class="register_btn"
 					:class="data.username == '' || data.password == '' || data.code == ''? 'no_touch' : ''"
 					@click="submit">
-					→
+					Register
 				</div>
 			</form>
 		</div>
@@ -73,7 +73,7 @@
 				<div class="register_btn"
 					:class="data.phone == '' || data.smsCode == ''|| data.password == ''? 'no_touch' : ''"
 					@click="submit">
-					→
+					Register
 				</div>
 			</form>
 		</div>
@@ -375,34 +375,34 @@
 </script>
 
 <style lang="less" scoped>
+	
 	.basic_wrap{
 		position: relative;
 	}
 	.form_div {
 		height: 600px;
 		width: 100%;
-		background: url(../img/user/login_background.png) no-repeat center center;
+		// background: url(../img/user/login_background.png) no-repeat center center;
 		background-size: 150% 100%;
 		position: relative;
 		top: -88px;
 
 		.form {
 			position: absolute;
-			margin: 200px auto 0 5%;
+			margin: 120px auto 0 5%;
 			width: 90%;
 
 			.register_btn {
-				background: #68326C;
-				color: #FFFFFF;
-				width: 60px;
-				height: 60px;
-				border-radius: 50%;
+				background: #333333;
+    			color: #FFFFFF;
+				width: 100%;
+				height: 50px;
+				border-radius: 32px;
 				float: right;
 				margin-right: 3%;
 				text-align: center;
-				line-height: 60px;
-				font-size: 36px;
-				font-weight: bold;
+				line-height: 50px;
+				font-size: 19px;
 			}
 		}
 	}
@@ -431,7 +431,8 @@
 	}
 
 	.logo {
-		margin: 50px 0 0 30px;
+		margin: 50px 0 0 0;
+		text-align: center;
 
 		img {
 			height: 80px;
@@ -449,6 +450,7 @@
 		margin-bottom: 15px;
 		border-radius: 25px;
 		padding: 0 20px;
+		border: 1px solid #EEEEEE;
 
 		input {
 			height: 50px;
@@ -494,11 +496,13 @@
 	}
 
 	.login_register {
-		position: relative;
-		top: -60px;
-		font-size: 14px;
-		margin-left: 50px;
-	
+		position: absolute;
+		// top: -60px;
+		font-size: 20px;
+		color: #333333;
+		// margin-left: 50px;
+		margin-top: 100%;
+    	margin-left: 4%;
 	}
 
 	/deep/ .van-dropdown-menu__bar {

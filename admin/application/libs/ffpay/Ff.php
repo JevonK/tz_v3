@@ -5,7 +5,6 @@ class Ff {
 
     //XXX替换对应的国家对应的地址
     const HOST_URL = 'https://ffpay8.com'; //网关地址切换正式环境不需要替换
-    const PAY_CODE = 'PKR601';    //订单中的支付编码
 
 		
 	//以下3个参数需要开启正式商户号后替换.
@@ -20,11 +19,50 @@ class Ff {
     static public $oderQuery = self::HOST_URL . '/dfpay/query';
 
     /**
+     * 发起订单
+     */
+    public function send_pay($params) {
+        $data = [
+            'merchant_id' => $this->authorizationKey,
+            'order_no' => $params['order_no'],
+            'submit_time' => date('Y-m-d H:i:s'),
+            'bank_code' => $params['pay_code'],
+            'notify_url' => getInfo('domain_api')."/index/index/ff_pay_callback",
+            'return_url' => getInfo('domain').'/#/recharge/record',
+            'amount' => $params['amount'],
+        ];
+        $data['sign'] = $this->getSign($data);
+        return $this->curlPost(self::$oderReceive, $data);
+    }
+
+    /**
+     * 发起代付订单
+     */
+    public function send_pay_out($params) {
+        $data = [
+            'mchid' => $this->authorizationKey,
+            'out_trade_no' => $params['order_no'],
+            'bankname' => $params['bankname'], // 银行名称
+            'accountname' => $params['accountname'], // 收款人姓名
+            'cardnumber' => $params['cardnumber'], // 银行卡号
+            'notify_url' => getInfo('domain_api')."/index/index/ff_out_pay_callback",
+            'money' => $params['money'],
+        ];
+        $data['pay_md5sign'] = $this->getSign($data);
+        return $this->curlPost(self::$oderOut, $data);
+    }
+
+    /**
      * 获取签名
      */
     public function getSign($data) {
         ksort($data);
-        $str = $this->password.http_build_query($data , '' , '&').$this->password;
+        $strA = '';
+        foreach ($data as $key => $val) {
+            $strA .= "$key=$val&";
+        }
+        $newstr = substr($strA,0,strlen($strA)-1); 
+        $str = $this->password.$newstr.$this->password;
         return md5(md5($str));
     }
 

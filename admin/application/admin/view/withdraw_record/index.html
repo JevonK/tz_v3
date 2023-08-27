@@ -102,7 +102,7 @@
                 <span class="color-green">已完成</span>
                 {/if}
                 {if $vo.status == 2}
-                <span class="color-desc">提现失败</span>
+                <span class="color-desc">提现失败({$vo.remark|default='--'})</span>
                 {/if}
                 {if $vo.status == 3}
                 <span class="color-red">审核中</span>

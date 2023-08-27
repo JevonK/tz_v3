@@ -97,7 +97,7 @@
 					{
 						"title": 'Reward Redemption',
 						"value": '',
-						"logo": "user/auth1.png",
+						"logo": "user/reward_redemption.png",
 						"url": "/red_envelope"
 					},{
 						"title": this.$t('user.withdrawAccount'),

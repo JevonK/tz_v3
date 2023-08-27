@@ -594,58 +594,70 @@ class Index extends Controller
 
     }
     /**
-     * onePay 支付回调
+     * ff_pay 支付回调
      */
-    public function one_pay_callback() {
-        $tool = new Tool();
+    public function ff_pay_callback() {
+        // $tool = new Tool();
         $str = file_get_contents("php://input");   //获取post数据
-        $res = $tool->parseData($str);  //解析数据结果为数组.
+        // $res = $tool->parseData($str);  //解析数据结果为数组.
+        $res = json_decode($str, true);
         // $res = json_decode($str, true);
         $curr_date = date('Y-m-d H:i:s');
-        file_put_contents('pay.log', "【".$curr_date."】:".json_encode($res).PHP_EOL,FILE_APPEND);
+        file_put_contents('pay.log', "【".$curr_date."】:".json_encode($str).PHP_EOL,FILE_APPEND);
         $language = 'en_us';
         if ($res) {
-            if ($res['orderType'] == 1) { // 充值
-                $rechargeRecord = Db::name('LcUserRechargeRecord')->where("status=0 and orderNo='{$res['merchantNo']}'")->find();
+            if ($res['return_code'] == 00) { // 充值
+                $rechargeRecord = Db::name('LcUserRechargeRecord')->where("status=0 and orderNo='{$res['order_no']}'")->find();
                 if ($rechargeRecord) {
                     $update_data = [
-                        'voucher' => $res['channelNo'],
+                        'voucher' => $res['transaction_id'],
                         'remark' =>$res['remark'] ?? '',
                         'time2' => date('Y-m-d H:i:s')
                     ];
-                    if ($res['status'] == 2) {
-                        $update_data['status'] = 1;
-                        Db::name('LcUserRechargeRecord')->where("id='{$rechargeRecord['id']}'")->update($update_data);
-                        //添加余额
-                        addFunding($rechargeRecord['uid'],$res['amount'],changeMoneyByLanguage($res['amount'],$language),1,2,$language);
-                        setNumber('LcUser', 'money', $res['amount'], 1, "id = {$rechargeRecord['uid']}");
-                    } else if($res['status'] == 3) {
-                        $update_data['status'] = 2;
-                        Db::name('LcUserRechargeRecord')->where("id='{$rechargeRecord['id']}'")->update($update_data);
-                    }
-                }
-            } else if ($res['orderType'] == 2) { // 提现
-                $withdrawRecord = Db::name('LcUserWithdrawRecord')->where("status=4 and orderNo='{$res['merchantNo']}'")->find();
-                if ($withdrawRecord) {
-                    $update_data = [
-                        'remark' =>$res['remark'] ?? '',
-                        'payment_received_time' => date('Y-m-d H:i:s')
-                    ];
-                    if ($res['status'] == 2) { // 成功
-                        $update_data['status'] = 1;
-                        Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
-                    } else if($res['status'] == 3) { // 失败
-                        $update_data['status'] = 2;
-                        Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
-                        //失败时返还提现金额
-                        //流水添加
-                        addFunding($withdrawRecord['uid'],$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']));
-                        //余额返还
-                        setNumber('LcUser', 'withdrawable', $withdrawRecord['money'], 1, "id = {$withdrawRecord['uid']}");
-                    }
+                    $update_data['status'] = 1;
+                    Db::name('LcUserRechargeRecord')->where("id='{$rechargeRecord['id']}'")->update($update_data);
+                    //添加余额
+                    addFunding($rechargeRecord['uid'],$res['amount'],changeMoneyByLanguage($res['amount'],$language),1,2,$language);
+                    setNumber('LcUser', 'money', $res['amount'], 1, "id = {$rechargeRecord['uid']}");
                 }
             }
         }
-        echo 'success';die;
+        echo 'OK';die;
+    }
+
+    /**
+     * ff_pay 代付回调
+     */
+    public function ff_out_pay_callback() {
+        // $tool = new Tool();
+        $str = file_get_contents("php://input");   //获取post数据
+        // $res = $tool->parseData($str);  //解析数据结果为数组.
+        $res = json_decode($str, true);
+        // $res = json_decode($str, true);
+        $curr_date = date('Y-m-d H:i:s');
+        file_put_contents('pay_out.log', "【".$curr_date."】:".json_encode($str).PHP_EOL,FILE_APPEND);
+        $language = 'en_us';
+        if ($res) {
+            $withdrawRecord = Db::name('LcUserWithdrawRecord')->where("status=4 and orderNo='{$res['out_trade_no']}'")->find();
+            if ($withdrawRecord) {
+                $update_data = [
+                    'remark' =>$res['msg'] ?? '',
+                    'payment_received_time' => date('Y-m-d H:i:s')
+                ];
+                if ($res['status'] == 'OK') { // 提现
+                    $update_data['status'] = 1;
+                    Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
+                } else {
+                    $update_data['status'] = 2;
+                    Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
+                    //失败时返还提现金额
+                    //流水添加
+                    addFunding($withdrawRecord['uid'],$withdrawRecord['money'],$withdrawRecord['money2'],1,4,getLanguageByTimezone($withdrawRecord['time_zone']));
+                    //余额返还
+                    setNumber('LcUser', 'withdrawable', $withdrawRecord['money'], 1, "id = {$withdrawRecord['uid']}");
+                }
+            }
+        }
+        echo 'OK';die;
     }
 }

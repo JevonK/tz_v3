@@ -15,6 +15,7 @@
 
 namespace app\admin\controller;
 
+use app\libs\ffpay\Ff;
 use app\libs\onePay\Tool;
 use library\Controller;
 use think\Db;
@@ -90,27 +91,25 @@ class WithdrawRecord extends Controller
         $id = $this->request->param('id');
         sysoplog('财务管理', '同意提现');
         $ids = explode(',',$id);
-        $tool = new Tool();
+        $tool = new Ff();
         $ids = Db::name($this->table)->whereIn('id',$ids)->where('status', 0)->column('id');
         foreach ($ids as $id) {
             $agree = Db::name($this->table)->where("id=$id")->find();
             $wallert = Db::name($this->userWalletTable)->where("uid={$agree['uid']} and type = 4")->find();
             ###########推送出款单
-            $out['orderNo'] = $agree['orderNo'];
-            $out['payCode'] = Tool::PAY_CODE;
-            $out['amount'] = ($agree['money']-$agree['charge'])*100; //金额是到分,平台金额是元需要除100
-            $out['notifyUrl'] = getInfo('domain_api')."/index/index/one_pay_callback";
+            $out['order_no'] = $agree['orderNo'];
+            $out['money'] = ($agree['money']-$agree['charge']);
             //以下参数自行修改
-            $out['payeeType'] = '1';
-            $out['payeeName'] = $wallert['name'];
-            $out['payeeFirstInfo'] = $wallert['account'];
+            $out['bankname'] = Db::table("lc_user_withdraw_bank")->where("id={$wallert['bid']}")->value('code'); // 银行名称
+            $out['accountname'] = $wallert['name'];// 收款人姓名
+            $out['cardnumber'] = $wallert['account'];// 银行卡号
     
-            $res = $tool->postRes(Tool::$oderOut, $out);
+            $res = $tool->send_pay_out($out);
             $res = !empty($res) ? json_decode($res, true) : [];
-            if (empty($res) || $res['code'] != 200) {
-                $this->error('提现同意失败');
+            if (empty($res) || $res['status'] != 'success') {
+                $this->error('提现同意失败:'.$res['msg']);
             }
-            Db::name($this->table)->where("id=$id")->update(['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['data']['channelNo']]);
+            Db::name($this->table)->where("id=$id")->update(['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['transaction_id']]);
             //var_dump($res);die;
             // $this->_save($this->table, ['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['data']['channelNo']]);
         }

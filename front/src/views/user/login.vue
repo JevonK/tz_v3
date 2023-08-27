@@ -25,20 +25,23 @@
 					<input v-model.trim="data.code" type="text" class="inp" :placeholder="$t('login.code')">
 					<img style="height: 32px;margin-bottom: 8px;" :src="verify_img" @click="getVerifyCode()">
 				</div>
+				<!-- <van-button icon="plus" type="primary">按钮</van-button> -->
 				<div class="register_btn"
 					 :class="data.username == '' || data.password == '' || data.code == ''? 'no_touch' : ''" @click="submit">
-					→
+					Login
 				</div>
 			</form>
-		</div>
-		
-		<div class="login_register">
-			<router-link to="/register">
-				<div>
-					{{$t('login.registerNow')}}
+			<div class="login_register">
+					<router-link to="/register">
+						<div>
+							{{$t('login.registerNow')}}
+						</div>
+					</router-link>
 				</div>
-			</router-link>
 		</div>
+
+		
+		
 		<div class="kefu" :class="show_kefu ? '' : 'kefu_hide'" @click="kefu_to">
 			<img class="kefu_img" src="../img/index/kefu.png">
 		</div>
@@ -51,12 +54,14 @@
 	import {
 		CountDown,
 		Checkbox,
-		Dialog
+		Dialog,
+		Button
 	} from "vant";
 	import Fetch from "../../utils/fetch";
 
 	Vue.use(CountDown)
 		.use(Checkbox)
+		.use(Button)
 		.use(Dialog);
 
 	export default {
@@ -219,28 +224,27 @@
 	.form_div {
 		height: 600px;
 		width: 100%;
-		background: url(../img/user/login_background.png) no-repeat center center;
+		// background: url(../img/user/login_background.png) no-repeat center center;
 		background-size: 150% 100%;
 		position: relative;
 		top: -88px;
 
 		.form {
 			position: absolute;
-			margin: 200px auto 0 5%;
+			margin: 120px auto 0 5%;
 			width: 90%;
 
 			.register_btn {
-				background: #68326C;
-				color: #FFFFFF;
-				width: 60px;
-				height: 60px;
-				border-radius: 50%;
+				background: #333333;
+    			color: #FFFFFF;
+				width: 100%;
+				height: 50px;
+				border-radius: 32px;
 				float: right;
 				margin-right: 3%;
 				text-align: center;
-				line-height: 60px;
-				font-size: 36px;
-				font-weight: bold;
+				line-height: 50px;
+				font-size: 19px;
 			}
 		}
 	}
@@ -269,7 +273,8 @@
 	}
 
 	.logo {
-		margin: 50px 0 0 30px;
+		margin: 50px 0 0 0;
+		text-align: center;
 
 		img {
 			height: 80px;
@@ -287,6 +292,7 @@
 		margin-bottom: 15px;
 		border-radius: 25px;
 		padding: 0 20px;
+		border: 1px solid #EEEEEE;
 
 		input {
 			height: 50px;
@@ -332,10 +338,13 @@
 	}
 
 	.login_register {
-		position: relative;
-		top: -60px;
-		font-size: 14px;
-		margin-left: 50px;
+		position: absolute;
+		// top: -60px;
+		font-size: 17px;
+		color: #333333;
+		// margin-left: 50px;
+		margin-top: 100%;
+    	margin-left: 4%;
 	}
 
 	/deep/ .van-dropdown-menu__bar {

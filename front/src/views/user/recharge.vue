@@ -7,6 +7,16 @@
 			</div>
 		</div>
 		<div class="recharge_wrap">
+			<div class="block_div recharge_money_wrap">
+				<p class="tips">Payment method</p>
+				<div class="flex_center">
+					<van-radio-group v-model="pay_code" >
+						<van-radio name="936">Wallet</van-radio>
+						<van-radio name="919">Online banking</van-radio>
+						<van-radio name="938">Scan Code</van-radio>
+					</van-radio-group>
+				</div>
+			</div>
 			<div class="block_div common_money_wrap">
 				<p class="tips">{{$t('recharge.money')}}</p>
 				<div class="flex_center common_money">
@@ -51,9 +61,10 @@
 	import Vue from 'vue';
 	import Fetch from '../../utils/fetch'
 	import {
-		Field
+		Field,
+		RadioGroup, Radio,
 	} from 'vant';
-	Vue.use(Field);
+	Vue.use(Field).use(RadioGroup).use(Radio);
 	export default {
 		name: "",
 		data() {
@@ -63,6 +74,7 @@
 				money: '',
 				rechargeMethod: [],
 				active: 0,
+				pay_code: '936',
 				active_money: -1,
 				minMoney:0,
 				loading: false,
@@ -103,6 +115,7 @@
 				this.loading = true;
 				Fetch('/user/recharge',{
 					'money': this.money,
+					'pay_code': this.pay_code,
 					'id': 20,
 				}).then(r => {
 					console.log(r.data);
@@ -250,5 +263,8 @@
 				margin-left: unset;
 			}
 		}
+	}
+	/deep/ .van-radio{
+		margin: 10px 0;
 	}
 </style>

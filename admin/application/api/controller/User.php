@@ -15,7 +15,7 @@
 
 namespace app\api\controller;
 
-use app\libs\onePay\Tool;
+use app\libs\ffpay\Ff;
 use library\Controller;
 use Endroid\QrCode\QrCode;
 use think\Db;
@@ -1037,22 +1037,21 @@ class User extends Controller
         $act_time = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
         $currency = getCurrencyByLanguage($language);
         $data = [];
-        $tool = new Tool();
-        $data['orderNo'] = $orderNo;
-        $data['payCode'] = Tool::PAY_CODE;
-        $data['amount'] = $money_usd*100; //金额是到分,平台金额是元需要除100
-        $data['notifyUrl'] = getInfo('domain_api')."/index/index/one_pay_callback";
-        $data['returnUrl'] = getInfo('domain').'/#/recharge/record';
-        //以下参数自行修改
-        $data['payerName'] = $user['username'];
-        $res = $tool->postRes(Tool::$oderReceive, $data);
+        $tool = new Ff();
+        $data['order_no'] = $orderNo;
+        $data['pay_code'] = $params['pay_code'];
+        $data['amount'] = $money_usd; //金额是到分,平台金额是元需要除100
+        $res = $tool->send_pay($data);
         $res = !empty($res) ? json_decode($res, true) : [];
         // print_r($data);
         // var_dump($res);die;
-        if ($res['code'] != 200) {
+        if ($res['status'] != 1) {
             $this->error("error");
         }
-        $voucher = $res['data']['merchantNo'] ?? '';
+
+        if ($res['status'] != 1) {
+            $this->error('Payment failed',"",218);
+        }
         
         //添加充值记录
         $insert = array(
@@ -1070,8 +1069,7 @@ class User extends Controller
         );
         $rrid = Db::name('LcUserRechargeRecord')->insertGetId($insert);
         if(!empty($rrid)){
-            
-            $this->success("success",$res['data']);
+            $this->success("success",['paymentUrl' => $res['payurl']]);
         }
         $this->error("error");
     }

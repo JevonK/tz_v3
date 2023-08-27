@@ -29,9 +29,10 @@
 	import {
 		Icon,
 		ActionSheet,
-		Field
+		Field,
+		showDialog
 	} from 'vant';
-	Vue.use(Icon).use(ActionSheet).use(Field);
+	Vue.use(Icon).use(ActionSheet).use(showDialog).use(Field);
 	export default {
 		name: "",
 		components: {
@@ -63,6 +64,12 @@
 			this.$parent.footer('user', false);
 		},
 		mounted() {
+			// showDialog({
+			// 	message: '生命远不止连轴转和忙到极限，人类的体验远比这辽阔、丰富得多。',
+			// 	theme: 'round-button',
+			// }).then(() => {
+			// // on close
+			// });
 		},
 		methods: {
 			onSelect(item) {

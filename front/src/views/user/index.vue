@@ -61,13 +61,13 @@
 			<template v-for="(item,index) in menus1">
 				<van-cell v-if="item.url == 'signout'" :key="index" is-link @click="logout">
 					<template #title>
-						<van-icon name="revoke" style="font-size: 23px;margin-right: 6%;" />
+						<img :src="require('../img/'+item.logo)" alt="">
 						<span class="custom-title">{{item.title}}</span>
 					</template>
 				</van-cell>
 				<van-cell v-else-if="item.url == 'download'" is-link @click="jump(data.version.url)">
 					<template #title>
-						<van-icon name="down" style="font-size: 23px;margin-right: 6%;" />
+						<img :src="require('../img/'+item.logo)" alt="">
 						<span class="custom-title">{{item.title}}</span>
 					</template>
 				</van-cell>
@@ -182,13 +182,13 @@
 					{
 						"title": 'Address',
 						"value": '',
-						"logo": "user/auth1.png",
+						"logo": "user/address.png",
 						"url": "/address"
 					},
 					{
 						"title": 'Edit password',
 						"value": '',
-						"logo": "user/auth1.png",
+						"logo": "user/edit_password.png",
 						"url": "/edit_password"
 					},
 					{
@@ -200,13 +200,13 @@
 					{
 						"title": this.$t('user.signOut'),
 						"value": '',
-						"logo": "signout",
+						"logo": "user/log_out.png",
 						"url": "signout"
 					},
 					{
 						"title": 'Download APP',
 						"value": '',
-						"logo": "download",
+						"logo": "user/download_app.png",
 						"url": "download"
 					}
 				],
