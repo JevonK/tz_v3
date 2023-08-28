@@ -34,11 +34,6 @@
 					<p>{{$t('recharge.money')}}</p>
 					<div>
 						<span class="money">{{common.currency_symbol_basic()}}{{common.precision_basic(money)}}</span>
-						<span>
-							( ≈ <span class="money">{{common.precision(money*rate)}}<span
-									class="currency">{{currency}}</span></span>
-							)
-						</span>
 					</div>
 				</div>
 				<div class="">

@@ -29,10 +29,9 @@
 	import {
 		Icon,
 		ActionSheet,
-		Field,
-		showDialog
+		Field
 	} from 'vant';
-	Vue.use(Icon).use(ActionSheet).use(showDialog).use(Field);
+	Vue.use(Icon).use(ActionSheet).use(Field);
 	export default {
 		name: "",
 		components: {

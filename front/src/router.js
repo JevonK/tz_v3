@@ -160,6 +160,12 @@ export default new Router({
 		        import(/* webpackChunkName: "home" */ "./views/user/recharge_record.vue")
 		},
 		{
+		    path: "/recharge/method",
+		    name: "recharge_method",
+		    component: () =>
+		        import(/* webpackChunkName: "home" */ "./views/user/recharge_method.vue")
+		},
+		{
 		    path: "/team",
 		    name: "team",
 		    component: () =>

@@ -17,7 +17,7 @@
 					</van-radio-group>
 				</div>
 			</div>
-			<div class="block_div common_money_wrap">
+			<!-- <div class="block_div common_money_wrap">
 				<p class="tips">{{$t('recharge.money')}}</p>
 				<div class="flex_center common_money">
 					<p v-for="(v,i) in commonMoney" @click="money=v;active_money=i;"
@@ -28,6 +28,15 @@
 				<p class="tips">{{$t('recharge.anotherMoney')}}</p>
 				<div class="flex_center">
 					<van-field v-model="money" type="number" :placeholder="$t('recharge.moneyMinPlaceholder')+common.currency_symbol_basic()+minMoney" />
+				</div>
+			</div> -->
+
+			<div class="block_div recharge_voucher_wrap">
+				<div class="recharge_money">
+					<p>{{$t('recharge.money')}}</p>
+					<div>
+						<span class="money">{{common.currency_symbol_basic()}}{{common.precision_basic(money)}}</span>
+					</div>
 				</div>
 			</div>
 			<!-- <div class="block_div recharge_method_wrap">
@@ -45,14 +54,19 @@
 					</div>
 				</div>
 			</div> -->
-			<div class="block_div flex_center recharge_detail_wrap">
+			<div class="recharge_btn_wrap">
+				<div class="basic_btn btn" @click="submit">
+					{{$t('recharge.submit')}}
+				</div>
+			</div>
+			<!-- <div class="block_div flex_center recharge_detail_wrap">
 				<div>
 					{{$t('recharge.money')}} <span class="detail_money">{{common.currency_symbol_basic()}}{{money}}</span>
 				</div>
 				<div class="basic_btn btn" :class="money>0?'':'no_touch'" @click="submit">
 					{{$t('recharge.rechargeNow')}}
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </template>
@@ -71,13 +85,14 @@
 			return {
 				commonMoney: [],
 				userBalance: '',
-				money: '',
+				money: this.$route.query.money,
 				rechargeMethod: [],
 				active: 0,
 				pay_code: '936',
 				active_money: -1,
 				minMoney:0,
 				loading: false,
+				id : this.$route.query.id,
 			};
 		},
 		created() {
@@ -92,12 +107,20 @@
 		},
 		methods: {
 			start() {
-				Fetch('/user/getRechargeMethod').then(r => {
-					this.userBalance = r.data.userBalance;
-					this.commonMoney = r.data.commonMoney;
-					this.rechargeMethod = r.data.rechargeMethod;
-					this.minMoney = r.data.minMoney;
+				Fetch('/user/getRechargeById', {
+					id: this.id,
+					money: this.money
+				}).then(r => {
+					// this.recharge = r.data.recharge;
+					// this.rate = r.data.rate;
+					// this.currency = r.data.currency;
 				})
+				// Fetch('/user/getRechargeMethod').then(r => {
+				// 	this.userBalance = r.data.userBalance;
+				// 	this.commonMoney = r.data.commonMoney;
+				// 	this.rechargeMethod = r.data.rechargeMethod;
+				// 	this.minMoney = r.data.minMoney;
+				// })
 			},
 			submit() {
 				if (this.money == "") {
@@ -116,7 +139,7 @@
 				Fetch('/user/recharge',{
 					'money': this.money,
 					'pay_code': this.pay_code,
-					'id': 20,
+					'id': this.id,
 				}).then(r => {
 					console.log(r.data);
 					window.location.href = r.data.paymentUrl
@@ -156,6 +179,37 @@
 				width: 22px;
 				height: 22px;
 			}
+		}
+	}
+	.recharge_voucher_wrap {
+		margin-bottom: 10px;
+		padding: 20px;
+
+		.recharge_money {
+			margin-bottom: 20px;
+
+			p {
+				margin-bottom: 10px;
+
+			}
+
+			.money {
+				font-size: 18px;
+				font-weight: bold;
+			}
+
+			.currency {
+				color: #999;
+			}
+		}
+
+		p {
+			color: #999;
+		}
+
+		.qrcode {
+			text-align: center;
+			margin-top: 20px;
 		}
 	}
 

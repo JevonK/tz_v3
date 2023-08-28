@@ -955,7 +955,7 @@ class User extends Controller
         $recharge = Db::name('LcUserRechargeMethod')->field("id,name,account,img,logo,bank_name,type")->where(['show' => 1,'delete' => 0])->find($params['id']);
         if(empty($recharge)) $this->error('utils.parameterError',"",218);
         $currency = Db::name('LcCurrency')->where(['country' => $language])->find();
-        if($currency['recharge_min']-$params['money']>0) $this->error('utils.parameterError',"",218);
+        // if($currency['recharge_min']-$params['money']>0) $this->error('utils.parameterError',"",218);
         
         //充值方式为优盾USDT免提交
         if($recharge['type']==6){
@@ -1016,16 +1016,6 @@ class User extends Controller
         $hash = '';
         $voucher = '';
         
-        //优盾USDT充值，需填写hash
-        // if($rechargeMethod['type']==5){
-        //     if(empty($params['hash'])) $this->error('utils.parameterError',"",218);
-        //     $hash = $params['hash'];
-        // //其他充值方式需上传凭证    
-        // }else{
-        //     if(empty($params['voucher'])) $this->error('utils.parameterError',"",218);
-        //     $voucher = $params['voucher'];
-        // }
-        
         //金额转换
         $money_usd = $params['money'];
         
@@ -1037,21 +1027,29 @@ class User extends Controller
         $act_time = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
         $currency = getCurrencyByLanguage($language);
         $data = [];
-        $tool = new Ff();
-        $data['order_no'] = $orderNo;
-        $data['pay_code'] = $params['pay_code'];
-        $data['amount'] = $money_usd; //金额是到分,平台金额是元需要除100
-        $res = $tool->send_pay($data);
-        $res = !empty($res) ? json_decode($res, true) : [];
-        // print_r($data);
-        // var_dump($res);die;
-        if ($res['status'] != 1) {
-            $this->error("error");
-        }
+        //ffpay
+        if($rechargeMethod['type']==3){
+            $tool = new Ff();
+            $data['order_no'] = $orderNo;
+            $data['pay_code'] = $params['pay_code'];
+            $data['amount'] = $money_usd; //金额是到分,平台金额是元需要除100
+            $res = $tool->send_pay($data);
+            $res = !empty($res) ? json_decode($res, true) : [];
+            // print_r($data);
+            // var_dump($res);die;
+            if ($res['status'] != 1) {
+                $this->error("error");
+            }
 
-        if ($res['status'] != 1) {
-            $this->error('Payment failed',"",218);
+            if ($res['status'] != 1) {
+                $this->error('Payment failed',"",218);
+            }
+            //其他充值方式需上传凭证    
+        }else{
+            if(empty($params['voucher'])) $this->error('utils.parameterError',"",218);
+            $voucher = $params['voucher'];
         }
+        
         
         //添加充值记录
         $insert = array(
@@ -1069,7 +1067,11 @@ class User extends Controller
         );
         $rrid = Db::name('LcUserRechargeRecord')->insertGetId($insert);
         if(!empty($rrid)){
-            $this->success("success",['paymentUrl' => $res['payurl']]);
+            $req = [];
+            if ($rechargeMethod['type']==3) {
+                $req = ['paymentUrl' => $res['payurl']];
+            }
+            $this->success("success", $req);
         }
         $this->error("error");
     }

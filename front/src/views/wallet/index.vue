@@ -16,7 +16,7 @@
 				<!-- <p class="money_usd">≈ {{common.precision(fundBalance)}} ({{currency}})</p> -->
 			</div>
 			<div class="recharge">
-				<p @click="$router.push('/recharge')">{{$t('user.recharge')}}</p>
+				<p @click="$router.push('/recharge/method')">{{$t('user.recharge')}}</p>
 				<!-- <p @click="$router.push('/withdraw')">{{$t('user.withdraw')}}</p> -->
 			</div>
 		</div>

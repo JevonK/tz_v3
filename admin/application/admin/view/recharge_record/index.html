@@ -66,7 +66,7 @@
             </td>
             <td class='text-left'>
                 {if $vo.status == 0}
-                    {if $vo.rtype == 5}
+                    {if $vo.rtype == 3}
                         自动处理中
                     {else}
                         <span class="color-red">审核中</span>
@@ -81,7 +81,7 @@
             </td>
             <td class='text-left'>
                 {if $vo.status eq 0}
-                    {if $vo.rtype == 5}
+                    {if $vo.rtype == 3}
                         处理中
                     {else}
                         {if auth("agree")}

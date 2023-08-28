@@ -84,16 +84,21 @@ class RechargeRecord extends Controller
         $ids = explode(',',$id);
         foreach($ids as $id) {
             $rechargeRecord = Db::name($this->table)->find($id);
+            $method_type = Db::table('lc_user_recharge_method')->where("id={$rechargeRecord['rid']}")->value('type');
+            if ($method_type == 3) {
+                continue;
+            }
             $uid = $rechargeRecord['uid'];
             
             if ($rechargeRecord['status'] != 0) {
-                $this->error('当前充值已处理');
+                continue;
             }
             
             //流水添加
             addFunding($uid,$rechargeRecord['money'],$rechargeRecord['money2'],1,2,getLanguageByTimezone($rechargeRecord['time_zone']));
             //添加余额
             setNumber('LcUser', 'money', $rechargeRecord['money'], 1, "id = $uid");
+            Db::name($this->table)->where("id=$id")->update(['status' => '1','time2' => date('Y-m-d H:i:s')]);
             //添加积分
             // setNumber('LcUser', 'value', $rechargeRecord['money'], 1, "id = $uid");
             //更新会员等级
@@ -111,7 +116,8 @@ class RechargeRecord extends Controller
         
         sysoplog('财务管理', '同意充值');
         
-        $this->_save($this->table, ['status' => '1','time2' => date('Y-m-d H:i:s')]);
+        // $this->_save($this->table, ['status' => '1','time2' => date('Y-m-d H:i:s')]);
+        $this->success('success');
     }
 
     /**

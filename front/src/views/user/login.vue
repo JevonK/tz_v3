@@ -12,7 +12,7 @@
 		<div class="form_div">
 			<form class="form">
 				<div v-if="!config.register_phone" class="item">
-					<input v-model.trim="data.username" type="text" class="inp" :placeholder="$t('login.phone')">
+					<span style="margin-right: 5px;">+62</span><input v-model.trim="data.username" type="text" class="inp" :placeholder="$t('login.phone')">
 				</div>
 				<div v-if="config.register_phone" class="item">
 					<input v-model.trim="data.username" type="number" class="inp" :placeholder="$t('login.phone')">
@@ -241,7 +241,7 @@
 				height: 50px;
 				border-radius: 32px;
 				float: right;
-				margin-right: 3%;
+				// margin-right: 3%;
 				text-align: center;
 				line-height: 50px;
 				font-size: 19px;
@@ -283,6 +283,7 @@
 
 	.item {
 		height: 50px;
+		line-height: 50px;
 		font-size: 14px;
 		display: flex;
 		justify-content: flex-start;
@@ -344,7 +345,7 @@
 		color: #333333;
 		// margin-left: 50px;
 		margin-top: 100%;
-    	margin-left: 4%;
+    	margin-left: 8%;
 	}
 
 	/deep/ .van-dropdown-menu__bar {

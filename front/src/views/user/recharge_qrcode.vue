@@ -22,14 +22,6 @@
 					<p>{{$t('recharge.money')}}</p>
 					<div>
 						<span class="money">{{common.currency_symbol_basic()}}{{common.precision_basic(money)}}</span>
-						<span v-if="recharge.type==1||recharge.type==5">
-							( ≈ <span class="money">{{(money*1).toFixed(4)}}<span class="currency">USDT</span></span>
-							)
-						</span>
-						<span v-if="recharge.type!=1&&recharge.type!=5">
-							( ≈ <span class="money">{{common.precision(money*rate)}}<span class="currency">{{currency}}</span></span>
-							)
-						</span>
 					</div>
 				</div>
 				<div class="" v-if="recharge.type==5">

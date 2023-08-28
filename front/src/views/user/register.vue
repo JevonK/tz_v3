@@ -13,7 +13,7 @@
 		<div class="form_div" v-if="!config.register_phone">
 			<form class="form">
 				<div class="item">
-					<input v-model.trim="data.username" type="text" class="inp" :placeholder="$t('login.phone')">
+					<span style="margin-right: 5px;">+62</span><input v-model.trim="data.username" type="text" class="inp" :placeholder="$t('login.phone')">
 				</div>
 				<div class="item">
 					<input v-model.trim="data.password" :type="password" class="inp"
@@ -36,6 +36,13 @@
 					Register
 				</div>
 			</form>
+			<div class="login_register">
+				<router-link to="/login">
+					<div>
+						{{$t('login.loginNow')}}
+					</div>
+				</router-link>
+			</div>
 		</div>
 		<!-- 非手机注册 end -->
 		<!-- 手机注册 start -->
@@ -76,6 +83,7 @@
 					Register
 				</div>
 			</form>
+			
 		</div>
 		<!-- 获取验证码需先验证 -->
 		<van-popup v-model:show="show_sms_verify" :round="true" :style="{ width: '90%' }">
@@ -91,13 +99,7 @@
 			</div>
 		</van-popup>
 		<!-- 手机注册 end -->
-		<div class="login_register">
-			<router-link to="/login">
-				<div>
-					{{$t('login.loginNow')}}
-				</div>
-			</router-link>
-		</div>
+		
 
 		<div class="kefu" :class="show_kefu ? '' : 'kefu_hide'" @click="kefu_to">
 			<img class="kefu_img" src="../img/index/kefu.png">
@@ -303,15 +305,15 @@
 				//非手机号注册判断
 				if (!this.config.register_phone) {
 					if (!this.data.username) {
-						this.$toast(this.$t('login.usernameEmpty'));
+						this.$toast("Mobile phone number cannot be empty");
 						return false;
 					}
-					if (!reg1.test(this.data.username)) {
-						this.$toast(this.$t('login.usernameLimit'));
-						return false;
-					}
-					if (this.data.username.length > 16 || this.data.username.length < 4) {
-						this.$toast(this.$t('login.usernameLength'));
+					// if (!reg1.test(this.data.username)) {
+					// 	this.$toast(this.$t('login.usernameLimit'));
+					// 	return false;
+					// }
+					if (this.data.username.length > 16 || this.data.username.length < 8) {
+						this.$toast("Please enter the correct phone number");
 						return false;
 					}
 				}
@@ -399,7 +401,7 @@
 				height: 50px;
 				border-radius: 32px;
 				float: right;
-				margin-right: 3%;
+				// margin-right: 3%;
 				text-align: center;
 				line-height: 50px;
 				font-size: 19px;
@@ -441,6 +443,7 @@
 
 	.item {
 		height: 50px;
+		line-height: 50px;
 		font-size: 14px;
 		display: flex;
 		justify-content: flex-start;
@@ -501,8 +504,8 @@
 		font-size: 20px;
 		color: #333333;
 		// margin-left: 50px;
-		margin-top: 100%;
-    	margin-left: 4%;
+		margin-top: 116%;
+    	margin-left: 8%;
 	}
 
 	/deep/ .van-dropdown-menu__bar {
