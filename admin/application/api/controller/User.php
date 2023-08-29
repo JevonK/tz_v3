@@ -2295,6 +2295,11 @@ class User extends Controller
                 $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
                 $fusers = array_reverse($fusers); 
                 foreach($fusers as $key => $val) {
+                    //如果上级没有购买相同的产品类型 则不返利跳过
+                    $ProductNumber = Db::name("LcInvest")->where("uid={$val['parentid']} and wait_num >0 and itemid={$v['itemid']}")->select();
+                    if(empty($ProductNumber)){
+                        continue;
+                    }
                     $level = '';
                     switch ($key) {
                         case 1:
@@ -2358,6 +2363,11 @@ class User extends Controller
                 $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
                 $fusers = array_reverse($fusers); 
                 foreach($fusers as $key => $val) {
+                    //如果上级没有购买相同的产品类型 则不返利跳过
+                    $ProductNumber = Db::name("LcInvest")->where("uid={$val['parentid']} and wait_num >0 and itemid={$v['itemid']}")->select();
+                    if(empty($ProductNumber)){
+                        continue;
+                    }
                     $level = '';
                     switch ($key) {
                         case 1:
@@ -2428,6 +2438,11 @@ class User extends Controller
                 $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
                 $fusers = array_reverse($fusers); 
                 foreach($fusers as $key => $val) {
+                    //如果上级没有购买相同的产品类型 则不返利跳过
+                    $ProductNumber = Db::name("LcInvest")->where("uid={$val['parentid']} and wait_num >0 and itemid={$v['itemid']}")->select();
+                    if(empty($ProductNumber)){
+                        continue;
+                    }
                     $level = '';
                     switch ($key) {
                         case 1:

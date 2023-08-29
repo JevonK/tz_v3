@@ -285,7 +285,7 @@ public function insertUserRelation($userId,$parentid,$invite_level)
             if($key>=$invite_level-1){
                 break;
             }
-            Db::name('LcUserRelation')->insert([
+            Db::name('SystemUserRelation')->insert([
                 'uid' => $userId,
                 'parentid' => $top['parentid'],
                 'level' => $top['level']+1
