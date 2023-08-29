@@ -23,8 +23,10 @@
 					<div>
 						<span class="money">{{common.currency_symbol_basic()}}{{common.precision_basic(money)}}</span>
 						<span >
-							( ≈ <span class="money">{{(money*15251.85).toFixed(4)}}<span class="currency">IDR</span></span>
+							<span >
+							( ≈ <span class="money">{{common.precision(money*rate)}}<span class="currency">{{currency}}</span></span>
 							)
+						</span>
 						</span>
 					</div>
 				</div>
