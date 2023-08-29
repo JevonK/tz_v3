@@ -19,6 +19,12 @@
 		<div class="basic_btn btn" :class="wallet.money?'':'no_touch'" @click="submit()">
 			Receive
 		</div>
+		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
+			<div class="tips-show">
+				<span class="tips-span">{{ show_money }}</span><br>
+				<van-icon name="close" color="#fff" size="40" @click="show_tips=false" />
+			</div>
+		</van-dialog>
 	</div>
 </template>
 
@@ -29,9 +35,10 @@
 	import {
 		Icon,
 		ActionSheet,
-		Field
+		Field,
+		Dialog
 	} from 'vant';
-	Vue.use(Icon).use(ActionSheet).use(Field);
+	Vue.use(Icon).use(ActionSheet).use(Field).use(Dialog);
 	export default {
 		name: "",
 		components: {
@@ -45,6 +52,8 @@
 				frozenAmount: '0',
 				withdraw_name: this.$t('withdraw.bindAccount'),
 				show: false,
+				show_tips: false,
+				show_money: "",
 				wallets: [],
 				wallet: {
 					money: '',
@@ -88,14 +97,8 @@
 					'code' : this.wallet.money,
 				}).then(r => {
 					if (r.code == 1) {
-						this.$dialog.alert({
-							closeOnClickOverlay: true,
-							confirmButtonText: this.$t('utils.confirm'),
-							showConfirmButton: true,
-							message: "Congratulations on winning:" + r.data.money,
-						}).catch(() => {
-							// on close
-						});
+						this.show_money = r.data.money
+						this.show_tips = true;
 					}
 					// this.$router.replace('/user');
 				})
@@ -210,6 +213,17 @@
 		width: 80%;
 		margin: 50px 0 0 10%;
 	}
+	.tips-show {
+		width: 80%;
+		margin: 0 auto;
+		margin-top: 150px;
+		text-align: center;
+	}
+	.tips-span {
+		color: #FD4B2F;
+		font-size: 57px;
+    	font-weight: bold;
+	}
 
 	/deep/ .van-cell {
 		padding: 10px 16px 10px 10px;
@@ -229,5 +243,17 @@
 	}
 	/deep/.van-action-sheet{
 		padding-bottom: 10px;
+	}
+	/deep/ .van-dialog {
+		width: 80%;
+		height: 450px;
+		background-color: transparent;
+		background-repeat: no-repeat;
+		background-size: contain;
+		background-position: center;
+		background-image: url(../img/user/red_envelope.png);
+	}
+	/deep/ .van-icon {
+		margin-top: 200px;
 	}
 </style>

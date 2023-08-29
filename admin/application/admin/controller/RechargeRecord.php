@@ -49,8 +49,9 @@ class RechargeRecord extends Controller
         if (isset($auth['username']) and $auth['username'] != 'admin') {
             $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
         }
+        $this->methods = Db::table('lc_user_recharge_method')->where('delete',0)->select();
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username');
-        $query->where($where)->join('lc_user u','i.uid=u.id')->equal('i.status#i_status')->like('u.username#u_username,u.agent#u_agent')->dateBetween('i.act_time#i_time')->order('i.id desc')->page();
+        $query->where($where)->join('lc_user u','i.uid=u.id')->equal('i.status#i_status,i.rid#rid')->like('u.username#u_username,u.agent#u_agent')->dateBetween('i.act_time#i_time')->order('i.id desc')->page();
     }
 
     /**

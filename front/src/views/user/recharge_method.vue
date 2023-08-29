@@ -44,6 +44,17 @@
 				</div>
 			</div>
 		</div>
+		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
+			<div class="tips-show">
+				<h3>Recharge instructions</h3>
+				<p>
+					Recharge time, pay attention to details, and fill in the content display page yourself
+				</p>
+				<div class="basic_btn tips-btn"  @click="show_tips=false">
+					OK
+				</div>
+			</div>
+		</van-dialog>
 	</div>
 </template>
 
@@ -53,8 +64,9 @@
 	import {
 		Field,
 		RadioGroup, Radio,
+		Dialog,
 	} from 'vant';
-	Vue.use(Field).use(RadioGroup).use(Radio);
+	Vue.use(Field).use(RadioGroup).use(Radio).use(Dialog);
 	export default {
 		name: "",
 		data() {
@@ -64,6 +76,7 @@
 				money: '',
 				rechargeMethod: [],
 				active: 0,
+				show_tips: false,
 				pay_code: '936',
 				active_money: -1,
 				minMoney:0,
@@ -79,6 +92,7 @@
 		},
 		mounted() {
 			this.start();
+			this.show_tips = true
 		},
 		methods: {
 			start() {
@@ -236,7 +250,29 @@
 			}
 		}
 	}
+	.tips-btn {
+		height: 30px;
+		line-height: 30px;
+		width: 56%;
+		margin: 0 auto;
+		margin-top: 122px;
+	}
+	.tips-show {
+		width: 80%;
+		margin: 0 auto;
+		margin-top: 177px;
+	}
 	/deep/ .van-radio{
 		margin: 10px 0;
+	}
+
+	/deep/ .van-dialog {
+		width: 80%;
+		height: 450px;
+		background-color: transparent;
+		background-repeat: no-repeat;
+		background-size: contain;
+		background-position: center;
+		background-image: url(../img/user/recharge_tips.png);
 	}
 </style>

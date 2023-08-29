@@ -10,8 +10,8 @@
 			<img src="../img/user/withdraw.png" />
 			<div class="flex_center userBalance">
 				<p>{{$t('withdraw.fundBalance')}}</p>
-				<van-icon v-show="frozenAmount!=0" name="question-o" size="16" color="#999" style="margin-left: 5px;"
-					@click="showMsg()" />
+				<!-- <van-icon v-show="frozenAmount!=0" name="question-o" size="16" color="#999" style="margin-left: 5px;"
+					@click="showMsg()" /> -->
 			</div>
 			<p>{{common.currency_symbol_basic()}}{{common.precision_basic(userBalance)}}</p>
 		</div>
@@ -37,14 +37,35 @@
 				</div>
 			</div>
 		</div>
-		<p class="withdraw_time_tips">
+		<!-- <p class="withdraw_time_tips">
 			{{$t('withdraw.withdrawNum')}}{{withdraw_num}}{{$t('utils.times'+times)}}<br>
 			{{$t('withdraw.withdrawAmount')}}{{common.currency_symbol_basic()}}{{common.precision_basic(withdraw_min)}}<br>
 			{{$t('withdraw.withdrawTips')}}
-		</p>
+		</p> -->
 		<div class="basic_btn btn" :class="wallet.money>0?'':'no_touch'" @click="submit()">
 			{{$t('withdraw.withdrawNow')}}
 		</div>
+
+		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
+			<div class="tips-show">
+				<h3>How to withdraw money</h3>
+				<p>
+					1. Click to bind the bank<br>
+					2. Click Apply for Withdrawal<br>
+					Withdrawal rules:<br>
+					Application withdrawal time: 10:00 am to 6:00 pm.
+					The minimum withdrawal amount is: 20000Rp
+					Withdrawal will be completed within t+1-T+3 days
+					(Banks are closed on Sundays and do not process withdrawals,
+					Withdrawals are processed on Monday)
+					Withdrawal tax: 10%
+					(Withdraw 1000, actually received 900)
+				</p>
+				<div class="basic_btn tips-btn"  @click="show_tips=false">
+					OK
+				</div>
+			</div>
+		</van-dialog>
 	</div>
 </template>
 
@@ -55,9 +76,10 @@
 	import {
 		Icon,
 		ActionSheet,
-		Field
+		Field,
+		Dialog
 	} from 'vant';
-	Vue.use(Icon).use(ActionSheet).use(Field);
+	Vue.use(Icon).use(ActionSheet).use(Field).use(Dialog);
 	export default {
 		name: "",
 		components: {
@@ -71,6 +93,7 @@
 				frozenAmount: '0',
 				withdraw_name: this.$t('withdraw.bindAccount'),
 				show: false,
+				show_tips: false,
 				wallets: [],
 				wallet: {
 					money: '',
@@ -90,6 +113,7 @@
 		},
 		mounted() {
 			this.start();
+			this.show_tips = true
 		},
 		methods: {
 			start() {
@@ -249,6 +273,13 @@
 		}
 
 	}
+	.tips-btn {
+		height: 30px;
+		line-height: 30px;
+		width: 56%;
+		margin: 0 auto;
+		margin-top: 18px;
+	}
 
 	.withdraw_time_tips {
 		padding: 10px 16px 14px 16px;
@@ -280,5 +311,14 @@
 	}
 	/deep/.van-action-sheet{
 		padding-bottom: 10px;
+	}
+	/deep/ .van-dialog {
+		width: 80%;
+		height: 450px;
+		background-color: transparent;
+		background-repeat: no-repeat;
+		background-size: contain;
+		background-position: center;
+		background-image: url(../img/user/withdraw_tips.png);
 	}
 </style>

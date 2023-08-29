@@ -33,7 +33,7 @@
 			</div>
 			<div class="zp-num">
 				<span>{{$t('draw.drawNum')}}</span>
-				<span>{{draw_num}}</span>
+				<span>{{draw_num || 0}}</span>
 			</div>
 		</div>
 		<div class="zp-bg2">
@@ -47,6 +47,19 @@
 				<div class="content" v-html="rule_content"></div>
 			</div>
 		</div>
+		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
+			<div class="tips-show">
+				<div class="tips-img">
+					<img :src="list[this.winner]['img']" alt="" srcset="">
+				</div>
+				<p>
+					{{ $t('draw.congratulation') }} : {{ list[this.winner]['title'] }}
+				</p>
+				<div class="basic_btn tips-btn"  @click="show_tips=false">
+					OK
+				</div>
+			</div>
+		</van-dialog>
 	</div>
 </template>
 
@@ -95,6 +108,7 @@
 				rule_content: '',
 				draw_num: 0,
 				times: 0,
+				show_tips: false,
 				point_total:0,
 				point:9999999
 			}
@@ -159,10 +173,11 @@
 				setTimeout(() => {
 					this.loading = false
 					if (this.list[this.winner]['type'] == 1 || this.list[this.winner]['type'] == 2 || this.list[this.winner]['type'] == 4) {
-						Dialog.alert({
-							message: this.$t('draw.congratulation') + this.list[this.winner]['title'],
-							confirmButtonText: this.$t('utils.confirm')
-						})
+						// Dialog.alert({
+						// 	message: this.$t('draw.congratulation') + this.list[this.winner]['title'],
+						// 	confirmButtonText: this.$t('utils.confirm')
+						// })
+						this.show_tips = true;
 					} else if (this.list[this.winner]['type'] == 3) {
 						this.$toast(this.$t('draw.unfortunately'));
 					}
@@ -260,6 +275,39 @@
 			}
 		}
 
+	}
+	.tips-btn {
+		width: 56%;
+		margin: 0 auto;
+		margin-top: 45px;
+		background-color: #EBA832;
+	}
+	.tips-show {
+		width: 80%;
+		margin: 0 auto;
+		margin-top: 117px;
+		p {
+			margin-top: 23px;
+		}
+	}
+
+	.tips-img {
+		width: 80px;
+		margin: 0 auto;
+		img {
+			width: 100%;
+			border: 1px solid #5E2800;
+		}
+	}
+
+	/deep/ .van-dialog {
+		width: 80%;
+		height: 450px;
+		background-color: transparent;
+		background-repeat: no-repeat;
+		background-size: contain;
+		background-position: center;
+		background-image: url(../img/draw/draw_tips.png);
 	}
 	.overall {
 		justify-content: center;

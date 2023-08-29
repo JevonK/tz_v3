@@ -34,6 +34,21 @@
             </div>
         </div>
         <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">充值方式</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="rid">
+                    <option value="">- 全部方式 -</option>
+                    {foreach $methods as $k=>$v}
+                    <!--{eq name='Think.get.rid' value="$v['id']"}-->
+                    <option selected value="{$v['id']}">{$v['name']}</option>
+                    <!--{else}-->
+                    <option value="{$v['id']}">{$v['name']}</option>
+                    <!--{/eq}-->
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
             <button class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe615;</i> 搜 索</button>
         </div>
     </form>
