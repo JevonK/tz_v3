@@ -215,6 +215,7 @@
 			position: fixed;
 			bottom: 0px;
 			width: 100%;
+			max-width: 750px;
 			margin: 0;
 			justify-content: space-between;
 			padding: 15px;

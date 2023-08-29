@@ -22,6 +22,10 @@
 					<p>{{$t('recharge.money')}}</p>
 					<div>
 						<span class="money">{{common.currency_symbol_basic()}}{{common.precision_basic(money)}}</span>
+						<span >
+							( ≈ <span class="money">{{(money*15251.85).toFixed(4)}}<span class="currency">IDR</span></span>
+							)
+						</span>
 					</div>
 				</div>
 				<div class="" v-if="recharge.type==5">

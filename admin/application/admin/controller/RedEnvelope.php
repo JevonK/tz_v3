@@ -44,7 +44,12 @@ class RedEnvelope extends Controller
     public function index()
     {
         $this->title = '红包列表';
-        $query = $this->_query($this->table);
+        $auth = $this->app->session->get('user');
+        $where = '';
+        if (isset($auth['username']) and $auth['username'] != 'admin') {
+            $where = "(f_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or f_user_id={$auth['id']} )";
+        }
+        $query = $this->_query($this->table)->where($where);
         $query->order('id desc')->page();
     }
 
@@ -55,8 +60,10 @@ class RedEnvelope extends Controller
      */
     protected function _form_filter(&$vo){
         if ($this->request->isGet()) {
+            $user = $this->app->session->get('user');
             if(!isset($vo['type'])) $vo['type'] = '1';
             if(empty($vo['code'])) $vo['code'] = uniqid();
+            if(empty($vo['f_user_id'])) $vo['f_user_id'] = $user['id'];
         }
     }
 

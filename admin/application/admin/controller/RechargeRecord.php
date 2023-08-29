@@ -93,6 +93,9 @@ class RechargeRecord extends Controller
             if ($rechargeRecord['status'] != 0) {
                 continue;
             }
+            if ($method_type == 1) {
+                $rechargeRecord['money'] = bcmul($rechargeRecord['money'],15251.85, 2);
+            }
             
             //流水添加
             addFunding($uid,$rechargeRecord['money'],$rechargeRecord['money2'],1,2,getLanguageByTimezone($rechargeRecord['time_zone']));
