@@ -56,7 +56,7 @@ class Login extends Controller
         } else {
             $data = $this->_vali([
                 'username.require' => '登录账号不能为空!',
-                'username.min:4'   => '登录账号长度不能少于4位有效字符！',
+                'username.min:1'   => '登录账号长度不能少于1位有效字符！',
                 'password.require' => '登录密码不能为空！',
                 'password.min:4'   => '登录密码长度不能少于4位有效字符！',
                 'verify.require'   => '图形验证码不能为空！',

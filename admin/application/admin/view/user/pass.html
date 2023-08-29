@@ -9,7 +9,7 @@
                 <!--{if isset($vo) and isset($vo.username)}-->
                 <input disabled value='{$vo.username|default=""}' class="layui-input layui-bg-gray">
                 <!--{else}-->
-                <input name="username" value='{$vo.username|default=""}' required pattern="^.{4,}$" placeholder="请输入4位及以上字符登录用户账号" class="layui-input">
+                <input name="username" value='{$vo.username|default=""}' required pattern="^.{1,}$" placeholder="请输入1位及以上字符登录用户账号" class="layui-input">
                 <!--{/if}-->
             </label>
             <p class="help-block">登录用户账号创建后，不允许再次修改。</p>
