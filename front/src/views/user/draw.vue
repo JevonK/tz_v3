@@ -53,7 +53,7 @@
 					<img :src="list[this.winner]['img']" alt="" srcset="">
 				</div>
 				<p>
-					{{ $t('draw.congratulation') }} : {{ list[this.winner]['title'] }}
+					{{ $t('draw.congratulation') }}{{ list[this.winner]['title'] }}
 				</p>
 				<div class="basic_btn tips-btn"  @click="show_tips=false">
 					OK
