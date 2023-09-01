@@ -48,7 +48,11 @@
 			<div class="tips-show">
 				<h3>Recharge instructions</h3>
 				<p>
-					Recharge time, pay attention to details, and fill in the content display page yourself
+				Recharge Notes: <br>
+				1. The recharge amount must be the same as the payment amount.<br>
+				2. You will get a different company collection account for each recharge, so please pay to the latest company collection account for each recharge<br>
+				3. There may be network delays during the recharge process. If it does not appear in your account, please wait a few minutes or contact customer service.<br>
+				4. The company will not be responsible for any loss of funds caused by violating the above regulations or paying to the wrong collection account.
 				</p>
 				<div class="basic_btn tips-btn"  @click="show_tips=false">
 					OK
@@ -255,12 +259,12 @@
 		line-height: 30px;
 		width: 56%;
 		margin: 0 auto;
-		margin-top: 122px;
+		margin-top: 15px;
 	}
 	.tips-show {
 		width: 80%;
 		margin: 0 auto;
-		margin-top: 177px;
+		margin-top: 139px;
 	}
 	/deep/ .van-radio{
 		margin: 10px 0;
@@ -268,10 +272,10 @@
 
 	/deep/ .van-dialog {
 		width: 80%;
-		height: 450px;
+		height: 500px;
 		background-color: transparent;
 		background-repeat: no-repeat;
-		background-size: contain;
+		background-size: 100% 100%;
 		background-position: center;
 		background-image: url(../img/user/recharge_tips.png);
 	}

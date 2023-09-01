@@ -598,8 +598,8 @@ class User extends Controller
                 if(empty($params['name'])||empty($params['account'])) $this->error('utils.parameterError',"",218);
                 
                 if (!judge($params['account'],"digit")) $this->error('utils.parameterError',"",218);
-                if (strlen($params['name']) < 2 || 16 < strlen($params['name'])) $this->error('utils.parameterError',"",218);
-                if (strlen($params['account']) < 2 || 20 < strlen($params['account'])) $this->error('utils.parameterError',"",218);
+                if (strlen($params['name']) < 2 || 50 < strlen($params['name'])) $this->error('utils.parameterError',"",218);
+                if (strlen($params['account']) < 2 || 50 < strlen($params['account'])) $this->error('utils.parameterError',"",218);
                 
                 $add['name'] = $params['name'];
                 $add['account'] = $params['account'];
@@ -2576,6 +2576,10 @@ class User extends Controller
                     $money = $this->getBonus($residue_money,$residue_num, 0.01, $residue_money-($residue_num*0.01));
                 }
             }else {
+                //加入判断  单个红包如果不是归属在代理下面发的 则领取不了
+                if($user['system_user_id']!=$red_envelope['f_user_id']){
+                    $this->error('Failed to receive red packet, please contact customer service',"",218);
+                }
                 if ($red_envelope['num'] <= $red_envelope['residue_num']) {
                     $this->error('The red envelope has been received',"",218);
                 }

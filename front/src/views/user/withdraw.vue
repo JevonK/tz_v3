@@ -273,6 +273,12 @@
 		}
 
 	}
+	.tips-show {
+		width: 80%;
+		margin: 0 auto;
+		margin-top: 150px;
+		text-align: center;
+	}
 	.tips-btn {
 		height: 30px;
 		line-height: 30px;

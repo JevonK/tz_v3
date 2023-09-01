@@ -88,12 +88,12 @@
 			return {
 				currency: '',
 				menus1: [
-					{
-						"title": this.$t('user.luckyDraw'),
-						"value": '',
-						"logo": "index/luckyDraw.png",
-						"url": "/draw"
-					},
+					// {
+					// 	"title": this.$t('user.luckyDraw'),
+					// 	"value": '',
+					// 	"logo": "index/luckyDraw.png",
+					// 	"url": "/draw"
+					// },
 					{
 						"title": 'Reward Redemption',
 						"value": '',

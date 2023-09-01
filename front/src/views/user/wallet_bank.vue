@@ -97,11 +97,11 @@
 			submit() {
 				this.account.bank = this.option1[this.value1]['text'];
 				this.account.bank_id = this.option1[this.value1]['id'];
-				if (this.account.name.length > 16 || this.account.name.length < 2) {
+				if (this.account.name.length > 60 || this.account.name.length < 2) {
 					this.$toast(this.$t('wallet.nameError'));
 					return false;
 				}
-				if (this.account.account.length > 20 || this.account.account.length < 6) {
+				if (this.account.account.length > 30 || this.account.account.length < 6) {
 					this.$toast(this.$t('wallet.accountError'));
 					return false;
 				}

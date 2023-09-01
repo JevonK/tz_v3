@@ -67,7 +67,7 @@
 				<van-tab title="D"></van-tab>
 			</van-tabs>
 			<div class="list_item">
-				<van-list v-model="loading" offset="0" :finished="finished"  @load="onLoad">
+				<van-list v-model="loading" offset="1" :finished="finished"  @load="onLoad">
 					<div class="item" v-for="(item,index) in list">
 						<div class="flex_center">
 							<p>{{item.act_time}}</p>
