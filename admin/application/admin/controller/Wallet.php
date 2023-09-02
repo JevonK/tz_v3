@@ -144,6 +144,9 @@ class Wallet extends Controller
     public function remove()
     {
         $this->applyCsrfToken();
-        $this->_delete($this->table);
+        $id = $this->request->param('id');
+        Db::name($this->table)->where("id=$id")->update(['deleted_at' => date('Y-m-d H:i:s')]);
+        $this->success('success');
+        // $this->_delete($this->table);
     }
 }

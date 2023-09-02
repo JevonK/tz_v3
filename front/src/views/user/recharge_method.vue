@@ -46,6 +46,7 @@
 		</div>
 		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
 			<div class="tips-show">
+				<van-icon name="close" color="#fff" size="30" @click="show_tips=false" />
 				<h3>Recharge instructions</h3>
 				<p>
 				Recharge Notes: <br>
@@ -69,8 +70,9 @@
 		Field,
 		RadioGroup, Radio,
 		Dialog,
+		Icon
 	} from 'vant';
-	Vue.use(Field).use(RadioGroup).use(Radio).use(Dialog);
+	Vue.use(Field).use(RadioGroup).use(Radio).use(Dialog).use(Icon);
 	export default {
 		name: "",
 		data() {
@@ -278,5 +280,10 @@
 		background-size: 100% 100%;
 		background-position: center;
 		background-image: url(../img/user/recharge_tips.png);
+	}
+	/deep/ .van-icon {
+		position: absolute;
+		top: 0;
+		right: 0;
 	}
 </style>

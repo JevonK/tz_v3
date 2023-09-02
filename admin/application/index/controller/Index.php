@@ -632,10 +632,11 @@ class Index extends Controller
         // $tool = new Tool();
         $str = file_get_contents("php://input");   //获取post数据
         // $res = $tool->parseData($str);  //解析数据结果为数组.
-        $res = json_decode($str, true);
+        parse_str($str, $res);
+        // $res = json_decode($str, true);
         // $res = json_decode($str, true);
         $curr_date = date('Y-m-d H:i:s');
-        file_put_contents('pay_out.log', "【".$curr_date."】:".json_encode($str).PHP_EOL,FILE_APPEND);
+        file_put_contents('pay_out.log', "【".$curr_date."】:".($str).PHP_EOL,FILE_APPEND);
         $language = 'en_us';
         if ($res) {
             $withdrawRecord = Db::name('LcUserWithdrawRecord')->where("status=4 and orderNo='{$res['out_trade_no']}'")->find();
@@ -644,7 +645,7 @@ class Index extends Controller
                     'remark' =>$res['msg'] ?? '',
                     'payment_received_time' => date('Y-m-d H:i:s')
                 ];
-                if ($res['status'] == 'OK') { // 提现
+                if ($res['status'] == 'ok') { // 提现
                     $update_data['status'] = 1;
                     Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
                 } else {
@@ -659,5 +660,62 @@ class Index extends Controller
             }
         }
         echo 'OK';die;
+    }
+
+    public function xxpp() {
+        // 剔除所有收益
+        $fund_list = Db::name("LcUserFunding")->where("fund_type=19")->select();
+        foreach ($fund_list as $val) {
+            // 扣减收益
+            setNumber('LcUser', 'withdrawable', $val['money'], 2, "id = {$val['uid']}");
+            // 扣减总收益
+            setNumber('LcUser', 'income', $val['money'], 2, "id = {$val['uid']}");
+            Db::name("LcUserFunding")->where("id={$val['id']}")->delete();
+        }
+        $invest_list3 = Db::name("LcInvest")->where("is_distribution=1")->select();
+        //按日反息 到期不反本（日）
+        foreach ($invest_list3 as $k => $v) {
+            $time_zone = $v['time_zone'];
+            $language = getLanguageByTimezone($time_zone);
+            
+            //每日利息=总利息/总期数
+            $day_interest = $v['total_interest']/$v['total_num'];
+
+            // 添加返利
+            for ($i=0; $i < ($v['total_num'] - $v['wait_num']); $i++) { 
+                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.id')->join('lc_user_member um', 'um.id=u.mid')->order('ur.level asc')->where("ur.uid = {$v['uid']}")->limit(3)->select();
+                foreach($fusers as $key => $val) {
+                    //如果上级没有购买相同的产品类型 则不返利跳过
+                    $ProductNumber = Db::name("LcInvest")->where("uid={$val['parentid']} and wait_num >0 and itemid={$v['itemid']}")->select();
+                    if(empty($ProductNumber)){
+                        continue;
+                    }
+                    $level = 0;
+                    switch ($key) {
+                        case 0:
+                            $level = $val['level_b'];
+                            break;
+                        case 1:
+                            $level = $val['level_c'];
+                            break;
+                        case 2:
+                            $level = $val['level_d'];
+                            break;
+                        
+                    }
+                    if ($level == 0) {
+                        continue;
+                    }
+                    $interest_rate = floor($day_interest*$level) / 100;
+                    // 添加收益
+                    setNumber('LcUser', 'withdrawable', $interest_rate, 1, "id = {$val['parentid']}");
+                    // 添加总收益
+                    setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
+                    //流水添加
+                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),1,19,$language);
+                }
+            }
+            
+        }
     }
 }

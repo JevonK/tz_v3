@@ -2292,34 +2292,36 @@ class User extends Controller
 
             // 添加返利
             if ($v['is_distribution']) {
-                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
-                $fusers = array_reverse($fusers); 
+                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.id')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->order('ur.level asc')->order('ur.level asc')->limit(3)->select();
                 foreach($fusers as $key => $val) {
                     //如果上级没有购买相同的产品类型 则不返利跳过
                     $ProductNumber = Db::name("LcInvest")->where("uid={$val['parentid']} and wait_num >0 and itemid={$v['itemid']}")->select();
                     if(empty($ProductNumber)){
                         continue;
                     }
-                    $level = '';
+                    $level = 0;
                     switch ($key) {
-                        case 1:
+                        case 0:
                             $level = $val['level_b'];
                             break;
-                        case 2:
+                        case 1:
                             $level = $val['level_c'];
                             break;
-                        case 3:
+                        case 2:
                             $level = $val['level_d'];
                             break;
                         
                     }
-                    $interest_rate = floor($day_interest*$level*100) / 100;
+                    if ($level == 0) {
+                        continue;
+                    }
+                    $interest_rate = floor($day_interest*$level) / 100;
                     // 添加收益
-                    setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
+                    setNumber('LcUser', 'withdrawable', $interest_rate, 1, "id = {$val['parentid']}");
                     // 添加总收益
                     setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
                     //流水添加
-                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,19,$language);
+                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),1,19,$language);
                 }
             }
             
@@ -2360,34 +2362,36 @@ class User extends Controller
 
             // 添加返利
             if ($v['is_distribution']) {
-                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
-                $fusers = array_reverse($fusers); 
+                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.id')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->order('ur.level asc')->limit(3)->select();
                 foreach($fusers as $key => $val) {
                     //如果上级没有购买相同的产品类型 则不返利跳过
                     $ProductNumber = Db::name("LcInvest")->where("uid={$val['parentid']} and wait_num >0 and itemid={$v['itemid']}")->select();
                     if(empty($ProductNumber)){
                         continue;
                     }
-                    $level = '';
+                    $level = 0;
                     switch ($key) {
-                        case 1:
+                        case 0:
                             $level = $val['level_b'];
                             break;
-                        case 2:
+                        case 1:
                             $level = $val['level_c'];
                             break;
-                        case 3:
+                        case 2:
                             $level = $val['level_d'];
                             break;
                         
                     }
-                    $interest_rate = floor($day_interest*$level*100) / 100;
+                    if ($level == 0) {
+                        continue;
+                    }
+                    $interest_rate = floor($day_interest*$level) / 100;
                     // 添加收益
-                    setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
+                    setNumber('LcUser', 'withdrawable', $interest_rate, 1, "id = {$val['parentid']}");
                     // 添加总收益
                     setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
                     //流水添加
-                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,19,$language);
+                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),1,19,$language);
                 }
             }
             
@@ -2435,41 +2439,42 @@ class User extends Controller
 
             // 添加返利
             if ($v['is_distribution']) {
-                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.mid')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->limit(3)->select();
-                $fusers = array_reverse($fusers); 
+                $fusers = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.parentid=u.id')->join('lc_user_member um', 'um.id=u.mid')->where("ur.uid = {$v['uid']}")->order('ur.level asc')->limit(3)->select();
                 foreach($fusers as $key => $val) {
                     //如果上级没有购买相同的产品类型 则不返利跳过
                     $ProductNumber = Db::name("LcInvest")->where("uid={$val['parentid']} and wait_num >0 and itemid={$v['itemid']}")->select();
                     if(empty($ProductNumber)){
                         continue;
                     }
-                    $level = '';
+                    $level = 0;
                     switch ($key) {
-                        case 1:
+                        case 0:
                             $level = $val['level_b'];
                             break;
-                        case 2:
+                        case 1:
                             $level = $val['level_c'];
                             break;
-                        case 3:
+                        case 2:
                             $level = $val['level_d'];
                             break;
                         
                     }
-                    $interest_rate = floor($day_interest*$level*100) / 100;
+                    if ($level == 0) {
+                        continue;
+                    }
+                    $interest_rate = floor($day_interest*$level) / 100;
                     // 添加收益
-                    setNumber('LcUser', 'withdrawable', $interest_rate, 2, "id = {$val['parentid']}");
+                    setNumber('LcUser', 'withdrawable', $interest_rate, 1, "id = {$val['parentid']}");
                     // 添加总收益
                     setNumber('LcUser', 'income', $interest_rate, 1, "id = {$val['parentid']}");
                     //流水添加
-                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),2,19,$language);
+                    addFunding($val['parentid'],$interest_rate,changeMoneyByLanguage($interest_rate,$language),1,19,$language);
                 }
             }
             
-            
             //最后一期
             if($v['wait_num']==1){
-                // Db::name('LcInvest')->where('id', $v['id'])->update(['status' => 1,'wait_num' => 0,'wait_interest' => 0]);
+                Db::name('LcInvest')->where('id', $v['id'])->update(['status' => 1,'wait_num' => 0,'wait_interest' => 0]);
                 // //返还本金
                 // addFunding($v['uid'],$v['money2'],changeMoneyByLanguage($v['money2'],$language),1,15,$language);
                 // setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");

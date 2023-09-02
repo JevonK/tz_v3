@@ -48,6 +48,7 @@
 
 		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
 			<div class="tips-show">
+				<van-icon name="close" color="#fff" size="30" @click="show_tips=false" />
 				<h3>How to withdraw money</h3>
 				<p>
 					1. Click to bind the bank<br>
@@ -326,5 +327,10 @@
 		background-size: contain;
 		background-position: center;
 		background-image: url(../img/user/withdraw_tips.png);
+	}
+	/deep/ .van-icon {
+		position: absolute;
+		top: 0;
+		right: 0;
 	}
 </style>

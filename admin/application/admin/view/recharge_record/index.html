@@ -20,6 +20,7 @@
             <th class='text-left'>用户</th>
             <th class="text-left">充值方式</th>
             <th class="text-left">充值金额</th>
+            <th class="text-left">交易号</th>
             <th class="text-left">充值凭证</th>
             <th class="text-left">提交时间</th>
             <th class="text-left">处理进度</th>
@@ -48,6 +49,10 @@
                     {$vo.money2|number_format=2}&nbsp;{$vo.currency|default='--'}
                 {/if}
             </td> 
+            <td>
+                订单号：{$vo.orderNo|default='--'}
+                <br> 流水号：{$vo.voucher|default='--'}
+            </td>
             <td class='text-left' style="max-width: 150px;overflow: hidden;word-wrap: break-word">
                 {if $vo.rtype == 5}
                     {$vo.hash|default='--'}

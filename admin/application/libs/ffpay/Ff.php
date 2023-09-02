@@ -43,12 +43,12 @@ class Ff {
             'mchid' => $this->authorizationKey,
             'out_trade_no' => $params['order_no'],
             'bankname' => $params['bankname'], // 银行名称
-            'accountname' => $params['accountname'], // 收款人姓名
+            'accountname' => str_replace(" ","",$params['accountname']), // 收款人姓名
             'cardnumber' => $params['cardnumber'], // 银行卡号
-            'notify_url' => getInfo('domain_api')."/index/index/ff_out_pay_callback",
             'money' => $params['money'],
         ];
         $data['pay_md5sign'] = $this->getSign($data);
+        $data['notifyurl'] = getInfo('domain_api')."/index/index/ff_out_pay_callback";
         return $this->curlPost(self::$oderOut, $data);
     }
 

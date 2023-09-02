@@ -10,6 +10,7 @@
 				{{item.title}}
 			</div>
 			<div class="detail">
+				<img :src="item.img" style="width: 100%;" alt="" srcset="">
 				<van-cell-group :border="false">
 					<van-cell :title="$t('invest.cycle')" value-class="value_class" :border="false"
 						:value="item.day+(item.type==3?$t('index.hour'):$t('index.day'))" />
