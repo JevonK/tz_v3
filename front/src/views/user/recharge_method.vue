@@ -46,7 +46,7 @@
 		</div>
 		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
 			<div class="tips-show">
-				<van-icon name="close" color="#fff" size="30" @click="show_tips=false" />
+				<van-icon name="close" color="#333" size="30" @click="show_tips=false" />
 				<h3>Recharge instructions</h3>
 				<p>
 				Recharge Notes: <br>
@@ -283,7 +283,7 @@
 	}
 	/deep/ .van-icon {
 		position: absolute;
-		top: 0;
-		right: 0;
+		top: 100px;
+		right: 12px;
 	}
 </style>
