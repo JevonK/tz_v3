@@ -75,13 +75,13 @@ class DownstreamReport extends Controller
             // 今日充值
             $vo['today_price'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("uf.time BETWEEN '$today' AND '$now' and uf.fund_type=2 and u.system_user_id={$vo['id']}")->sum('uf.money');
             // 兑换红包
-            $vo['residue_num'] = Db::table('lc_red_envelope')->where("f_user_id={$vo['id']}")->sum('residue_num');
+            $vo['residue_num'] = Db::table('lc_red_envelope')->where("f_user_id={$vo['id']}")->sum('money2');
             // 总充值金额
             $vo['recharge_sum'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("u.system_user_id={$vo['id']} and uf.fund_type=2")->sum('uf.money');
             // 总提现金额
             $vo['withdraw_sum'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->where('u.system_user_id', $vo['id'])->where("rr.status = 1")->sum('rr.money');
             //提现笔数
-            $vo['withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->where('u.system_user_id', $vo['id'])->where("rr.status = 1")->count();
+            $vo['withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn("rr.source", [1,2])->where('u.system_user_id', $vo['id'])->where("rr.status = 1")->count();
             // 今日提现数量
             $vo['today_withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereBetweenTime('rr.time', $today, $now)->where('u.system_user_id', $vo['id'])->count();
             // 待处理提现数量

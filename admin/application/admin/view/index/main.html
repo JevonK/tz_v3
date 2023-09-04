@@ -19,13 +19,13 @@
 
     .store-total-container .store-total-item {
         color: #fff;
-        line-height: 4em;
+        /* line-height: 4em; */
         padding: 15px 25px;
         position: relative;
     }
 
     .store-total-container .store-total-item > div:nth-child(2) {
-        font-size: 46px;
+        font-size: 24px;
         line-height: 46px;
     }
 
@@ -35,106 +35,116 @@
 <div class="think-box-shadow store-total-container notselect">
     <div class="margin-bottom-15">数据统计</div>
     <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm6 layui-col-md4">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#c543d8,#925cc3)">
-                <div>总充值</div>
-                <div>${:number_format($recharge_sum)}</div>
-                <div>平台用户总充值</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-user"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md4">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
-                <div>总提现</div>
-                <div>${:number_format($withdraw_sum)}</div>
-                <div>平台用户总提现</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-user"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md4">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#c543d8,#925cc3)">
-                <div>用户总量</div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#57bdbf,#2f9de2)">
+                <div>总人数</div>
                 <div>{:number_format($user_count)}人</div>
-                <div>用户总人数</div>
+                <div>今日注册：{:number_format($user_count_today)}人</div>
+                <div>昨日注册：{:number_format($user_count_yesterday)}人</div>
             </div>
-            <i class="store-total-icon layui-icon layui-icon-user"></i>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
+                <div>总订单</div>
+                <div>{:number_format($invest_count)}</div>
+                <div>今日订单：{:number_format($today['invest'])}</div>
+                <div>昨日订单：{:number_format($yesterday['invest'])}</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#57bdbf,#2f9de2)">
+                <div>总订单分红</div>
+                <div>{:number_format($invest_reward)}</div>
+                <div>今日订单分红：{:number_format($today['invest_reward'])}</div>
+                <div>昨日订单分红：{:number_format($yesterday['invest_reward'])}</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#57bdbf,#2f9de2)">
+                <div>总兑换红包</div>
+                <div>{:number_format($recharge_sum)}</div>
+                <div>今日兑换:{:number_format($today['residue_num'])}</div>
+                <div>昨日兑换:{:number_format($yesterday['residue_num'])}</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
+                <div>总充值</div>
+                <div>{:number_format($recharge_sum)}</div>
+                <div>今日充值：{:number_format($today['recharge'])}</div>
+                <div>昨日充值：{:number_format($yesterday['recharge'])}</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#57bdbf,#2f9de2)">
+                <div>余额钱包</div>
+                <div>{:number_format($withdrawable)}</div>
+                <div>--</div>
+                <div>--</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
         </div>
     </div>
     {if session('user')['username'] eq 'admin' }
     <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm6 layui-col-md4">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#ff7d7d,#fb2c95)">
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
+                <div>今日首充人数</div>
+                <div>{:number_format($first_charge_count_today)}</div>
+                <div>昨日首充：{:number_format($first_charge_count_yesterday)}</div>
+                <div>--</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-template-1"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
+                <div>总提现</div>
+                <div>{:number_format($withdraw_sum)}</div>
+                <div>今日提现：{:number_format($today['withdraw'])}</div>
+                <div>昨日提现：{:number_format($yesterday['withdraw'])}</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
+                <div>波比</div>
+                <div>{:$poby}</div>
+                <div>--</div>
+                <div>--</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-template-1"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#57bdbf,#2f9de2)">
+                <div>提现待处理</div>
+                <div>{:number_format($wait_withdraw_count)}</div>
+                <div>--</div>
+                <div>--</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
+                <div>有效用户</div>
+                <div>{:number_format($recharge_p)}</div>
+                <div>今充人数：{:$today['recharge_p']}</div>
+                <div>昨充人数：{:$yesterday['recharge_p']}</div>
+            </div>
+            <!-- <i class="store-total-icon layui-icon layui-icon-user"></i> -->
+        </div>
+        <div class="layui-col-sm6 layui-col-md2">
+            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
                 <div>总结余</div>
-                <div>${:number_format($aggregate_balance)}</div>
-                <div>平台用户总结余</div>
+                <div>{:number_format($aggregate_balance)}</div>
+                <div>今日结余：{:number_format($today['recharge']-$today['withdraw'])}</div>
+                <div>昨日结余：{:number_format($yesterday['recharge']-$yesterday['withdraw'])}</div>
             </div>
-            <i class="store-total-icon layui-icon layui-icon-template-1"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md4">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
-                <div>活跃用户</div>
-                <div>{:number_format($user_login_count_today)}人</div>
-                <div>当前活跃用户</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-user"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md4">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#ff7d7d,#fb2c95)">
-                <div>用户余额</div>
-                <div>${:number_format($user_money_sum)}</div>
-                <div>平台用户总余额</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-template-1"></i>
-        </div>
-    </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm6 layui-col-md2">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-113deg,#c543d8,#925cc3)">
-                <div>首充人数</div>
-                <div>{:number_format($first_charge_count)}人</div>
-                <div>平台首充人数</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-user"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md2">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#57bdbf,#2f9de2)">
-                <div>充值订单个数</div>
-                <div>{:number_format($recharge_count)}笔</div>
-                <div>平台充值订单个数</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-user"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md2">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#ff7d7d,#fb2c95)">
-                <div>复冲个数</div>
-                <div>{:number_format($recharging_count)}人</div>
-                <div>总复冲个数</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-template-1"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md2">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#ff7d7d,#fb2c95)">
-                <div>复冲个数</div>
-                <div>{:number_format($recharging_count)}人</div>
-                <div>总复冲个数</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-template-1"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md2">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#ff7d7d,#fb2c95)">
-                <div>复冲个数</div>
-                <div>{:number_format($recharging_count)}人</div>
-                <div>总复冲个数</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-template-1"></i>
-        </div>
-        <div class="layui-col-sm6 layui-col-md2">
-            <div class="store-total-item nowrap" style="background:linear-gradient(-125deg,#ff7d7d,#fb2c95)">
-                <div>复冲个数</div>
-                <div>{:number_format($recharging_count)}人</div>
-                <div>总复冲个数</div>
-            </div>
-            <i class="store-total-icon layui-icon layui-icon-template-1"></i>
+            <!-- <i class="store-total-icon layui-icon layui-icon-template-1"></i> -->
         </div>
     </div>
     {/if}

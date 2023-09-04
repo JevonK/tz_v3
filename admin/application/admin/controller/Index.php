@@ -165,16 +165,28 @@ class Index extends Controller
             //用户数量
             $this->user_count = Db::name('LcUser')->whereIn('system_user_id', $ids)->count();
             //用户余额
-            $this->user_money_sum = Db::name('LcUser')->sum('money');
+            $this->user_money_sum = Db::name('LcUser')->whereIn('system_user_id', $ids)->sum('money');
+            //用户可提现余额
+            $this->withdrawable = Db::name('LcUser')->whereIn('system_user_id', $ids)->sum('withdrawable');
             //今日注册
-            $this->user_count_today = Db::name('LcUser')->where("time BETWEEN '$today' AND '$now'")->count();
+            $this->user_count_today = Db::name('LcUser')->whereIn('system_user_id', $ids)->where("time BETWEEN '$today' AND '$now'")->count();
+            //昨日注册
+            $this->user_count_yesterday = Db::name('LcUser')->whereIn('system_user_id', $ids)->where("time BETWEEN '$yesterday' AND '$today'")->count();
             //今日登录
             $this->user_login_count_today = Db::name('LcUser')->where("logintime BETWEEN '$today' AND '$now'")->count();
             //充值笔数
             $this->recharge_count = Db::name('LcUserRechargeRecord')->where("status = 1")->count();
+            //充值人数
+            $this->recharge_p = count(Db::name('LcUserRechargeRecord')->where("status = 1")->group('uid')->select());
             //首充人数
-            $first_charge_count = Db::query('select count(*) as num from (select count(uid) as num, uid from lc_user_recharge_record where status = 1 group by uid) as a where a.num=1 limit 1');
+            $first_charge_count = Db::query('select count(*) as num from (select count(uid) as num, uid, time from lc_user_recharge_record where status = 1 group by uid) as a where a.num=1 limit 1');
             $this->first_charge_count = $first_charge_count[0]['num'];
+            //今日首充人数
+            $first_charge_count_today = Db::query("select count(*) as num from (select count(uid) as num, uid, time from lc_user_recharge_record where status = 1 group by uid) as a where a.num=1 and time BETWEEN '$today' AND '$now' limit 1");
+            $this->first_charge_count_today = $first_charge_count_today[0]['num'];
+            //昨日首充人数
+            $first_charge_count_yesterday = Db::query("select count(*) as num from (select count(uid) as num, uid, time from lc_user_recharge_record where status = 1 group by uid) as a where a.num=1 and time BETWEEN '$yesterday' AND '$today' limit 1");
+            $this->first_charge_count_yesterday = $first_charge_count_yesterday[0]['num'];
             //复充人数
             $recharging_count = Db::query('select count(*) as num from (select count(uid) as num, uid from lc_user_recharge_record where status = 1 group by uid) as a where a.num>1 limit 1');
             $this->recharging_count = $recharging_count[0]['num'];
@@ -185,13 +197,13 @@ class Index extends Controller
             //提现金额
             $this->withdraw_sum = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 1")->sum('rr.money');
             //投资笔数
-            $this->invest_count = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->count();
+            $this->invest_count = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn("rr.source", [1,2])->whereIn('u.system_user_id', $ids)->count();
             //投资人数
             $this->invest_user_count = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->group('uid')->count();
             //投资金额
             $this->invest_sum = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->sum('rr.money');
             //投资收益
-            $this->invest_reward = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.type = 1 AND rr.fund_type = 6")->sum('rr.money');
+            $this->invest_reward = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.type = 1 AND rr.fund_type in (6,19)")->sum('rr.money');
             //系统操作（增加）
             $funding_sys_1_sum = Db::name('LcUserFunding')->where("type = 1 AND fund_type = 1")->sum('money');
             //系统操作（减少）
@@ -202,6 +214,12 @@ class Index extends Controller
             $this->sys_reward = Db::name('LcUserFunding')->where("type = 1 AND fund_type IN (7,8,9,10,11,12,13,14,19,20,21)")->sum('money');
             // 总结余（充值-提现）
             $this->aggregate_balance = $this->recharge_sum - $this->withdraw_sum;
+            // 兑换红包
+            $this->residue_num = Db::table('lc_red_envelope')->whereIn("f_user_id", $ids)->sum('money2');
+            // 波比（提现 / 充值）
+            $this->poby = $this->recharge_sum ? bcmul($this->withdraw_sum/$this->recharge_sum, 100, 2) . "%" : '--';
+            // 待处理提现数量
+            $this->wait_withdraw_count = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 0")->count();
             
             
             $table = $this->finance_report($now,$today,$yesterday,$i_time, $ids);
@@ -262,17 +280,20 @@ class Index extends Controller
     {
         $data['recharge'] = Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->sum('rr.money');
         $data['recharge_count'] = Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->count();
+        $data['recharge_p'] = count(Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->group('rr.uid')->select());
         $data['withdraw'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->sum('rr.money');
         $data['withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->count();
         $data['new_user'] = Db::name('LcUser')->whereIn('system_user_id', $ids)->where("time BETWEEN '$time1' AND '$time2'")->count();
-        $data['invest'] = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2'")->count();
+        $data['invest'] = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn("rr.source", [1,2])->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2'")->count();
         $data['invest_user_count'] = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2'")->group('rr.uid')->count();
         $data['invest_sum'] = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2'")->sum('rr.money');
-        $data['invest_reward'] = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.type = 1 AND rr.fund_type = 6")->sum('rr.money');
+        $data['invest_reward'] = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.type = 1 AND rr.fund_type in (6,19)")->sum('rr.money');
         $data_sys_sum_1 = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.type = 1 AND rr.fund_type = 1")->sum('rr.money');
         $data_sys_sum_2 = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.type = 2 AND rr.fund_type = 1")->sum('rr.money');
         $data['sys_sum'] = $data_sys_sum_1 - $data_sys_sum_2;
         $data['sys_reward'] = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.type = 1 AND rr.fund_type IN (7,8,9,10,11,12,13,14,19,20,21)")->sum('rr.money');
+        // 兑换红包
+        $data['residue_num'] = Db::table('lc_red_envelope_record')->alias('rer')->join('lc_red_envelope re', 'rer.pid=re.id')->whereIn("re.f_user_id", $ids)->where("rer.time BETWEEN '$time1' AND '$time2'")->sum('rer.money');
         
         return $data;
     
