@@ -140,19 +140,26 @@ class Index extends Controller
             $tomorrow = date('Y-m-d 00:00:00', strtotime($now)+86400);//明天0点
             $i_time = $this->request->param('i_time');
             $user_id = $this->request->param('user_id');
+            $system_user_id = $this->request->param('system_user_id');
             $auth = $this->app->session->get('user');
             $ids = [];
             if ($auth['username'] != 'admin') {
-                $ids = Db::table('system_user')->where('f_user_id',$auth['id'])->column('id');
+                $ids = Db::table('system_user_relation')->where('parentid',$auth['id'])->column('uid');
                 $ids[] = $auth['id'];
-                $this->users = Db::table('system_user')->where('f_user_id',$auth['id'])->select();
+                $this->users = Db::table('system_user')->alias('su')->join("system_user_relation sur", "sur.uid=su.id")->where('sur.parentid',$auth['id'])->select();
             }else {
                 $this->users = Db::table('system_user')->select();
+                $ids = Db::table('system_user')->column('id');
             }
 
             if ($user_id) {
                 $ids = [];
                 $ids[] = $user_id;
+            }
+
+            if ($system_user_id) {
+                $ids = [];
+                $ids[] = $system_user_id;
             }
             
             //用户数量
@@ -193,6 +200,8 @@ class Index extends Controller
             $this->funding_sys_sum = $funding_sys_1_sum - $funding_sys_2_sum;
             //系统奖励
             $this->sys_reward = Db::name('LcUserFunding')->where("type = 1 AND fund_type IN (7,8,9,10,11,12,13,14,19,20,21)")->sum('money');
+            // 总结余（充值-提现）
+            $this->aggregate_balance = $this->recharge_sum - $this->withdraw_sum;
             
             
             $table = $this->finance_report($now,$today,$yesterday,$i_time, $ids);

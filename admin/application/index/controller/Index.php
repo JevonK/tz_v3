@@ -663,6 +663,7 @@ class Index extends Controller
     }
 
     public function xxpp() {
+        echo "已停用"; die;
         // 剔除所有收益
         $fund_list = Db::name("LcUserFunding")->where("fund_type=19")->select();
         foreach ($fund_list as $val) {

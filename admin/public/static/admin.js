@@ -669,7 +669,11 @@ $(function () {
 
     /*! 注册 data-iframe 事件行为 */
     $body.on('click', '[data-iframe]', function (index) {
-        index = $.form.iframe($(this).attr('data-iframe'), $(this).attr('data-title') || '窗口');
+        var area = '';
+        if ($(this).attr('data-width') && $(this).attr('data-height')) {
+            area = [$(this).attr('data-width'), $(this).attr('data-height')];
+        }
+        index = $.form.iframe($(this).attr('data-iframe'), $(this).attr('data-title') || '窗口', area);
         $(this).attr('data-index', index);
     });
 

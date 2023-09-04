@@ -98,11 +98,11 @@ class User extends Controller
         // 總資產
         $invest_sum = Db::name('LcInvest')->where('uid', $uid)->where("status = 0 and source!=3")->sum('money');
         //投资收益
-        $invest_reward = Db::name('LcUserFunding')->where('uid', $uid)->where("type = 1 AND fund_type = 6")->sum('money');
+        $invest_reward = Db::name('LcUserFunding')->where('uid', $uid)->where("type = 1 AND fund_type in (6,19,20)")->sum('money');
         // 今日收益
         $now = date('Y-m-d H:i:s');//现在
         $today = date('Y-m-d 00:00:00');//今天0点
-        $day_invest_reward = Db::name('LcUserFunding')->where('uid', $uid)->where("time BETWEEN '$today' AND '$now' AND type = 1 AND fund_type = 6")->sum('money');
+        $day_invest_reward = Db::name('LcUserFunding')->where('uid', $uid)->where("time BETWEEN '$today' AND '$now' AND type = 1 AND fund_type in (6,19,20)")->sum('money');
 
         
         $data = array(
