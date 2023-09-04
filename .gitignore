@@ -3,3 +3,6 @@ admin/.env
 dist
 front/node_modules
 *.DS_Store
+tz_v3_app/unpackage/cache
+tz_v3_app/unpackage/dist
+tz_v3_app/unpackage/release

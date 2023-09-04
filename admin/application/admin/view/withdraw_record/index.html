@@ -44,7 +44,7 @@
             <td class='text-left'>
                 提现金额：${$vo.money|number_format=2}
                 <br>实际金额：
-                {if $vo.wallet_type==1}
+                {if isset($vo.wallet_type) && $vo.wallet_type==1}
                     ${$vo.money2|number_format=2}&nbsp;
                 {else}
                     ${$vo.money2|number_format=2}&nbsp;
@@ -67,16 +67,16 @@
                         货币：{$vo.currency|default='--'}<br>
                     {/if}
                     
-                    {if $vo.wallet_type==1}
+                    {if isset($vo.wallet_type) && $vo.wallet_type==1}
                         {$vo.wallet_wname|default='--'}
                         <br>地址：{$vo.wallet_account|default='--'}
-                    {elseif $vo.wallet_type==2}
+                    {elseif isset($vo.wallet_type) && $vo.wallet_type==2}
                         {$vo.wallet_wname|default='--'}
                         <br>账号：{$vo.wallet_account|default='--'}
-                    {elseif $vo.wallet_type==3}
+                    {elseif isset($vo.wallet_type) && $vo.wallet_type==3}
                         {$vo.wallet_wname|default='--'}
                         <br>账号：{$vo.wallet_account|default='--'}
-                    {elseif $vo.wallet_type==4}
+                    {elseif isset($vo.wallet_type) && $vo.wallet_type==4}
                         银行：{$vo.wallet_wname|default='--'}
                         <br>姓名：{$vo.wallet_name|default='--'}
                         <br>卡号：{$vo.wallet_account|default='--'}
