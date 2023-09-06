@@ -159,6 +159,7 @@ class Index extends Controller
 
             if ($system_user_id) {
                 $ids = [];
+                $ids = Db::table('system_user_relation')->where('parentid',$system_user_id)->column('uid');
                 $ids[] = $system_user_id;
             }
             
@@ -173,22 +174,22 @@ class Index extends Controller
             //昨日注册
             $this->user_count_yesterday = Db::name('LcUser')->whereIn('system_user_id', $ids)->where("time BETWEEN '$yesterday' AND '$today'")->count();
             //今日登录
-            $this->user_login_count_today = Db::name('LcUser')->where("logintime BETWEEN '$today' AND '$now'")->count();
+            $this->user_login_count_today = Db::name('LcUser')->whereIn('system_user_id', $ids)->where("logintime BETWEEN '$today' AND '$now'")->count();
             //充值笔数
-            $this->recharge_count = Db::name('LcUserRechargeRecord')->where("status = 1")->count();
+            $this->recharge_count = Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("status = 1")->count();
             //充值人数
-            $this->recharge_p = count(Db::name('LcUserRechargeRecord')->where("status = 1")->group('uid')->select());
+            $this->recharge_p = count(Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("status = 1")->group('uid')->select());
             //首充人数
-            $first_charge_count = Db::query('select count(*) as num from (select count(uid) as num, uid, time from lc_user_recharge_record where status = 1 group by uid) as a where a.num=1 limit 1');
+            $first_charge_count = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num=1 limit 1");
             $this->first_charge_count = $first_charge_count[0]['num'];
             //今日首充人数
-            $first_charge_count_today = Db::query("select count(*) as num from (select count(uid) as num, uid, time from lc_user_recharge_record where status = 1 group by uid) as a where a.num=1 and time BETWEEN '$today' AND '$now' limit 1");
+            $first_charge_count_today = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num=1 and time BETWEEN '$today' AND '$now' limit 1");
             $this->first_charge_count_today = $first_charge_count_today[0]['num'];
             //昨日首充人数
-            $first_charge_count_yesterday = Db::query("select count(*) as num from (select count(uid) as num, uid, time from lc_user_recharge_record where status = 1 group by uid) as a where a.num=1 and time BETWEEN '$yesterday' AND '$today' limit 1");
+            $first_charge_count_yesterday = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num=1 and time BETWEEN '$yesterday' AND '$today' limit 1");
             $this->first_charge_count_yesterday = $first_charge_count_yesterday[0]['num'];
             //复充人数
-            $recharging_count = Db::query('select count(*) as num from (select count(uid) as num, uid from lc_user_recharge_record where status = 1 group by uid) as a where a.num>1 limit 1');
+            $recharging_count = Db::query("select count(*) as num from (select count(uid) as num, uid from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and rr.status = 1 group by rr.uid) as a where a.num>1 limit 1");
             $this->recharging_count = $recharging_count[0]['num'];
             //充值金额
             $this->recharge_sum = Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 1")->sum('rr.money');
@@ -219,7 +220,7 @@ class Index extends Controller
             // 波比（提现 / 充值）
             $this->poby = $this->recharge_sum ? bcmul($this->withdraw_sum/$this->recharge_sum, 100, 2) . "%" : '--';
             // 待处理提现数量
-            $this->wait_withdraw_count = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 0")->count();
+            $this->wait_withdraw_count = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 0")->sum("rr.money");
             
             
             $table = $this->finance_report($now,$today,$yesterday,$i_time, $ids);
@@ -264,12 +265,17 @@ class Index extends Controller
         foreach($monthDays as $k=>$v){
             $first = date('Y-m-d 00:00:00', strtotime($v));
             $last = date('Y-m-d 23:59:59', strtotime($v));
+            if ($first > date('Y-m-d 00:00:00')) {
+                break;
+            }
             
             $day[$k] = $this->getDatas($first,$last,$ids);
             
             $day[$k]['date'] = $v;
             
         }
+
+        $day = array_reverse($day);
         return array('day' => $day,'today' => $today1,'yesterday' => $yesterday1,'month' => $month,'last_month'=>$lastMonth);
     }
     /**
