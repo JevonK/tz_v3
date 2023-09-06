@@ -494,7 +494,7 @@ class User extends Controller
         
         $withdrawMethod = Db::name('LcUserWithdrawMethod')->field("id,type,name,logo")->where(['show' => 1,'delete' => 0,'cid' => $currency['id']])->order('sort asc,id desc')->select();
         
-        $wallets = Db::name('LcUserWallet')->field("id,wid,type,wname,account,bid")->where(['uid' => $uid,'cid' => $currency['id']])->select();
+        $wallets = Db::name('LcUserWallet')->field("id,wid,type,wname,account,bid")->where(['uid' => $uid,'cid' => $currency['id'], 'deleted_at' => '0000-00-00 00:00:00'])->select();
         foreach ($wallets as &$wallet) {
             if($wallet['type']==1){
                 $wallet['account'] = substr($wallet['account'],0,4).'******'.substr($wallet['account'],strlen($wallet['account'])-4,strlen($wallet['account']));
@@ -562,7 +562,7 @@ class User extends Controller
         $withdraw = Db::name('LcUserWithdrawMethod')->find($params['id']);
         if(empty($withdraw)) $this->error('utils.parameterError',"",218);
         //判断是否绑定过
-        $wallet = Db::name('LcUserWallet')->where(['uid' => $uid,'wid' => $withdraw['id']])->select();
+        $wallet = Db::name('LcUserWallet')->where(['uid' => $uid,'wid' => $withdraw['id'], 'deleted_at' => '0000-00-00 00:00:00'])->select();
         if(!empty($wallet)) $this->error('utils.parameterError',"",218);
         $currency = Db::name('LcCurrency')->where(['country' => $language])->find();
         
@@ -621,6 +621,29 @@ class User extends Controller
         $this->success("success");
     }
     /**
+     * Describe: 删除提现账户
+     * DateTime: 
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function delWallets() {
+        $params = $this->request->param();
+        $language = $params["language"];
+        $id = $params["id"];
+        $this->checkToken($language);
+        $uid = $this->userInfo['id'];
+
+        //判断是否绑定过
+        $wallet = Db::name('LcUserWallet')->where(['uid' => $uid, 'id' => $id, 'deleted_at' => '0000-00-00 00:00:00'])->select();
+        if(empty($wallet)) $this->error('utils.parameterError',"",218);
+
+        Db::name('LcUserWallet')->where(['uid' => $uid, 'id' => $id, 'deleted_at' => '0000-00-00 00:00:00'])->update(["deleted_at" => date("Y-m-d H:i:s")]);
+
+        $this->success("success");
+
+    }
+    /**
      * Describe:获取提现账户
      * DateTime: 
      * @throws \think\db\exception\DataNotFoundException
@@ -640,7 +663,7 @@ class User extends Controller
         
         //获取指定国别的提现账户
         $currency = Db::name('LcCurrency')->where(['country' => $language])->find();
-        $wallets = Db::name('LcUserWallet')->field('id,wname,type,account')->where(['uid' => $uid,'cid' => $currency['id']])->select();
+        $wallets = Db::name('LcUserWallet')->field('id,wname,type,account')->where(['uid' => $uid,'cid' => $currency['id'], 'deleted_at' => '0000-00-00 00:00:00'])->select();
         foreach ($wallets as &$wallet) {
             if($wallet['type']==1){
                 $wallet['account'] = substr($wallet['account'],0,4).'****'.substr($wallet['account'],strlen($wallet['account'])-4,strlen($wallet['account']));
@@ -856,7 +879,7 @@ class User extends Controller
         $page = $params["page"];
         $listRows = $params["listRows"];
         
-        $list = Db::name('LcUserWithdrawRecord uwr,lc_user_wallet uw')->field("uwr.money,uwr.money2,uwr.currency,uwr.status,uwr.act_time,uwr.wname,uw.type as wtype")->where("uwr.uid = $uid AND uwr.wid = uw.id AND uwr.money > 0")->order("uwr.act_time desc")->page($page,$listRows)->select();
+        $list = Db::name('LcUserWithdrawRecord uwr,lc_user_wallet uw')->field("uwr.money,uwr.money2,uwr.currency,uwr.status,date_format(uwr.act_time, '%d %M %Y · %H:%i') as act_time,uwr.wname,uw.type as wtype")->where("uwr.uid = $uid AND uwr.wid = uw.id AND uwr.money > 0")->order("uwr.act_time desc")->page($page,$listRows)->select();
         $length = Db::name('LcUserWithdrawRecord uwr,lc_user_wallet uw')->where("uwr.uid = $uid AND uwr.wid = uw.id AND uwr.money > 0")->order("uwr.act_time desc")->count();
         
         $data = array(
@@ -891,7 +914,7 @@ class User extends Controller
             $where = 'type = 2';
         }
         
-        $list = Db::name('LcUserFunding')->field("money,money2,type,fund_type,currency,act_time")->where("uid = $uid")->where($where)->order("act_time desc")->page($page,$listRows)->select();
+        $list = Db::name('LcUserFunding')->field("money,money2,type,fund_type,currency,date_format(act_time, '%d %M %Y · %H:%i') as act_time")->where("uid = $uid")->where($where)->order("act_time desc")->page($page,$listRows)->select();
         $length = Db::name('LcUserFunding')->where("uid = $uid")->where($where)->order("act_time desc")->count();
         
         $data = array(
@@ -1093,7 +1116,7 @@ class User extends Controller
         $page = $params["page"];
         $listRows = $params["listRows"];
         
-        $list = Db::name('LcUserRechargeRecord urr,lc_user_recharge_method urm')->field("urr.money,urr.money2,urr.currency,urr.status,urr.act_time,urm.name,urm.type")->where("urr.uid = $uid AND urr.rid = urm.id AND urr.money > 0")->order("urr.act_time desc")->page($page,$listRows)->select();
+        $list = Db::name('LcUserRechargeRecord urr,lc_user_recharge_method urm')->field("urr.money,urr.money2,urr.currency,urr.status,date_format(urr.act_time, '%d %M %Y · %H:%i') as act_time,urm.name,urm.type")->where("urr.uid = $uid AND urr.rid = urm.id AND urr.money > 0")->order("urr.act_time desc")->page($page,$listRows)->select();
         $length = Db::name('LcUserRechargeRecord urr,lc_user_recharge_method urm')->field("urr.money,urr.money2,urr.currency,urr.status,urr.act_time,urm.name")->where("urr.uid = $uid AND urr.rid = urm.id AND urr.money > 0")->order("urr.act_time desc")->count();
         
         $data = array(
@@ -1201,6 +1224,7 @@ class User extends Controller
             $recharge_sum = Db::name('lc_user_recharge_record')->where("uid=$uid2 AND status=1")->sum('money');
             $user['recharge_sum'] = $recharge_sum;
             $user['username'] = substr($user['username'],0,3).'***'.substr($user['username'],strlen($user['username'])-3,strlen($user['username']));
+            $user['act_time'] = date('d M Y · H:i', strtotime($user['act_time']));
         }
         
         $data = array(
@@ -1650,6 +1674,7 @@ class User extends Controller
             if(!empty($item)){
                 $invest['title'] = $item["title_$language"];
             }
+            $invest['time_actual'] = date('d M Y · H:i', strtotime($invest['time_actual']));
         }
         
         $data = array(

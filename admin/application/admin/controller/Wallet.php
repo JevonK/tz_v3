@@ -45,9 +45,9 @@ class Wallet extends Controller
     {
         $this->title = '钱包列表';
         $auth = $this->app->session->get('user');
-        $where = '';
+        $where = "deleted_at = '0000-00-00 00:00:00' ";
         if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
+            $where .= " and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
         }
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username,c.name as cname,c.country as ccountry,c.country_cn as ccountry_cn,c.price as crate');
         $query->where($where)->join('lc_user u','i.uid=u.id')->join('lc_currency c','i.cid=c.id')->like('u.username#u_username')->order('i.id desc')->page();
@@ -145,8 +145,8 @@ class Wallet extends Controller
     {
         $this->applyCsrfToken();
         $id = $this->request->param('id');
-        // Db::name($this->table)->where("id=$id")->update(['deleted_at' => date('Y-m-d H:i:s')]);
-        // $this->success('success');
-        $this->_delete($this->table);
+        Db::name($this->table)->where("id=$id")->update(['deleted_at' => date('Y-m-d H:i:s')]);
+        $this->success('success');
+        // $this->_delete($this->table);
     }
 }

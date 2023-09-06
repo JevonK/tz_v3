@@ -328,7 +328,7 @@
 		background-position: center;
 		background-image: url(../img/user/withdraw_tips.png);
 	}
-	/deep/ .van-icon {
+	/deep/ .van-icon-close {
 		position: absolute;
 		top: 100px;
 		right: 12px;

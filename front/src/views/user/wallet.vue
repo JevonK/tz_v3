@@ -22,6 +22,7 @@
 								<div v-if="item.type!=4" @click="$router.push('/wallet/qrcode/'+item.id)">
 									<p class="bind" v-if="!item.status">{{$t('wallet.toBind')}}</p>
 								</div>
+								<van-icon v-if="item.status" name="close" color="red" @click="delWallet(item.wallet_id)" size="20"/>
 							</div>
 						</template>
 					</van-cell>
@@ -42,10 +43,12 @@
 	import Fetch from '../../utils/fetch'
 	import {
 		Cell,
-		Tag
+		Tag,
+		Icon,
+		Toast
 	} from "vant";
 
-	Vue.use(Cell).use(Tag);
+	Vue.use(Cell).use(Tag).use(Icon).use(Toast);
 	export default {
 		name: "wallet",
 		components: {
@@ -75,6 +78,7 @@
 					for (var j = 0; j < this.wallets.length; j++) {
 						if (this.wallets[j]['wid'] == this.withdrawMethod[i]['id']) {
 							this.withdrawMethod[i]['status'] = 1;
+							this.withdrawMethod[i]['wallet_id'] = this.wallets[j]['id'];
 							this.withdrawMethod[i]['tips'] = this.wallets[j][
 								'account'
 							];
@@ -91,7 +95,32 @@
 				}
 			})
 		},
-		methods: {}
+		methods: {
+			delWallet(id) {
+				this.$dialog.alert({
+					closeOnClickOverlay: true,
+					showConfirmButton: true,
+					showCancelButton: true,
+					cancelButtonText: "Cancel",
+					confirmButtonText: "Confirm",
+					title: "Delete withdraw account",
+					message: "<p style='text-align: left'>Are you sure you want to delete the withdrawal account?</p>",
+				}).then(() => {
+					// on confirm
+					Toast.loading({
+						forbidClick: true,
+						duration: 20000
+					});
+					Fetch('/user/delWallets', {id}).then(r => {
+						Toast.clear();
+						window.location.reload();
+					})
+				}).catch(() => {
+					// on close
+				});
+				
+			}
+		}
 	};
 </script>
 

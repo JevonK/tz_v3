@@ -107,7 +107,7 @@ class Index extends Controller
         
         $items = Db::name('LcItem')->field("title_$language as title,img2,min,day,rate,id,type")->where(['show' => 1])->order('sort asc,id desc')->limit(10)->select();
 
-        $news = Db::name('LcArticle')->where("type=13 and `show`=1")->order('release_time desc')->select();
+        $news = Db::name('LcArticle')->where("type=13 and `show`=1")->order('release_time desc')->field("*, date_format(release_time, '%d %M %Y · %H:%i') as release_time")->select();
         // foreach ($items as &$item) {
         //     $item['min'] = changeMoneyByLanguage($item['min'],$language);
         //     $item['max'] = changeMoneyByLanguage($item['max'],$language);
