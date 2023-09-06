@@ -237,7 +237,7 @@ class Index extends Controller
     private function finance_report($now,$today,$yesterday,$i_time, $ids=[]){
         //综合报表
         //今日
-        $today1 = $this->getDatas($now,$today,$ids);
+        $today1 = $this->getDatas($today,$now,$ids);
         
         //昨日
         $yesterday1 = $this->getDatas($yesterday,$today,$ids);
@@ -280,9 +280,10 @@ class Index extends Controller
     {
         $data['recharge'] = Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->sum('rr.money');
         $data['recharge_count'] = Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->count();
-        $data['recharge_p'] = count(Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->group('rr.uid')->select());
+        $data['recharge_p'] = count(Db::name('LcUserRechargeRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->group('rr.uid')->column('rr.uid'));
         $data['withdraw'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->sum('rr.money');
         $data['withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->count();
+        $data['withdraw_p'] = count(Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.status = 1")->group("rr.uid")->select());
         $data['new_user'] = Db::name('LcUser')->whereIn('system_user_id', $ids)->where("time BETWEEN '$time1' AND '$time2'")->count();
         $data['invest'] = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn("rr.source", [1,2])->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2'")->count();
         $data['invest_user_count'] = Db::name('LcInvest')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2'")->group('rr.uid')->count();
@@ -294,6 +295,15 @@ class Index extends Controller
         $data['sys_reward'] = Db::name('LcUserFunding')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.time BETWEEN '$time1' AND '$time2' AND rr.type = 1 AND rr.fund_type IN (7,8,9,10,11,12,13,14,19,20,21)")->sum('rr.money');
         // 兑换红包
         $data['residue_num'] = Db::table('lc_red_envelope_record')->alias('rer')->join('lc_red_envelope re', 'rer.pid=re.id')->whereIn("re.f_user_id", $ids)->where("rer.time BETWEEN '$time1' AND '$time2'")->sum('rer.money');
+        // var_dump(Db::getLastSql());die;
+        // 首充人数
+        $first_charge_count = Db::query("select count(*) as num from (select count(uid) as num, uid, urr.time from lc_user_recharge_record as urr inner join lc_user u on urr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and urr.status = 1 group by urr.uid) as a where a.num=1 and a.time BETWEEN '$time1' AND '$time2' limit 1");
+        $data['first_charge_count'] = $first_charge_count[0]['num'];
+        // 首充金额
+        $first_charge_price = Db::query("select sum(money) as num from (select count(uid) as num, uid, urr.time, urr.money from lc_user_recharge_record as urr inner join lc_user u on urr.uid=u.id where urr.status = 1 and u.system_user_id in (".implode(',', $ids).") group by urr.uid) as a where a.num=1 and time BETWEEN '$time1' AND '$time2' limit 1");
+        $data['first_charge_price'] = $first_charge_price[0]['num'];
+        // 结余
+        $data['aggregate_balance'] = $data['recharge'] - $data['withdraw'];
         
         return $data;
     

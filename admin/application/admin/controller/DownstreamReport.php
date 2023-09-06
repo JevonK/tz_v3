@@ -19,8 +19,8 @@ use library\Controller;
 use think\Db;
 
 /**
- * 用户管理
- * Class Item
+ * 下级统计
+ * Class Index
  * @package app\admin\controller
  */
 class DownstreamReport extends Controller
@@ -34,7 +34,7 @@ class DownstreamReport extends Controller
     protected $table_funding = 'LcUserFunding';
 
     /**
-     * 客服统计
+     * 下级统计
      * @auth true
      * @menu true
      * @throws \think\Exception
@@ -47,8 +47,10 @@ class DownstreamReport extends Controller
     {
         $auth = $this->app->session->get('user');
         $where = 'is_deleted=0 ';
-        if (isset($user['username']) and $auth['username'] != 'admin') {
-            $where .= " and id in (select uid from system_user_relation where parentid={$auth['id']})";
+        if (isset($auth['username']) and $auth['username'] != 'admin') {
+            $where .= " and authorize=2 and id in (select uid from system_user_relation where parentid={$auth['id']})";
+        }else {
+            $where .= " and authorize=3 ";
         }
         $query = $this->_query($this->table)->where($where)->equal('username#u_username,id#u_id');
         $query->dateBetween('login_at,create_at')->order('id desc')->page();
@@ -65,31 +67,37 @@ class DownstreamReport extends Controller
     {
         $now = date("Y-m-d H:i:s");
         $today = date('Y-m-d 00:00:00');//今天0点
+
         foreach($data as &$vo){
+            $ids = [];
+            if ($vo['authorize'] == 3) {
+                $ids = Db::table('system_user_relation')->where('parentid',$vo['id'])->column('uid');
+            }
+            $ids[] = $vo['id'];
             // 总人数
-            $vo['total_people'] = Db::table('lc_user')->where('system_user_id',$vo['id'])->count();
+            $vo['total_people'] = Db::table('lc_user')->whereIn('system_user_id',$ids)->count();
             // 有效用户
-            $vo['valid_user'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("u.system_user_id={$vo['id']} and fund_type=2")->group("u.id")->count();
+            $vo['valid_user'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("u.system_user_id in (".implode(',', $ids).") and fund_type=2")->group("u.id")->count();
             // 今日首充人数
-            $vo['today_first_charge'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("uf.time BETWEEN '$today' AND '$now' and uf.fund_type=2 and u.system_user_id={$vo['id']}")->group("u.id")->count();
+            $vo['today_first_charge'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("uf.time BETWEEN '$today' AND '$now' and uf.fund_type=2 and u.system_user_id in (".implode(',', $ids).") ")->group("u.id")->count();
             // 今日充值
-            $vo['today_price'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("uf.time BETWEEN '$today' AND '$now' and uf.fund_type=2 and u.system_user_id={$vo['id']}")->sum('uf.money');
+            $vo['today_price'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("uf.time BETWEEN '$today' AND '$now' and uf.fund_type=2 and u.system_user_id in (".implode(',', $ids).") ")->sum('uf.money');
             // 兑换红包
-            $vo['residue_num'] = Db::table('lc_red_envelope')->where("f_user_id={$vo['id']}")->sum('money2');
+            $vo['residue_num'] = Db::table('lc_red_envelope')->where("f_user_id in (".implode(',', $ids).")")->sum('money2');
             // 总充值金额
-            $vo['recharge_sum'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("u.system_user_id={$vo['id']} and uf.fund_type=2")->sum('uf.money');
+            $vo['recharge_sum'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("u.system_user_id in (".implode(',', $ids).")  and uf.fund_type=2")->sum('uf.money');
             // 总提现金额
-            $vo['withdraw_sum'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->where('u.system_user_id', $vo['id'])->where("rr.status = 1")->sum('rr.money');
+            $vo['withdraw_sum'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 1")->sum('rr.money');
             //提现笔数
-            $vo['withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->where('u.system_user_id', $vo['id'])->where("rr.status = 1")->count();
+            $vo['withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 1")->count();
             // 今日提现数量
-            $vo['today_withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereBetweenTime('rr.time', $today, $now)->where('u.system_user_id', $vo['id'])->count();
+            $vo['today_withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereBetweenTime('rr.time', $today, $now)->whereIn('u.system_user_id', $ids)->count();
             // 待处理提现数量
-            $vo['wait_withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->where('u.system_user_id', $vo['id'])->where("rr.status = 0")->count();
+            $vo['wait_withdraw_count'] = Db::name('LcUserWithdrawRecord')->alias('rr')->join('lc_user u', 'u.id=rr.uid')->whereIn('u.system_user_id', $ids)->where("rr.status = 0")->count();
             // 总结余（充值-提现）
             $vo['aggregate_balance'] = $vo['recharge_sum'] - $vo['withdraw_sum'];
             // 总余额钱包
-            $vo['total_balance'] = Db::table('lc_user')->where("system_user_id={$vo['id']}")->sum("withdrawable");
+            $vo['total_balance'] = Db::table('lc_user')->where("system_user_id in (".implode(',', $ids).") ")->sum("withdrawable");
             // 波比（提现 / 充值）
             $vo['poby'] = $vo['recharge_sum'] ? bcmul($vo['withdraw_sum']/$vo['recharge_sum'], 100, 2) . "%" : '--';
         }

@@ -61,7 +61,7 @@
                 {if $vo.status!=0}
                     {$vo.wname|default='--'}
                 {else}
-                    {if $vo.wallet_type==1}
+                    {if isset($vo.wallet_type) && $vo.wallet_type==1}
                         货币：USDT<br>
                     {else}
                         货币：{$vo.currency|default='--'}<br>
@@ -118,7 +118,7 @@
             </td>
             <td class='text-left'>
                 {if $vo.status eq 0}
-                    {if $vo.wallet_type==1}
+                    {if isset($vo.wallet_type) && $vo.wallet_type==1}
                         {if auth("agree_yd")}
                         <a class="layui-btn layui-btn layui-btn-xs layui-btn-normal" data-confirm="确定要同意提现吗？" data-action="{:url('pay')}" data-value="id#{$vo.id}" data-csrf="{:systoken('pay')}">优盾代付</a>
                         {else}
