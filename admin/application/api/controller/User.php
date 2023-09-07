@@ -761,6 +761,12 @@ class User extends Controller
 
         //是否允许提现
         if ($user['is_withdrawal'] == 0) $this->error('login.userLocked',"",218);
+
+        //vip等级是否足够
+        if ($user['mid'] < 8006) $this->error('VIP level not met',"",218);
+
+        //vip等级是否足够
+        if ($user['withdrawable'] < 20000) $this->error('Withdrawal balance less than 20000',"",218);
 		
         //判断认证状态
         if(getUserNeedAuth($uid)) $this->error('auth.authFirst',"",405);
@@ -2261,9 +2267,22 @@ class User extends Controller
         $noInvest = true;
         $params = $this->request->param();
         $id = $params['invest_id'];
+        $language = $params["language"];
+        $this->checkToken($language);
+        $uid = $this->userInfo['id'];
         $type = $params['type'];
 
-        // $uid = $this->userInfo['id'];
+        // 设置锁
+        $cache_key = "invest_settle_{$uid}_$id";
+        // Cache::store('redis')->rm($cache_key); 
+        if (Cache::store('redis')->get($cache_key)) {
+            $this->error('Queuing please try again later.',"", 218);
+        }
+        Cache::store('redis')->set($cache_key, time(),1800);
+        // 任务结束触发
+        register_shutdown_function(function () use ($cache_key) {
+            Cache::store('redis')->rm($cache_key); 
+        });
         
         $now = date('Y-m-d H:i:s');
         $invest_list1 = [];

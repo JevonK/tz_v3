@@ -210,7 +210,7 @@
 						"url": "/questions"
 					}
 				],
-				show_kefu: false,
+				show_kefu: true,
 				loading: false,
 				notice: [],
 				show_tc: false,

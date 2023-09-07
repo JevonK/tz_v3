@@ -43,9 +43,14 @@ class RedEnvelopeRecord extends Controller
      */
     public function index()
     {
-        $this->title = '红包列表';
+        $this->title = '红包领取列表';
+        $auth = $this->app->session->get('user');
+        $where = '';
+        if (isset($auth['username']) and $auth['username'] != 'admin') {
+            $where = "(d.f_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or d.f_user_id={$auth['id']} )";
+        }
         $query = $this->_query($this->table)->alias('i')->field('i.*,d.title_zh_cn as title,u.username,d.type as dtype');
-        $query->join('lc_red_envelope d','i.pid=d.id')->join('lc_user u','i.uid=u.id')->equal('d.type#i_type')->like('u.username#u_username')->dateBetween('i.time#i_time')->order('i.id desc')->page();
+        $query->where($where)->join('lc_red_envelope d','i.pid=d.id')->join('lc_user u','i.uid=u.id')->equal('d.type#i_type')->like('u.username#u_username')->dateBetween('i.time#i_time')->order('i.id desc')->page();
     }
     
     /**
