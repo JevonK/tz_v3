@@ -774,7 +774,7 @@ class User extends Controller
         //判断参数
         if(empty($params['id'])||empty($params['money'])) $this->error('utils.parameterError',"",218);
         
-        $wallet = Db::name('LcUserWallet')->field('id,wid,type,name,wname,account')->find($params['id']);
+        $wallet = Db::name('LcUserWallet')->where(['deleted_at' => '0000-00-00 00:00:00'])->field('id,wid,type,name,wname,account')->find($params['id']);
         if(empty($wallet)) $this->error('utils.parameterError',"",218);
         $wname = '';
         if($wallet['type']==1){
@@ -2689,7 +2689,7 @@ class User extends Controller
         $this->success('success');
     }
 
-    // 添加收货地址
+    // 修改密码
     public function edit_password() {
         $params = $this->request->param();
         $language = $params["language"];
