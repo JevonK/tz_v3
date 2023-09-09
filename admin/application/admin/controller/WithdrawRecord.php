@@ -50,21 +50,23 @@ class WithdrawRecord extends Controller
         
         $this->title = '提现记录';
         $auth = $this->app->session->get('user');
-        $where = '';
+        $params = $this->request->param();
+        $where = ' 1 ';
         if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
+            $where = " and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
         }
-        if (isset($params['superior_username'])) {
+        if (isset($params['u_username'])) {
             // 上级邀请人
             if ($params['superior_username']) {
                 $user_id = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.uid=u.id')->join('lc_user lu', 'lu.id=ur.parentid')->where("lu.username like '%{$params['superior_username']}%' and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->column('lu.id');
                 $where .= " and i.uid in (".($user_id ? implode(',', $user_id) : 0).") ";
             }
-            // 充值金额
+            // 提现金额
             if ($params['recharge_amount'] && $params['recharge_amount_1']) {
                 $where .= " and i.money BETWEEN {$params['recharge_amount']} and {$params['recharge_amount_1']} ";
             }
         }
+
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username');
         $query->where($where)->join('lc_user u','i.uid=u.id')->equal('i.status#i_status,i.orderNo#order_no')->like('u.username#u_username,u.agent#u_agent')->dateBetween('i.act_time#i_time')->order('i.id desc')->page();
     }

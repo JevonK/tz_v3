@@ -42,13 +42,13 @@
                 {$vo.username|default='--'}
             </td>
             <td class='text-left'>
-                提现金额：${$vo.money|number_format=2}
-                <br>实际金额：
+                提现金额：{$vo.money|number_format=2}
+                <!-- <br>实际金额：
                 {if isset($vo.wallet_type) && $vo.wallet_type==1}
                     ${$vo.money2|number_format=2}&nbsp;
                 {else}
                     ${$vo.money2|number_format=2}&nbsp;
-                {/if}
+                {/if} -->
                 {if $vo.charge>0}
                     <span class="color-red">手续费：${$vo.charge|number_format=2}</span><br>
                 {/if}

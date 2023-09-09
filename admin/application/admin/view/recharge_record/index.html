@@ -41,13 +41,13 @@
                 {$vo.rname|default='--'}
             </td>
             <td class='text-left'>
-                充值金额：${$vo.money|number_format=2}
-                <br>实际金额：
+                充值金额：{$vo.money|number_format=2}
+                <!-- <br>实际金额：
                 {if $vo.rtype == 1 || $vo.rtype == 5 ||$vo.rtype == 6}
                     {$vo.money|number_format=2}&nbsp;USDT
                 {else}
                     {$vo.money2|number_format=2}&nbsp;{$vo.currency|default='--'}
-                {/if}
+                {/if} -->
             </td> 
             <td>
                 订单号：{$vo.orderNo|default='--'}
