@@ -46,13 +46,67 @@ class Users extends Controller
     public function index()
     {
         $auth = $this->app->session->get('user');
+        $params = $this->request->param();
         $this->title = '用户列表';
-        $where = '';
-        if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']} )";
+        $where = ' 1 ';
+        if ($auth['username'] != 'admin') {
+            $where .= " (system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']}) ";
         }
+
+        if (isset($params['u_username'])) {
+            // 所属下级系统用户
+            if ($params['sys_username']) {
+                $sys_user_id = Db::table('system_user')->alias('su')->join('system_user_relation sur', 'sur.uid=su.id')->where("su.is_deleted=1 and sur.parentid={$auth['id']}")->whereLike('username', $params['sys_username'])->column('id');
+                $where .= " and id in (".($sys_user_id ? implode(',', $sys_user_id) : 0).") ";
+            }
+            // 上级邀请人
+            if ($params['superior_username']) {
+                $user_id = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.uid=u.id')->join('lc_user lu', 'lu.id=ur.parentid')->where("lu.username like '%{$params['superior_username']}%' and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->column('lu.id');
+                $where .= " and id in (".($user_id ? implode(',', $user_id) : 0).") ";
+            }
+            // 推广人数
+            if ($params['promotion_num'] && $params['promotion_num_1']) {
+                $user = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.parentid=u.id')->where("ur.level=1 and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->field('count(u.id) as num, u.id')->group('u.id')->having("num BETWEEN {$params['promotion_num']} and {$params['promotion_num_1']}")->select();
+                $user_id = $user ? array_column($user, 'id') : [0];
+                $where .= " and id in (".implode(',', $user_id).") ";
+            }
+            
+            // 有效推广人数
+            if ($params['effective_promotion_num_1'] && $params['effective_promotion_num']) {
+                $user = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.parentid=u.id')->join('lc_user lu', 'lu.id=ur.uid')->where("lu.money>0 and (u.system_user_id in (select uid from u.system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']} )")->field('count(u.id) as num, u.id')->group('u.id')->having("num BETWEEN {$params['effective_promotion_num']} and {$params['effective_promotion_num_1']}")->select();
+                $user_id = $user ? array_column($user, 'id') : [0];
+                $where .= " and id in (".implode(',', $user_id).") ";
+            }
+
+            //抽奖次数
+            if ($params['draw_num'] && $params['draw_num_1']) {
+                $user = Db::table('lc_draw_appoint')->alias('da')->join('lc_user u', 'u.id=da.uid')->where("(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->field('count(u.id) as num, u.id')->group('u.id')->having("num BETWEEN {$params['draw_num']} and {$params['draw_num_1']}")->select();
+                $user_id = $user ? array_column($user, 'id') : [0];
+                $where .= " and id in (".implode(',', $user_id).") ";
+            }
+            // 充值钱包
+            if ($params['recharge_wallet'] && $params['recharge_wallet_1']) {
+                $where .= " and money BETWEEN {$params['recharge_wallet']} and {$params['recharge_wallet_1']} ";
+            }
+             // 余额钱包
+             if ($params['balance_wallet'] && $params['balance_wallet_1']) {
+                $where .= " and withdrawable BETWEEN {$params['balance_wallet']} and {$params['balance_wallet_1']} ";
+            }
+             // 积分
+             if ($params['integral'] && $params['integral_1']) {
+                $where .= " and point BETWEEN {$params['integral']} and {$params['integral_1']} ";
+            }
+             // 充值金额
+             if ($params['recharge_amount'] && $params['recharge_amount_1']) {
+                $user = Db::name("lc_user_withdraw_record")->alias('uwr')->join('lc_user u', 'u.id=uwr.uid')->where("(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} ) AND uwr.status = '1'")->field('sum(uwr.money) as money, u.id')->group('u.id')->having("money BETWEEN {$params['recharge_amount']} and {$params['recharge_amount_1']}")->select();
+                $user_id = $user ? array_column($user, 'id') : [0];
+                $where .= " and id in (".implode(',', $user_id).") ";
+            }
+        }
+
+        $this->member = Db::table('lc_user_member')->field('id,name')->select();
         
-        $query = $this->_query($this->table)->where($where)->equal('auth_email#u_auth_email,auth_google#u_auth_google,clock#u_clock')->like('username#u_username,ip#u_ip')->dateBetween('time#u_time')->order('id desc')->page();
+        $query = $this->_query($this->table)->where($where)->equal('auth_email#u_auth_email,auth_google#u_auth_google,clock#u_clock,mid#u_mid')->like('username#u_username,ip#u_ip')->dateBetween('time#u_time')->order('id desc')->page();
     }
 
     /**
@@ -89,6 +143,7 @@ class Users extends Controller
             $vo['tema_direct_count'] = Db::name('LcUserRelation')->where("parentid = {$vo['id']} AND level = 1")->count();
             $vo['tema_indirect_count'] = Db::name('LcUserRelation')->where("parentid = {$vo['id']} AND level <> 1")->count();
             $vo['tema_all_money'] = Db::name('LcUser u,lc_user_relation ur')->where("u.id=ur.uid AND ur.parentid = {$vo['id']}")->sum('u.money');
+            $vo['draw_num'] = Db::table('lc_draw_appoint')->where("uid={$vo['id']}")->count();
             
         }
     }

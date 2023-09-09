@@ -14,11 +14,35 @@
             </div>
         </div>
         <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">上级邀请人</label>
+            <div class="layui-input-inline">
+                <input  name="superior_username" value="{$Think.get.superior_username|default=''}" placeholder="请输入上级邀请人" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">充值金额</label>
+            <div class="layui-input-inline">
+                <div class="layui-input-inline" style="width: 100px;">
+                    <input type="text" name="recharge_amount" value="{$Think.get.recharge_amount|default=''}" placeholder="" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline" style="width: 100px;">
+                    <input type="text" name="recharge_amount_1" value="{$Think.get.recharge_amount_1|default=''}" placeholder="" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">订单号</label>
+            <div class="layui-input-inline">
+                <input name="order_no" value="{$Think.get.order_no|default=''}" placeholder="请输入代理线" class="layui-input">
+            </div>
+        </div>
+        <!-- <div class="layui-form-item layui-inline">
             <label class="layui-form-label">代理线</label>
             <div class="layui-input-inline">
                 <input name="u_agent" value="{$Think.get.u_agent|default=''}" placeholder="请输入代理线" class="layui-input">
             </div>
-        </div>
+        </div> -->
         <div class="layui-form-item layui-inline">
             <label class="layui-form-label">处理进度</label>
             <div class="layui-input-inline">
