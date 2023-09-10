@@ -53,7 +53,7 @@ class WithdrawRecord extends Controller
         $params = $this->request->param();
         $where = ' 1 ';
         if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = " and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
+            $where .= " and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
         }
         if (isset($params['u_username'])) {
             // 上级邀请人

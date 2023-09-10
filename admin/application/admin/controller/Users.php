@@ -50,7 +50,7 @@ class Users extends Controller
         $this->title = '用户列表';
         $where = ' 1 ';
         if ($auth['username'] != 'admin') {
-            $where .= " (system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']}) ";
+            $where .= " and (system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']}) ";
         }
 
         if (isset($params['u_username'])) {
