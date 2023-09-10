@@ -58,7 +58,7 @@ class WithdrawRecord extends Controller
         if (isset($params['u_username'])) {
             // 上级邀请人
             if ($params['superior_username']) {
-                $user_id = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.uid=u.id')->join('lc_user lu', 'lu.id=ur.parentid')->where("lu.username like '%{$params['superior_username']}%' and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->column('lu.id');
+                $user_id = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.uid=u.id')->join('lc_user lu', 'lu.id=ur.parentid')->where("ur.level = 1 and lu.username like '%{$params['superior_username']}%' and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->column('u.id');
                 $where .= " and i.uid in (".($user_id ? implode(',', $user_id) : 0).") ";
             }
             // 提现金额

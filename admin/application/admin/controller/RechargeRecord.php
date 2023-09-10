@@ -51,15 +51,26 @@ class RechargeRecord extends Controller
             $where .= " and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
         }
         if (isset($params['superior_username'])) {
+            // 是否首充
+            if ($params['first_charge']) {
+                $rechargeIds = Db::table('lc_user_recharge_record')->alias("i")->where('status', 1)->where($where)->join('lc_user u','i.uid=u.id')->field('i.id, i.uid')->group('i.uid')->column('i.id');
+                $where .= " and i.id ". ($params['first_charge'] == 1 ? "not in" : "in") ." (".($rechargeIds ? implode(',', $rechargeIds) : 0).") ";
+            }
+            // 所属下级系统用户
+            if ($params['sys_username']) {
+                $sys_user_id = Db::table('system_user')->alias('su')->join('system_user_relation sur', 'sur.uid=su.id')->where("su.is_deleted=0 and sur.parentid={$auth['id']}")->whereLike('username', "%{$params['sys_username']}%")->column('su.id');
+                $where .= " and u.system_user_id in (".($sys_user_id ? implode(',', $sys_user_id) : 0).") ";
+            }
             // 上级邀请人
             if ($params['superior_username']) {
-                $user_id = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.uid=u.id')->join('lc_user lu', 'lu.id=ur.parentid')->where("lu.username like '%{$params['superior_username']}%' and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->column('lu.id');
+                $user_id = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.uid=u.id')->join('lc_user lu', 'lu.id=ur.parentid')->where("ur.level = 1 and lu.username like '%{$params['superior_username']}%' and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->column('u.id');
                 $where .= " and i.uid in (".($user_id ? implode(',', $user_id) : 0).") ";
             }
             // 充值金额
             if ($params['recharge_amount'] && $params['recharge_amount_1']) {
                 $where .= " and i.money BETWEEN {$params['recharge_amount']} and {$params['recharge_amount_1']} ";
             }
+            
         }
         $this->methods = Db::table('lc_user_recharge_method')->where('delete',0)->select();
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username');
@@ -80,6 +91,20 @@ class RechargeRecord extends Controller
             if($method){
                 $vo['rname'] = $method['name'];
                 $vo['rtype'] = $method['type'];
+            }
+            $user = Db::name('LcUser')->where('id', $vo['uid'])->find();
+            if ($vo['status'] == 1) {
+                $vo['first_charge'] = Db::name("lc_user_recharge_record")->where("uid={$vo['uid']} and time2 < '{$vo['time2']}' and status=1")->count() ? "否" : "是";
+            } else {
+                $vo['first_charge'] = "否";
+            }
+            $vo['s_name'] = Db::table('system_user')->where("id={$user['system_user_id']}")->value('username');
+            $top_user = Db::name('LcUserRelation')->where("uid = {$vo['uid']} AND level = 1")->find();
+            if(!empty($top_user)){
+                $top_user = Db::name('LcUser')->find($top_user['parentid']);
+                if(!empty($top_user)){
+                    $vo['top'] = $top_user['username'];
+                }
             }
         }
     }

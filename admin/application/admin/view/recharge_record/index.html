@@ -21,6 +21,7 @@
             <th class="text-left">充值方式</th>
             <th class="text-left">充值金额</th>
             <th class="text-left">交易号</th>
+            <th class="text-left">所属</th>
             <th class="text-left">充值凭证</th>
             <th class="text-left">提交时间</th>
             <th class="text-left">处理进度</th>
@@ -53,7 +54,13 @@
                 订单号：{$vo.orderNo|default='--'}
                 <br> 流水号：{$vo.voucher|default='--'}
             </td>
+            <td>
+                所属业务员：{$vo.s_name|default='--'} <br>
+                我的上级：{$vo.top|default='--'} <br>
+                是否首充：{$vo.first_charge|default='--'} <br>
+            </td>
             <td class='text-left' style="max-width: 150px;overflow: hidden;word-wrap: break-word">
+                
                 {if $vo.rtype == 5}
                     {$vo.hash|default='--'}
                 {elseif $vo.rtype == 6}
