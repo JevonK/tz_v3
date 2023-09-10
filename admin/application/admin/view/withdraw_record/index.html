@@ -13,6 +13,15 @@
 {block name="content"}
 <div class="think-box-shadow">
     {include file='withdraw_record/index_search'}
+    <p>
+        <h2>提现成功率：{$success_rate|default='--'}</h2>
+    </p>
+    <p>
+        <h2>今日提现金额：{$today_recharge|default='--'}</h2>
+    </p>
+    <p>
+        <h2>今日成功提现笔数：{$today_recharge_num|default='--'}</h2>
+    </p>
     <table class="layui-table margin-top-10" lay-skin="line">
         {notempty name='list'}
         <thead>

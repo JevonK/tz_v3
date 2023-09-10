@@ -67,6 +67,20 @@ class WithdrawRecord extends Controller
             }
         }
 
+        $now = date('Y-m-d H:i:s');
+        $today = date('Y-m-d 00:00:00');
+        // 今日充值金额
+        $this->today_recharge = Db::name($this->table)->alias('i')->where($where)->join('lc_user u','i.uid=u.id')->where("i.status=1 and payment_received_time BETWEEN '$today' and '$now'")->sum('i.money');
+        // 今日充值金额
+        $this->today_recharge_num = Db::name($this->table)->alias('i')->where($where)->join('lc_user u','i.uid=u.id')->where("i.status=1 and payment_received_time BETWEEN '$today' and '$now'")->count();
+        // 总充值成功笔数
+        $total_recharge_suc_num = Db::name($this->table)->alias('i')->where($where)->join('lc_user u','i.uid=u.id')->where("i.status=1")->count();
+        $this->total_recharge_suc_num =  $total_recharge_suc_num;
+        // 总充值笔数
+        $total_recharge_num = Db::name($this->table)->alias('i')->where($where)->join('lc_user u','i.uid=u.id')->count();
+        // 充值成功率
+        $this->success_rate = bcdiv($total_recharge_suc_num, $total_recharge_num, 4)*100 . "%";
+
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username');
         $query->where($where)->join('lc_user u','i.uid=u.id')->equal('i.status#i_status,i.orderNo#order_no')->like('u.username#u_username,u.agent#u_agent')->dateBetween('i.act_time#i_time')->order('i.id desc')->page();
     }

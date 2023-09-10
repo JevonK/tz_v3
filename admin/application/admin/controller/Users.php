@@ -226,9 +226,9 @@ class Users extends Controller
         $type = $this->request->param('type');
         $auth = $this->app->session->get('user');
         $where = '1 ';
-        if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where .= " and (system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']} )";
-        }
+        // if (isset($auth['username']) and $auth['username'] != 'admin') {
+        //     $where .= " and (system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or system_user_id={$auth['id']} )";
+        // }
         $user = Db::name('LcUser')->where($where)->where(['username' => $username])->find();
         $where = '1 ';
         if(!empty($user)){
@@ -238,6 +238,8 @@ class Users extends Controller
             }else{
                 $where = " uid = $uid";
             }
+        } else {
+            $where .= " and id = 0";
         }
         
         $query = $this->_query($this->table_relation)->where($where)->order('level asc,id asc')->page();
