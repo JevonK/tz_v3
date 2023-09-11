@@ -84,7 +84,7 @@ class RechargeRecord extends Controller
         // 总充值笔数
         $total_recharge_num = Db::name($this->table)->alias('i')->where($where)->join('lc_user u','i.uid=u.id')->count();
         // 充值成功率
-        $this->success_rate = bcdiv($total_recharge_suc_num, $total_recharge_num, 4)*100 . "%";
+        $this->success_rate = ($total_recharge_num ? bcdiv($total_recharge_suc_num, $total_recharge_num, 4)*100 : 0) . "%";
 
         $this->methods = Db::table('lc_user_recharge_method')->where('delete',0)->select();
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username');

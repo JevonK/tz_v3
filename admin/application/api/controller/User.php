@@ -2324,7 +2324,7 @@ class User extends Controller
             
             //判断返还时间
             $return_num = $v['wait_num'] - 1;
-            $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*($wait_day -1))));
+            $return_time = date('Y-m-d', (strtotime($v['time2_actual'].'-' . $return_num . ' day') + (3600*24*($wait_day -1))));
             if($return_time > $now && empty(($wait_day))) continue;
             
             $time_zone = $v['time_zone'];
@@ -2380,9 +2380,9 @@ class User extends Controller
                 }
                 
             }else{
-                $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . ($wait_day -1) . ' day'));
-                $time = date('Y-m-d H:i:s', strtotime($v['time'].'+' . ($wait_day -1) . ' day'));
-                Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time' => $time, 'time2' => $time2, 'time2_actual' => $time2]);
+                $time2 = date('Y-m-d H:i:s', strtotime($v['time2_actual'].'+' . ($wait_day -1) . ' day'));
+                $time = date('Y-m-d H:i:s', strtotime($v['time_actual'].'+' . ($wait_day -1) . ' day'));
+                Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time_actual' => $time, 'time2' => $time2, 'time2_actual' => $time2]);
             }
             
             //利息
@@ -2469,7 +2469,7 @@ class User extends Controller
             }
             //判断返还时间
             $return_num = $v['wait_num'] - 1;
-            $return_time = date('Y-m-d', (strtotime($v['time2'].'-' . $return_num . ' day') + (3600*24*($wait_day-1))));
+            $return_time = date('Y-m-d', (strtotime($v['time2_actual'].'-' . $return_num . ' day') + (3600*24*($wait_day-1))));
             if($return_time > $now) continue;
             if ($wait_day < 1) continue;
 
@@ -2524,7 +2524,7 @@ class User extends Controller
                 // setNumber('LcUser', 'money', $v['money2'], 1, "id = {$v['uid']}");
                 
             }else{
-                $time2 = date('Y-m-d H:i:s', strtotime($v['time2'].'+' . ($wait_day -1) . ' day'));
+                $time2 = date('Y-m-d H:i:s', strtotime($v['time2_actual'].'+' . ($wait_day -1) . ' day'));
                 $time = date('Y-m-d H:i:s', strtotime($v['time_actual'].'+' . ($wait_day -1 ) . ' day'));
                 Db::name('LcInvest')->where('id', $v['id'])->update(['wait_num' => $v['wait_num']-1,'wait_interest' => $v['wait_interest']-$day_interest, 'time_actual' => $time, 'time2' => $time2, 'time2_actual' => $time2]);
             }
