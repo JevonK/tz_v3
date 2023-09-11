@@ -17,6 +17,7 @@ namespace app\admin\controller;
 
 use app\libs\ffpay\Ff;
 use app\libs\onePay\Tool;
+use app\libs\ttpay\Tingting;
 use library\Controller;
 use think\Db;
 
@@ -118,7 +119,7 @@ class WithdrawRecord extends Controller
         $id = $this->request->param('id');
         sysoplog('财务管理', '同意提现');
         $ids = explode(',',$id);
-        $tool = new Ff();
+        $tool = new Tingting();
         $ids = Db::name($this->table)->whereIn('id',$ids)->where('status', 0)->column('id');
         foreach ($ids as $id) {
             $agree = Db::name($this->table)->where("id=$id")->find();
@@ -132,11 +133,30 @@ class WithdrawRecord extends Controller
             $out['cardnumber'] = $wallert['account'];// 银行卡号
     
             $res = $tool->send_pay_out($out);
+            // var_dump($res);die;
             $res = !empty($res) ? json_decode($res, true) : [];
-            if (empty($res) || $res['status'] != 'success') {
+            if (empty($res) || $res['code'] != 0) {
                 $this->error('提现同意失败:'.$res['msg']);
             }
-            Db::name($this->table)->where("id=$id")->update(['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['transaction_id']]);
+            $data = $res['data'];
+            $update_data = [
+                'remark' =>json_encode($data) ?? '',
+                'payment_received_time' => date('Y-m-d H:i:s')
+            ];
+            if($data['state'] == 2) {
+                $update_data['status'] = 1;
+                Db::name('LcUserWithdrawRecord')->where("id='{$agree['id']}'")->update($update_data);
+            }
+            if ($data['state'] == 3 || $data['state'] == 4) {
+                $update_data['status'] = 2;
+                Db::name('LcUserWithdrawRecord')->where("id='{$agree['id']}'")->update($update_data);
+                //失败时返还提现金额
+                //流水添加
+                addFunding($agree['uid'],$agree['money'],$agree['money2'],1,4,getLanguageByTimezone($agree['time_zone']));
+                //余额返还
+                setNumber('LcUser', 'withdrawable', $agree['money'], 1, "id = {$agree['uid']}");
+            }
+            Db::name($this->table)->where("id=$id")->update(['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['data']['transferId']]);
             //var_dump($res);die;
             // $this->_save($this->table, ['status' => '4','time2' => date('Y-m-d H:i:s'), 'serial_number' => $res['data']['channelNo']]);
         }

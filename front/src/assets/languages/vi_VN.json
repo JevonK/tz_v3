@@ -40,12 +40,14 @@
 		"type16": "Tiết kiệm (đặt mua)",
 		"type17": "Tiết kiệm (chuộc lại)",
 		"type18": "Tiết kiệm (thu nhập)",
-		"type19": "Intermediary investment (income)"
+		"type19": "Intermediary investment (income)",
+		"type20": "Bộ sưu tập phong bì màu đỏ"
 	},
 	"home": {
 		"index": "Trang chủ",
 		"invest": "Đầu tư",
 		"team": "Đội của tôi",
+		"wallet": "Cái ví",
 		"my": "Tài khoản"
 	},
 	"index": {
@@ -62,7 +64,8 @@
 		"exchangeRate": "Tỷ giá hối đoái hôm nay",
 		"notice": "Thông cáo",
 		"downApp": "Tải xuống",
-		"recommendedItem": "Dự án khuyến nghị"
+		"recommendedItem": "Dự án khuyến nghị",
+		"news" : "Thông báo tin tức"
 	},
 	"invest": {
 		"info": "Thông tin dự án",
@@ -88,6 +91,7 @@
 		"trend": "Xu hướng dự án"
 	},
 	"user": {
+		"red_title":"Đổi thưởng",
 		"invite_code": "Mã lời mời",
 		"fundingAccount": "Tài khoản vốn",
 		"fundingTips": "Các quỹ tài khoản đều được giải quyết bằng đồng đô la Mỹ, và sau đó được chuyển đổi theo tỷ giá hối đoái hiện tại, biến động tỷ giá hối đoái sẽ dao động với nó",
@@ -108,7 +112,17 @@
 		"faq": "Vấn đề thường gặp",
 		"signOut": "Thoát tài khoản",
 		"signinSuccess": "Đăng nhập thành công",
-		"signined": "Đăng nhập ngay hôm nay"
+		"signined": "Đăng nhập ngay hôm nay",
+		"edit_password": "Thay đổi mật khẩu",
+		"address": "Địa chỉ giao hàng",
+		"download": "Tải về ứng dụng",
+		"reward_redemption": "Sự chuộc lại",
+		"total_earnings": "Tổng thu nhập",
+		"total_assets": "Tổng tài sản",
+		"total_withdrawal": "Rút lui toàn bộ",
+		"total_recharge": "Thay đổi hoàn toàn",
+		"points": "Điểm",
+		"today_earnings": "Lợi nhuận ngày nay"
 	},
 	"login": {
 		"login": "Đăng nhập",
@@ -131,7 +145,8 @@
 		"userLocked": "Người dùng bị khóa, vui lòng liên hệ với dịch vụ khách hàng",
 		"loginSuccess": "Đăng nhập thành công",
 		"loginFirst": "Vui lòng đăng nhập đầu tiên",
-		"loginAgain": "Đăng nhập không thành công, vui lòng đăng nhập lại"
+		"loginAgain": "Đăng nhập không thành công, vui lòng đăng nhập lại",
+		"phoneNumber": "+84"
 	},
 	"register": {
 		"register": "Đăng ký",

@@ -12,7 +12,7 @@
 		<div class="form_div">
 			<form class="form">
 				<div v-if="!config.register_phone" class="item">
-					<span style="margin-right: 5px;">+62</span><input v-model.trim="data.username" type="text" class="inp" :placeholder="$t('login.phone')">
+					<span style="margin-right: 5px;">{{$t('login.phoneNumber')}}</span><input v-model.trim="data.username" type="text" class="inp" :placeholder="$t('login.phone')">
 				</div>
 				<div v-if="config.register_phone" class="item">
 					<input v-model.trim="data.username" type="number" class="inp" :placeholder="$t('login.phone')">

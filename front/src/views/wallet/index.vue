@@ -95,7 +95,7 @@
 					// 	"url": "/draw"
 					// },
 					{
-						"title": 'Reward Redemption',
+						"title": this.$t('user.reward_redemption'),
 						"value": '',
 						"logo": "user/reward_redemption.png",
 						"url": "/red_envelope"

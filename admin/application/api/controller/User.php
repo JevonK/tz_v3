@@ -16,6 +16,7 @@
 namespace app\api\controller;
 
 use app\libs\ffpay\Ff;
+use app\libs\ttpay\Tingting;
 use library\Controller;
 use Endroid\QrCode\QrCode;
 use think\Db;
@@ -1056,9 +1057,9 @@ class User extends Controller
         $act_time = dateTimeChangeByZone($time, 'Asia/Shanghai', $time_zone, 'Y-m-d H:i:s');
         $currency = getCurrencyByLanguage($language);
         $data = [];
-        //ffpay
+        //ttpay
         if($rechargeMethod['type']==3){
-            $tool = new Ff();
+            $tool = new Tingting();
             $data['order_no'] = $orderNo;
             $data['pay_code'] = $params['pay_code'];
             $data['amount'] = $money_usd; //金额是到分,平台金额是元需要除100
@@ -1066,14 +1067,10 @@ class User extends Controller
             $res = !empty($res) ? json_decode($res, true) : [];
             // print_r($data);
             // var_dump($res);die;
-            if ($res['status'] != 1) {
+            if ($res['code'] != 0) {
                 $this->error("error");
             }
-
-            if ($res['status'] != 1) {
-                $this->error('Payment failed',"",218);
-            }
-            //其他充值方式需上传凭证    
+            $voucher = $res['data']['payOrderId'];
         }else{
             if(empty($params['voucher'])) $this->error('utils.parameterError',"",218);
             $voucher = $params['voucher'];
@@ -1098,7 +1095,7 @@ class User extends Controller
         if(!empty($rrid)){
             $req = [];
             if ($rechargeMethod['type']==3) {
-                $req = ['paymentUrl' => $res['payurl']];
+                $req = ['paymentUrl' => $res['data']['payData']];
             }
             $this->success("success", $req);
         }

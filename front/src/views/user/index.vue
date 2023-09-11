@@ -33,27 +33,27 @@
 		</div>
 		<div class="block_div flex_center user_yw">
 			<div >
-				<p>Total earnings</p>
+				<p>{{$t('user.total_earnings')}}</p>
 				<p>{{data.invest_reward}}</p>
 			</div>
 			<div >
-				<p>Total assets</p>
+				<p>{{$t('user.total_assets')}}</p>
 				<p>{{data.invest_sum}}</p>
 			</div>
 			<div >
-				<p>Total withdrawal</p>
+				<p>{{$t('user.total_withdrawal')}}</p>
 				<p>{{data.withdraw_sum}}</p>
 			</div>
 			<div >
-				<p>Total recharge</p>
+				<p>{{$t('user.total_recharge')}}</p>
 				<p>{{data.recharge_sum}}</p>
 			</div>
 			<div >
-				<p>Points </p>
+				<p>{{$t('user.points')}}</p>
 				<p>{{data.point}}</p>
 			</div>
 			<div >
-				<p>Today's earnings</p>
+				<p>{{$t('user.today_earnings')}}</p>
 				<p>{{data.day_invest_reward}}</p>
 			</div>
 		</div>
@@ -180,13 +180,13 @@
 					// 	"url": "/rewards"
 					// },
 					{
-						"title": 'Address',
+						"title": this.$t('user.address'),
 						"value": '',
 						"logo": "user/address.png",
 						"url": "/address"
 					},
 					{
-						"title": 'Edit password',
+						"title": this.$t('user.edit_password'),
 						"value": '',
 						"logo": "user/edit_password.png",
 						"url": "/edit_password"
@@ -204,7 +204,7 @@
 						"url": "signout"
 					},
 					{
-						"title": 'Download APP',
+						"title": this.$t('user.download'),
 						"value": '',
 						"logo": "user/download_app.png",
 						"url": "download"
