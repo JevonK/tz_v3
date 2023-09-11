@@ -78,6 +78,7 @@ class Index extends Controller
         if($auth->isLogin()){
             $user = $this->app->session->get('user');
             $authorize = $user['authorize'];
+            $rechargeState = $this->request->param("rechargeState");
             if(!empty($authorize)){
                 $auth_node = Db::name("system_auth_node")->where("auth=$authorize AND (node = 'admin/recharge_record/agree' OR node = 'admin/withdraw_record/agree')")->count();
             }
@@ -85,13 +86,25 @@ class Index extends Controller
                 $withdraw_count = Db::name("LcUserWithdrawRecord")->where(['status'=>0,'warn'=>1])->count();
                 $recharge_count = Db::name("LcUserRechargeRecord")->where(['status'=>0,'warn'=>1])->count();
                 if($withdraw_count>0&&$recharge_count>0){
-                    $this->success("<a style='color:#FFFFFF' data-open='/admin/recharge_record/index.html'>您有{$withdraw_count}条新的提现记录和{$recharge_count}条新的充值记录，请查看！</a>",['url'=>'/static/mp3/cztx.mp3']);
+                    $url = "";
+                    if ($rechargeState) {
+                        $url = "/static/mp3/cztx.mp3";
+                    }
+                    $this->success("<a style='color:#FFFFFF' data-open='/admin/recharge_record/index.html'>您有{$withdraw_count}条新的提现记录和{$recharge_count}条新的充值记录，请查看！</a>",['url'=>$url]);
                 }
                 if($withdraw_count>0&&$recharge_count==0){
-                    $this->success("<a style='color:#FFFFFF' data-open='/admin/withdraw_record/index.html'>您有{$withdraw_count}条新的提现记录，请查看！</a>",['url'=>'/static/mp3/tx.mp3']);
+                    $url = "";
+                    if ($rechargeState) {
+                        $url = "/static/mp3/tx.mp3";
+                    }
+                    $this->success("<a style='color:#FFFFFF' data-open='/admin/withdraw_record/index.html'>您有{$withdraw_count}条新的提现记录，请查看！</a>",['url'=>$url]);
                 }
                 if ($withdraw_count == 0 && 0 < $recharge_count){
-                    $this->success("<a style='color:#FFFFFF' data-open='/admin/recharge_record/index.html'>您有{$recharge_count}条新的充值记录，请查看！</a>",['url'=>'/static/mp3/cz.mp3']);
+                    $url = "";
+                    if ($rechargeState) {
+                        $url = "/static/mp3/cz.mp3";
+                    }
+                    $this->success("<a style='color:#FFFFFF' data-open='/admin/recharge_record/index.html'>您有{$recharge_count}条新的充值记录，请查看！</a>",['url'=>$url]);
                 }
                 $this->error("暂无记录");
             }
