@@ -14,6 +14,12 @@
             </div>
         </div>
         <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">后台账户</label></label>
+            <div class="layui-input-inline">
+                <input name="sys_username" value="{$Think.get.sys_username|default=''}" placeholder=请输入后台账户" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
             <label class="layui-form-label">上级邀请人</label>
             <div class="layui-input-inline">
                 <input  name="superior_username" value="{$Think.get.superior_username|default=''}" placeholder="请输入上级邀请人" class="layui-input">

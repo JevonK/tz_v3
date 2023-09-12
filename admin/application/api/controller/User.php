@@ -755,6 +755,17 @@ class User extends Controller
         $this->checkToken($language);
         $uid = $this->userInfo['id'];
         $user = Db::name("LcUser")->find($uid);
+        // 设置锁
+        $cache_key = "withdraw_settle_{$uid}";
+        // Cache::store('redis')->rm($cache_key); 
+        if (Cache::store('redis')->get($cache_key)) {
+            $this->error('Queuing please try again later.',"", 218);
+        }
+        Cache::store('redis')->set($cache_key, time(),1800);
+        // 任务结束触发
+        register_shutdown_function(function () use ($cache_key) {
+            Cache::store('redis')->rm($cache_key); 
+        });
         
 		//用户被锁定
         if ($user['clock'] == 1) $this->error('login.userLocked',"",218);
