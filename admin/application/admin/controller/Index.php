@@ -196,7 +196,7 @@ class Index extends Controller
             $first_charge_count = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num=1 limit 1");
             $this->first_charge_count = $first_charge_count[0]['num'];
             //今日首充人数
-            $first_charge_count_today = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num=1 and time BETWEEN '$today' AND '$now' limit 1");
+            $first_charge_count_today = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num>0 and time BETWEEN '$today' AND '$now' limit 1");
             $this->first_charge_count_today = $first_charge_count_today[0]['num'];
             //昨日首充人数
             $first_charge_count_yesterday = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num=1 and time BETWEEN '$yesterday' AND '$today' limit 1");
@@ -316,7 +316,7 @@ class Index extends Controller
         $data['residue_num'] = Db::table('lc_red_envelope_record')->alias('rer')->join('lc_red_envelope re', 'rer.pid=re.id')->whereIn("re.f_user_id", $ids)->where("rer.time BETWEEN '$time1' AND '$time2'")->sum('rer.money');
         // var_dump(Db::getLastSql());die;
         // 首充人数
-        $first_charge_count = Db::query("select count(*) as num from (select count(uid) as num, uid, urr.time from lc_user_recharge_record as urr inner join lc_user u on urr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and urr.status = 1 group by urr.uid) as a where a.num=1 and a.time BETWEEN '$time1' AND '$time2' limit 1");
+        $first_charge_count = Db::query("select count(*) as num from (select count(uid) as num, uid, urr.time from lc_user_recharge_record as urr inner join lc_user u on urr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and urr.status = 1 group by urr.uid) as a where a.num>0 and a.time BETWEEN '$time1' AND '$time2' limit 1");
         $data['first_charge_count'] = $first_charge_count[0]['num'];
         // 首充金额
         $first_charge_price = Db::query("select sum(money) as num from (select count(uid) as num, uid, urr.time, urr.money from lc_user_recharge_record as urr inner join lc_user u on urr.uid=u.id where urr.status = 1 and u.system_user_id in (".implode(',', $ids).") group by urr.uid) as a where a.num=1 and time BETWEEN '$time1' AND '$time2' limit 1");
