@@ -1072,7 +1072,7 @@ class User extends Controller
         if($rechargeMethod['type']==3){
             $tool = new Tingting();
             $data['order_no'] = $orderNo;
-            $data['pay_code'] = $params['pay_code'];
+            $data['account'] = $rechargeMethod['account'];
             $data['amount'] = $money_usd; //金额是到分,平台金额是元需要除100
             $res = $tool->send_pay($data);
             $res = !empty($res) ? json_decode($res, true) : [];

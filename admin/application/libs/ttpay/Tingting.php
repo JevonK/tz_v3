@@ -40,7 +40,7 @@ class Tingting {
             'subject' => "Nạp tiền",
             'body' => "Nạp tiền",
             'reqTime' => time().rand(100,999),
-            'bank_code' => $params['pay_code'],
+            'extParam' => $params['account'],
             'notifyUrl' => getInfo('domain_api')."/index/index/tt_pay_callback",
             'returnUrl' => getInfo('domain').'/#/recharge/record',
             'amount' => $params['amount'],
