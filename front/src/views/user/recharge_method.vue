@@ -47,13 +47,13 @@
 		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
 			<div class="tips-show">
 				<van-icon name="close" color="#333" size="30" @click="show_tips=false" />
-				<h3>Recharge instructions</h3>
-				<p>
-				Recharge Notes: <br>
-				1. The recharge amount must be the same as the payment amount.<br>
-				2. You will get a different company collection account for each recharge, so please pay to the latest company collection account for each recharge<br>
-				3. There may be network delays during the recharge process. If it does not appear in your account, please wait a few minutes or contact customer service.<br>
-				4. The company will not be responsible for any loss of funds caused by violating the above regulations or paying to the wrong collection account.
+				<h3>{{ $t('invest.recharge_instructions') }}</h3>
+				<p size="10">
+					{{ $t('invest.recharge_notes') }}<br>
+					{{ $t('invest.recharge_title1') }}<br>
+					{{ $t('invest.recharge_title2') }}<br>
+					{{ $t('invest.recharge_title3') }}<br>
+					{{ $t('invest.recharge_title4') }}
 				</p>
 				<div class="basic_btn tips-btn"  @click="show_tips=false">
 					OK
@@ -265,6 +265,7 @@
 	}
 	.tips-show {
 		width: 80%;
+		
 		margin: 0 auto;
 		margin-top: 139px;
 	}
@@ -274,7 +275,7 @@
 
 	/deep/ .van-dialog {
 		width: 80%;
-		height: 500px;
+		height: 70%;
 		background-color: transparent;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;

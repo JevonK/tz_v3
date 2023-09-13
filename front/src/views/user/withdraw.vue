@@ -49,18 +49,12 @@
 		<van-dialog v-model:show="show_tips" title="" :show-confirm-button="false">
 			<div class="tips-show">
 				<van-icon name="close" color="#333" size="30" @click="show_tips=false" />
-				<h3>How to withdraw money</h3>
+				<h3>{{$t('invest.withdraw_instructions')}}</h3>
 				<p>
-					1. Click to bind the bank<br>
-					2. Click Apply for Withdrawal<br>
-					Withdrawal rules:<br>
-					Application withdrawal time: 10:00 am to 6:00 pm.
-					The minimum withdrawal amount is: 20000Rp
-					Withdrawal will be completed within t+1-T+3 days
-					(Banks are closed on Sundays and do not process withdrawals,
-					Withdrawals are processed on Monday)
-					Withdrawal tax: 10%
-					(Withdraw 1000, actually received 900)
+					{{$t('invest.withdraw_title1')}}<br>
+					{{$t('invest.withdraw_title2')}}<br>
+					{{$t('invest.withdrawal_rules')}}<br>
+					{{$t('invest.withdrawal_content')}}
 				</p>
 				<div class="basic_btn tips-btn"  @click="show_tips=false">
 					OK

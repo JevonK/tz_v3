@@ -88,7 +88,18 @@
 		"moneyNotEnough": "Insufficient balance",
 		"investNum": "Maximum Product times: ",
 		"investNumEmpty": "The number of Products available today has been exhausted",
-		"trend": "Project trend"
+		"trend": "Project trend",
+		"recharge_instructions": "Refill instructions",
+		"recharge_notes": "Refill Notes:",
+		"recharge_title1":"1. The top-up amount must be the same as the payment amount.",
+		"recharge_title2":"2. You will get a different company billing account for each recharge, so please pay to the latest company billing account for each recharge",
+		"recharge_title3":"3. There may be network delays during the recharge process. If it does not appear in your account, please wait a few minutes or contact customer service.",
+		"recharge_title4":"4. The Company is not responsible for any loss of funds caused by violation of the above regulations or payment to an incorrect billing account.",
+		"withdraw_instructions":"How to withdraw money",
+		"withdraw_title1":"1. Click to bind the bank",
+		"withdraw_title2":"2. Click Apply for Withdrawal",
+		"withdrawal_rules":"Withdrawal rules:",
+		"withdrawal_content":"Application withdrawal time: 10:00 to 18:00. Minimum withdrawal amount is: 20000Rp Withdrawals will be completed within t+1-T+3 days (Banks are closed on Sundays and do not process withdrawals, Withdrawals are processed on Mondays) Withdrawal tax : 10% (Withdrawal 1000, actually received 900)"
 	},
 	"user": {
 		"red_title":"Reward wheel",
@@ -122,7 +133,8 @@
 		"total_withdrawal": "Total penarikan",
 		"total_recharge": "Total Recharge",
 		"points": "points",
-		"today_earnings": "Today Earnings"
+		"today_earnings": "Today Earnings",
+		"redward_code": "Please Enter Gift Code"
 	},
 	"login": {
 		"login": "Login",

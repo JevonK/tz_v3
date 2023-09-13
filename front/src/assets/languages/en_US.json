@@ -45,15 +45,15 @@
 	},
 	"home": {
 		"index": "Trang chủ",
-		"invest": "Đầu tư",
-		"team": "Đội của tôi",
+		"invest": "Sản phẩm",
+		"team": "Đội",
 		"wallet": "Cái ví",
 		"my": "Tài khoản"
 	},
 	"index": {
-		"rate": "Lãi suất: ",
-		"dailyRate": "Lãi suất hàng ngày: ",
-		"cycle": "Chu kỳ đầu tư: ",
+		"rate": "Giá sản phẩm ",
+		"dailyRate": "Tỷ lệ sản phẩm hàng ngày: ",
+		"cycle": "Xe đạp: ",
 		"day": " ngày",
 		"hour": " giờ",
 		"amount": "Số lượng: ",
@@ -88,7 +88,18 @@
 		"moneyNotEnough": "Không đủ số dư",
 		"investNum": "Đầu tư tối đa: ",
 		"investNumEmpty": "Đầu tư không đủ ngày hôm nay",
-		"trend": "Xu hướng dự án"
+		"trend": "Xu hướng dự án",
+		"recharge_instructions": "Hướng dẫn nạp tiền",
+		"recharge_notes": "Ghi chú nạp tiền:",
+		"recharge_title1":"1. Số tiền nạp phải bằng số tiền thanh toán.",
+		"recharge_title2":"2. Bạn sẽ nhận được một tài khoản thanh toán của công ty khác nhau cho mỗi lần nạp tiền, vì vậy vui lòng thanh toán vào tài khoản thanh toán mới nhất của công ty cho mỗi lần nạp tiền",
+		"recharge_title3":"3. Có thể xảy ra hiện tượng trễ mạng trong quá trình nạp tiền. Nếu nó không xuất hiện trong tài khoản của bạn, vui lòng đợi vài phút hoặc liên hệ với bộ phận dịch vụ khách hàng.",
+		"recharge_title4":"4. Công ty không chịu trách nhiệm về bất kỳ tổn thất tiền nào do vi phạm các quy định trên hoặc thanh toán vào tài khoản thanh toán không chính xác.",
+		"withdraw_instructions":"Cách rút tiền",
+		"withdraw_title1":"1. Bấm để ràng buộc ngân hàng",
+		"withdraw_title2":"2. Nhấp vào Đăng ký rút tiền",
+		"withdrawal_rules":"Quy tắc rút tiền:",
+		"withdrawal_content":"Thời gian rút đơn: 10h00 đến 18h00. Số tiền rút tối thiểu là: 20000Rp Việc rút tiền sẽ được hoàn thành trong vòng t+1-T+3 ngày (Ngân hàng đóng cửa vào Chủ nhật và không xử lý việc rút tiền, Việc rút tiền được xử lý vào thứ Hai) Thuế rút tiền : 10% (Rút tiền 1000, thực tế nhận được 900)"
 	},
 	"user": {
 		"red_title":"Đổi thưởng",
@@ -122,7 +133,8 @@
 		"total_withdrawal": "Rút lui toàn bộ",
 		"total_recharge": "Thay đổi hoàn toàn",
 		"points": "Điểm",
-		"today_earnings": "Lợi nhuận ngày nay"
+		"today_earnings": "Lợi nhuận ngày nay",
+		"redward_code": "Vui Lòng Nhập Gift Code"
 	},
 	"login": {
 		"login": "Đăng nhập",
