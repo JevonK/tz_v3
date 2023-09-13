@@ -199,7 +199,7 @@ class Index extends Controller
             $first_charge_count_today = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num>0 and time BETWEEN '$today' AND '$now' limit 1");
             $this->first_charge_count_today = $first_charge_count_today[0]['num'];
             //昨日首充人数
-            $first_charge_count_yesterday = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num=1 and time BETWEEN '$yesterday' AND '$today' limit 1");
+            $first_charge_count_yesterday = Db::query("select count(*) as num from (select count(uid) as num, uid, rr.time from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and status = 1 group by uid) as a where a.num>1 and time BETWEEN '$yesterday' AND '$today' limit 1");
             $this->first_charge_count_yesterday = $first_charge_count_yesterday[0]['num'];
             //复充人数
             $recharging_count = Db::query("select count(*) as num from (select count(uid) as num, uid from lc_user_recharge_record as rr inner join lc_user u on rr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and rr.status = 1 group by rr.uid) as a where a.num>1 limit 1");
