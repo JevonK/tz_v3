@@ -57,6 +57,11 @@ class WithdrawRecord extends Controller
             $where .= " and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
         }
         if (isset($params['u_username'])) {
+            // 所属下级系统用户
+            if ($params['sys_username']) {
+                $sys_user_id = Db::table('system_user')->alias('su')->join('system_user_relation sur', 'sur.uid=su.id')->where("su.is_deleted=0 and sur.parentid={$auth['id']}")->whereLike('username', "%{$params['sys_username']}%")->column('su.id');
+                $where .= " and u.system_user_id in (".($sys_user_id ? implode(',', $sys_user_id) : 0).") ";
+            }
             // 上级邀请人
             if ($params['superior_username']) {
                 $user_id = Db::table('lc_user')->alias('u')->join('lc_user_relation ur', 'ur.uid=u.id')->join('lc_user lu', 'lu.id=ur.parentid')->where("ur.level = 1 and lu.username like '%{$params['superior_username']}%' and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )")->column('u.id');
@@ -103,6 +108,15 @@ class WithdrawRecord extends Controller
                 $vo['wallet_account'] = $wallet['account'];
                 $vo['wallet_img'] = $wallet['img'];
                 $vo['wallet_type'] = $wallet['type'];
+            }
+            $user = Db::name('LcUser')->where('id', $vo['uid'])->find();
+            $vo['s_name'] = Db::table('system_user')->where("id={$user['system_user_id']}")->value('username');
+            $top_user = Db::name('LcUserRelation')->where("uid = {$vo['uid']} AND level = 1")->find();
+            if(!empty($top_user)){
+                $top_user = Db::name('LcUser')->find($top_user['parentid']);
+                if(!empty($top_user)){
+                    $vo['top'] = $top_user['username'];
+                }
             }
         }
     }

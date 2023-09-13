@@ -32,6 +32,7 @@
             <th class='text-left'>用户</th>
             <th class="text-left">提现金额</th>
             <th class="text-left">订单号</th>
+            <th class="text-left">所属</th>
             <th class="text-left">提现信息</th>
             <th class="text-left">二维码</th>
             <th class="text-left">查看已投项目</th>
@@ -65,6 +66,10 @@
             <td>
                 订单号：{$vo.orderNo|default='--'}<br>
                 流水号：{$vo.serial_number|default='--'}<br>
+            </td>
+            <td>
+                所属业务员：{$vo.s_name|default='--'} <br>
+                我的上级：{$vo.top|default='--'} <br>
             </td>
             <td class='text-left'>
                 {if $vo.status!=0}
