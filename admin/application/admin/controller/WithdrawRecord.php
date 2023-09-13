@@ -128,7 +128,9 @@ class WithdrawRecord extends Controller
             $out['order_no'] = $agree['orderNo'];
             $out['money'] = ($agree['money']-$agree['charge']);
             //以下参数自行修改
-            $out['bankname'] = Db::table("lc_user_withdraw_bank")->where("id={$wallert['bid']}")->value('code'); // 银行名称
+            $wathdraw_bank = Db::table("lc_user_withdraw_bank")->where("id={$wallert['bid']}")->find();
+            $out['bankname'] = $wathdraw_bank['name']; // 银行名称
+            $out['code'] = $wathdraw_bank['code']; // code
             $out['accountname'] = $wallert['name'];// 收款人姓名
             $out['cardnumber'] = $wallert['account'];// 银行卡号
     
