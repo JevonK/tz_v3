@@ -116,9 +116,29 @@
 						'id'
 					]);
 				} else if (this.rechargeMethod[this.active]['type'] == 3) {
-                    this.$router.replace('/recharge?money=' + this.money + "&id=" + this.rechargeMethod[this.active][
-						'id'
-					]);
+                    if (this.money == "") {
+						this.$toast(this.$t('recharge.moneyEmpty'));
+						return false;
+					}
+					if (this.money <=0) {
+						this.$toast(this.$t('recharge.moneyError'));
+						return false;
+					}
+					if (this.money - this.minMoney < 0) {
+						this.$toast(this.$t('recharge.moneyMinError')+this.common.currency_symbol_basic()+this.minMoney);
+						return false;
+					}
+					this.loading = true;
+					Fetch('/user/recharge',{
+						'money': this.money,
+						'pay_code': 11,
+						'id': this.rechargeMethod[this.active]['id'],
+					}).then(r => {
+						console.log(r.data);
+						window.location.href = r.data.paymentUrl
+					}).catch(() => {
+						this.loading = false;
+					})
                 } else {
 					this.$router.replace('/recharge/qrcode?money=' + this.money + "&id=" + this.rechargeMethod[this.active]
 						['id']);
