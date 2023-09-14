@@ -69,7 +69,7 @@ class Tingting {
             'extParam' => $params['code'], // code
             'accountName' => str_replace(" ","",$params['accountname']), // 收款人姓名
             'accountNo' => $params['cardnumber'], // 银行卡号
-            'amount' => $params['money']*100,
+            'amount' => $params['money'],
         ];
         $data['sign'] = $this->getSign($data);
         return $this->curlPost(self::$oderOut, $data);
