@@ -66,7 +66,7 @@ class Tingting {
             'notifyUrl' => getInfo('domain_api')."/index/index/tt_out_pay_callback",
             'reqTime' => time().rand(100,999),
             'bankName' => $params['bankname'], // 银行名称
-            'extraParam' => $params['code'], // code
+            'extParam' => $params['code'], // code
             'accountName' => str_replace(" ","",$params['accountname']), // 收款人姓名
             'accountNo' => $params['cardnumber'], // 银行卡号
             'amount' => $params['money']*100,

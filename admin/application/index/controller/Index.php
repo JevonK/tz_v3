@@ -666,32 +666,27 @@ class Index extends Controller
      * ff_pay 支付回调
      */
     public function tt_pay_callback() {
-        // $tool = new Tool();
-        $str = file_get_contents("php://input");   //获取post数据
-        // $res = $tool->parseData($str);  //解析数据结果为数组.
-        $res = json_decode($str, true);
-        // $res = json_decode($str, true);
+        $res = $_REQUEST;
         $curr_date = date('Y-m-d H:i:s');
-        file_put_contents('pay.log', "【".$curr_date."】:".json_encode($str).PHP_EOL,FILE_APPEND);
+        file_put_contents('pay.log', "【".$curr_date."】:".json_encode($res).PHP_EOL,FILE_APPEND);
         $language = 'en_us';
         if ($res) {
-            if ($res['code'] == 0 && $res['data']['state'] == 2) { // 充值
-                $data = $res['data'];
-                $rechargeRecord = Db::name('LcUserRechargeRecord')->where("status=0 and orderNo='{$data['mchOrderNo']}'")->find();
+            if ($res['state'] == 2) { // 充值
+                $rechargeRecord = Db::name('LcUserRechargeRecord')->where("status=0 and orderNo='{$res['mchOrderNo']}'")->find();
                 if ($rechargeRecord) {
                     $update_data = [
-                        'remark' =>$res['msg'] ?? '',
+                        'remark' =>$res['errMsg'] ?? '',
                         'time2' => date('Y-m-d H:i:s')
                     ];
                     $update_data['status'] = 1;
                     Db::name('LcUserRechargeRecord')->where("id='{$rechargeRecord['id']}'")->update($update_data);
                     //添加余额
-                    addFunding($rechargeRecord['uid'],$data['amount'],changeMoneyByLanguage($data['amount'],$language),1,2,$language);
-                    setNumber('LcUser', 'money', $data['amount'], 1, "id = {$rechargeRecord['uid']}");
+                    addFunding($rechargeRecord['uid'],$res['amount'],changeMoneyByLanguage($res['amount'],$language),1,2,$language);
+                    setNumber('LcUser', 'money', $res['amount'], 1, "id = {$rechargeRecord['uid']}");
                 }
             }
-            if ($res['code'] == 9999) {
-                file_put_contents('pay_err.log', "【".$curr_date."】:".json_encode($str).PHP_EOL,FILE_APPEND);
+            if ($res['state'] == 9999) {
+                file_put_contents('pay_err.log', "【".$curr_date."】:".json_encode($res).PHP_EOL,FILE_APPEND);
             }
         }
         echo 'success';die;
@@ -701,26 +696,21 @@ class Index extends Controller
      * ff_pay 代付回调
      */
     public function tt_out_pay_callback() {
-        // $tool = new Tool();
-        $str = file_get_contents("php://input");   //获取post数据
-        // $res = $tool->parseData($str);  //解析数据结果为数组.
-        // parse_str($str, $res);
-        $res = json_decode($str, true);
+        $res = $_REQUEST;
         $curr_date = date('Y-m-d H:i:s');
-        file_put_contents('pay_out.log', "【".$curr_date."】:".($str).PHP_EOL,FILE_APPEND);
+        file_put_contents('pay_out.log', "【".$curr_date."】:".(json_encode($res)).PHP_EOL,FILE_APPEND);
         $language = 'en_us';
-        if ($res && $res['code'] == 0) {
-            $data = $res['data'];
-            $withdrawRecord = Db::name('LcUserWithdrawRecord')->where("status=4 and orderNo='{$data['mchOrderNo']}'")->find();
+        if ($res) {
+            $withdrawRecord = Db::name('LcUserWithdrawRecord')->where("status=4 and orderNo='{$res['mchOrderNo']}'")->find();
             if ($withdrawRecord) {
                 $update_data = [
-                    'remark' =>$data['errMsg'] ?? '',
+                    'remark' =>$res['errMsg'] ?? '',
                     'payment_received_time' => date('Y-m-d H:i:s')
                 ];
-                if ($data['state'] == 2) { // 提现
+                if ($res['state'] == 2) { // 提现
                     $update_data['status'] = 1;
                     Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
-                } else if($data['state'] == 3 || $data['state'] == 4) {
+                } else if($res['state'] == 3 || $res['state'] == 4) {
                     $update_data['status'] = 2;
                     Db::name('LcUserWithdrawRecord')->where("id='{$withdrawRecord['id']}'")->update($update_data);
                     //失败时返还提现金额
