@@ -116,7 +116,7 @@
 		position: fixed;
 		z-index: 10;
 		right: 13px;
-		bottom: 50px;
+		bottom: 160px;
 		transition: all 1s;
 		opacity: 1;
 		transform: translateX(0);
