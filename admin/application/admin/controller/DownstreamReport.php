@@ -79,7 +79,7 @@ class DownstreamReport extends Controller
             // 有效用户
             $vo['valid_user'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("u.system_user_id in (".implode(',', $ids).") and fund_type=2")->group("u.id")->count();
             // 今日首充人数
-            $first_charge_count = Db::query("select count(*) as num from (select count(uid) as num, uid, urr.time from lc_user_recharge_record as urr inner join lc_user u on urr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and urr.status = 1 group by urr.uid) as a where a.num=1 and a.time BETWEEN '$today' AND '$now' limit 1");
+            $first_charge_count = Db::query("select count(*) as num from (select count(uid) as num, uid, urr.time from lc_user_recharge_record as urr inner join lc_user u on urr.uid=u.id where u.system_user_id in (".implode(',', $ids).") and urr.status = 1 group by urr.uid) as a where a.num>0 and a.time BETWEEN '$today' AND '$now' limit 1");
             $vo['today_first_charge'] = $first_charge_count[0]['num'];
             // 今日充值
             $vo['today_price'] = Db::table('lc_user')->alias('u')->join("lc_user_funding uf", "u.id=uf.uid")->where("uf.time BETWEEN '$today' AND '$now' and uf.fund_type=2 and u.system_user_id in (".implode(',', $ids).") ")->sum('uf.money');

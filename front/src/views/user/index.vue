@@ -312,6 +312,7 @@
 <style lang="less" scoped>
 	.user_wrap {
 		margin-bottom: 60px;
+		min-height: 650px;
 	}
 
 	.share_wrap {
