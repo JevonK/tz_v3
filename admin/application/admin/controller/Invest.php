@@ -46,12 +46,19 @@ class Invest extends Controller
         $this->title = '已投项目管理';
         $auth = $this->app->session->get('user');
         $status = $this->request->param('status', '');
+        $sys_username = $this->request->param('sys_username');
         $where = '1 ';
         if (isset($auth['username']) and $auth['username'] != 'admin') {
-            $where = "(u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} )";
+            $where .= " and (u.system_user_id in (select uid from system_user_relation where parentid={$auth['id']}) or u.system_user_id={$auth['id']} ) ";
         }
+        // 所属下级系统用户
+        if ($sys_username) {
+            $sys_user_id = Db::table('system_user')->alias('su')->join('system_user_relation sur', 'sur.uid=su.id')->where("su.is_deleted=0 and sur.parentid={$auth['id']}")->whereLike('username', "%{$sys_username}%")->column('su.id');
+            $where .= " and u.system_user_id in (".($sys_user_id ? implode(',', $sys_user_id) : 0).") ";
+        }
+        $where .=" and itemid != 221";
         $query = $this->_query($this->table)->alias('i')->field('i.*,u.username,it.title_en_us as title');
-        $query->where($where)->join('lc_user u','i.uid=u.id');
+        $query->where($where)->join('lc_user u','i.uid=u.id','');
         $query->join('lc_item it','i.itemid=it.id')->like('it.title_zh_cn#it_title,u.username#u_username,i.status#status')->dateBetween('i.time#i_time')->order('i.id desc')->page();
     }
 
@@ -64,6 +71,19 @@ class Invest extends Controller
      */
     protected function _index_page_filter(&$data)
     {
+        foreach($data as &$vo){
+            
+            $user = Db::name('LcUser')->where('id', $vo['uid'])->find();
+           
+            $vo['s_name'] = Db::table('system_user')->where("id={$user['system_user_id']}")->value('username');
+            $top_user = Db::name('LcUserRelation')->where("uid = {$vo['uid']} AND level = 1")->find();
+            if(!empty($top_user)){
+                $top_user = Db::name('LcUser')->find($top_user['parentid']);
+                if(!empty($top_user)){
+                    $vo['top'] = $top_user['username'];
+                }
+            }
+        }
     }
 
     /**
