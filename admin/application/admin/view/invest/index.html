@@ -8,6 +8,7 @@
         <thead>
         <tr>
             <th class='text-left nowrap'>投资信息</th>
+            <th class='text-left nowrap'>所属</th>
             <th class='text-left nowrap'>投资数据</th>
             <th class='text-left nowrap'>投资状态</th>
             <th class="text-left nowrap">投资时间</th>
@@ -22,6 +23,10 @@
                 项目名称：{$vo.title|default='--'}<br>
                 投资人：{$vo.username|default='--'}<br>
                 
+            </td>
+            <td>
+                所属业务员：{$vo.s_name|default='--'} <br>
+                我的上级：{$vo.top|default='--'} <br>
             </td>
             <td class='text-left nowrap'>
                 金额：${$vo.money|number_format=2}<br>

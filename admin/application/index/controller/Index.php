@@ -550,21 +550,21 @@ class Index extends Controller
             foreach ($user_level as $val) {
                 switch ($item['value']) {
                     case 1:
-                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level=1 and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid>={$val['mid']} and ur.level=1 and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
                         $num = $num['num'] ?? 0;
                         if($num > 2) {
                             Db::name('LcUser')->where("id = {$val['id']}")->update(['mid' => ($val['mid']+1)]);
                         }
                         break;
                     case 2:
-                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid>={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
                         $num = $num['num'] ?? 0;
                         if($num > 2) {
                             Db::name('LcUser')->where("id = {$val['id']}")->update(['mid' => ($val['mid']+1)]);
                         }
                         break;
                     case 3:
-                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid>={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
                         $num = $num['num'] ?? 0;
                         $member_num = Db::name("LcUserRelation")->where("parentid={$val['id']}")->count();
                         if($num > 1 && $member_num > 99) {
@@ -572,7 +572,7 @@ class Index extends Controller
                         }
                         break;
                     case 4:
-                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid>={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
                         $num = $num['num'] ?? 0;
                         $member_num = Db::name("LcUserRelation")->where("parentid={$val['id']}")->count();
                         if($num > 1 && $member_num > 399) {
@@ -580,7 +580,7 @@ class Index extends Controller
                         }
                         break;
                     case 5:
-                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
+                        $num = Db::name("LcUserRelation")->alias('ur')->join('lc_user u', 'ur.uid=u.id')->where("u.mid>={$val['mid']} and ur.level in (1,2,3) and ur.parentid={$val['id']}")->group('ur.parentid')->field('count(ur.parentid) as num,ur.parentid')->find();
                         $num = $num['num'] ?? 0;
                         $member_num = Db::name("LcUserRelation")->where("parentid={$val['id']}")->count();
                         if($num > 0 && $member_num > 999) {

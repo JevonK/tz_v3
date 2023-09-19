@@ -15,6 +15,7 @@
                 <label><input data-auto-none data-check-target='.list-check-box' type='checkbox'></label>
             </th>
             <th class='text-left'>用户名</th>
+            <th class='text-left'>所属</th>
             <th class='text-left'>交易金额</th>
             <th class="text-left">交易前余额</th>
             <th class="text-left">详情</th>
@@ -31,6 +32,10 @@
             </td>
             <td class='text-left'>
                 {$vo.username}
+            </td>
+            <td>
+                所属业务员：{$vo.s_name|default='--'} <br>
+                我的上级：{$vo.top|default='--'} <br>
             </td>
             <td class='text-left'>
                 {if $vo.type == 1}
@@ -79,6 +84,10 @@
                     储蓄金-赎回
                 {elseif $vo.fund_type==18}
                     储蓄金-收益
+                {elseif $vo.fund_type==19}
+                    团队佣金    
+                {elseif $vo.fund_type==20}
+                    兑换红包
                 {/if}
             </td>
             <td class='text-left'>

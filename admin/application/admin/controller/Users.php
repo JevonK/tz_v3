@@ -106,7 +106,7 @@ class Users extends Controller
 
         $this->member = Db::table('lc_user_member')->field('id,name')->select();
         
-        $query = $this->_query($this->table)->where($where)->equal('auth_email#u_auth_email,auth_google#u_auth_google,clock#u_clock,mid#u_mid')->like('username#u_username,ip#u_ip')->dateBetween('time#u_time')->order('id desc')->page();
+        $query = $this->_query($this->table)->where($where)->equal('auth_email#u_auth_email,auth_google#u_auth_google,clock#u_clock,mid#u_mid')->like('username#u_username,ip#u_ip')->dateBetween('time#u_time,logintime#u_logintime')->order('id desc')->page();
     }
 
     /**
